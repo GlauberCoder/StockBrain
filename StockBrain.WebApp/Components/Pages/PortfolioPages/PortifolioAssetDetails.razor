@@ -1,0 +1,31 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.WebApp.Components.Pages.AssetPages
+
+<RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
+	<Tabs>
+		<RadzenTabsItem Text="Dados">
+			<AssetData Asset="@Asset.Asset.Asset" />
+		</RadzenTabsItem>
+		@if (!Asset.Asset.Asset.Risk)
+		{
+			<RadzenTabsItem Text="Avaliação">
+				<PortifolioAssetDetailsEvaluation Asset="@Asset" />
+			</RadzenTabsItem>
+			<RadzenTabsItem Text="Critérios">
+				<AssetEvaluation Asset="@Asset.Asset.Asset" />
+			</RadzenTabsItem>
+			<RadzenTabsItem Text="Corretoras">
+				<PortifolioAssetDetailsBrokers Asset="@Asset" />
+			</RadzenTabsItem>
+			<RadzenTabsItem Text="Movimentos">
+				<PortifolioAssetDetailsMovements Asset="@Asset" />
+			</RadzenTabsItem>
+			
+		}
+	</Tabs>
+</RadzenTabs>
+
+@code {
+	[Parameter]
+	public PortfolioAssetDetail Asset { get; set; }
+}

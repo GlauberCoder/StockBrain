@@ -1,0 +1,55 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.WebApp.Components.Pages.AssetPages
+
+<RadzenDataGrid PagerHorizontalAlign="HorizontalAlign.Left" Data="@Asset.Asset.Movements" ColumnWidth="300px">
+	<Columns>
+		<RadzenDataGridColumn Title="Ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.Date
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.Broker.Name
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Inicial QTD" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.StartQuantity
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="QTD" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.Quantity
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Final QTD" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.EndQuantity
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Inicial Investimento" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.StartInvestment
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Investimento" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.Investment
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Final Investimento" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.EndInvestment
+			</Template>
+		</RadzenDataGridColumn>
+
+	</Columns>
+</RadzenDataGrid>
+
+
+
+@code {
+	[Parameter]
+	public PortfolioAssetDetail Asset { get; set; }
+}

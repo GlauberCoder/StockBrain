@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StockBrain.Domain.Repositories.Abstractions\StockBrain.Infra.Repositories.Abstractions.csproj" />
+    <ProjectReference Include="..\StockBrain.Infra.PriceGetters.Abstractions\StockBrain.Infra.PriceGetters.Abstractions.csproj" />
+    <ProjectReference Include="..\StockBrain.Utils\StockBrain.Utils.csproj" />
+  </ItemGroup>
+
+</Project>

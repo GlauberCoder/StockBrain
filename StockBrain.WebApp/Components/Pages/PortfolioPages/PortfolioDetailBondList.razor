@@ -1,0 +1,127 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.WebApp.Components.Pages.AssetPages
+
+
+	<RadzenCardGroup Responsive="true">
+		<RadzenCard Variant="@Variant.Flat">
+			<RadzenStack JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+				<RadzenStack Gap="0">
+					<RadzenRow RowGap="0">
+						<SBLabelCol Size="12" Title="Total" Text="@Portfolio.Categories[AssetCategory.Fix].Current.Value.MonetaryFormat()" />
+					</RadzenRow>
+				</RadzenStack>
+				<RadzenStack Gap="0">
+					<RadzenRow RowGap="0">
+						<RadzenColumn Size="2">
+
+						</RadzenColumn>
+						<RadzenColumn Size="1">
+							<RadzenText TextStyle="TextStyle.Overline">PRV</RadzenText>
+						</RadzenColumn>
+						<RadzenColumn Size="1">
+							<RadzenText TextStyle="TextStyle.Overline">GOV</RadzenText>
+						</RadzenColumn>
+					</RadzenRow>
+				</RadzenStack>
+				<RadzenStack Gap="0">
+					<RadzenRow RowGap="0">
+						<RadzenColumn Size="2">
+							Atual
+						</RadzenColumn>
+						<RadzenColumn Size="1">
+							<RadzenText TextStyle="TextStyle.Body1">@Portfolio.Types[AssetType.Priv].Current.Proportion.PercentageFormat()</RadzenText>
+						</RadzenColumn>
+						<RadzenColumn Size="1">
+							<RadzenText TextStyle="TextStyle.Body1">@Portfolio.Types[AssetType.Gov].Current.Proportion.PercentageFormat()</RadzenText>
+						</RadzenColumn>
+						<RadzenColumn Size="8" class="rz-py-1">
+							<RadzenProgressBar ProgressBarStyle="@ProgressBarStyle.Primary" Value=@Portfolio.Types[AssetType.Priv].Current.Proportion.ToPercentage() ShowValue="false" Style="--rz-progressbar-height: 1rem;" />
+						</RadzenColumn>
+					</RadzenRow>
+				</RadzenStack>
+				<RadzenStack Gap="0">
+					<RadzenRow RowGap="0">
+						<RadzenColumn Size="2">
+							Alvo
+						</RadzenColumn>
+						<RadzenColumn Size="1">
+							<RadzenText TextStyle="TextStyle.Body1">@Portfolio.Types[AssetType.Priv].Target.Proportion.PercentageFormat()</RadzenText>
+						</RadzenColumn>
+						<RadzenColumn Size="1">
+							<RadzenText TextStyle="TextStyle.Body1">@Portfolio.Types[AssetType.Gov].Target.Proportion.PercentageFormat()</RadzenText>
+						</RadzenColumn>
+						<RadzenColumn Size="8" class="rz-py-1">
+							<RadzenProgressBar ProgressBarStyle="@ProgressBarStyle.Primary" Value=@Portfolio.Types[AssetType.Priv].Target.Proportion.ToPercentage() ShowValue="false" Style="--rz-progressbar-height: 1rem;" />
+						</RadzenColumn>
+					</RadzenRow>
+				</RadzenStack>
+			</RadzenStack>
+		</RadzenCard>
+	<PortfolioCategoryDetailCard Group="@Portfolio.Types[AssetType.Priv]" Style="@ProgressBarStyle.Primary" />
+	<PortfolioCategoryDetailCard Group="@Portfolio.Types[AssetType.Gov]" Style="@ProgressBarStyle.Info" />
+
+	</RadzenCardGroup>
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left"
+				Data="@Portfolio.Bonds" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
+	<Columns>
+		<RadzenDataGridColumn Title="Corretora" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Broker.Name
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Emissor" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Issuer.Name
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Tipo" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Type.ToString()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Index" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Index.ToString()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Taxa" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Tax.PercentageFormat(4)
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Aporte" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Value.MonetaryFormat()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Data" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Date
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Idade" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Age.YearMonthFormat()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Expiração" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Expiration
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Duração" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.TimeToExpire.YearMonthFormat()
+			</Template>
+		</RadzenDataGridColumn>
+
+
+
+	</Columns>
+</RadzenDataGrid>
+
+@code {
+	[Parameter]
+	public Portfolio Portfolio { get; set; }
+}

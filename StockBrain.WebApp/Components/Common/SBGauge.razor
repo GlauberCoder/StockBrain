@@ -1,0 +1,22 @@
+﻿
+<RadzenStack AlignItems="AlignItems.Start">
+	<RadzenArcGauge Style="width: 100%; height: 100px;">
+		<RadzenArcGaugeScale Step="20" Min="0" Max="100" MinorStep="2" Radius="1.5" TickPosition=@GaugeTickPosition.None Y="0.9" Margin="0">
+			<RadzenArcGaugeScaleValue Value=@Value ShowValue=true>
+				<Template Context="pointer">
+					<RadzenStack AlignItems="AlignItems.Center" Gap="0" Style="margin-top: -50%;">
+						<RadzenText TextStyle="TextStyle.H5" class="rz-m-0"><strong>@pointer.Value</strong>%</RadzenText>
+						<RadzenText TextStyle="TextStyle.Caption">@Title</RadzenText>
+					</RadzenStack>
+				</Template>
+			</RadzenArcGaugeScaleValue>
+		</RadzenArcGaugeScale>
+	</RadzenArcGauge>
+</RadzenStack>
+
+@code {
+	[Parameter]
+	public double Value { get; set; }
+	[Parameter]
+	public string Title { get; set; }
+}

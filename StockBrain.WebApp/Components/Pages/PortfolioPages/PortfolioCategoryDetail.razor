@@ -1,0 +1,69 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+
+
+<RadzenCardGroup Responsive="true">
+	<RadzenCard Variant="@Variant.Flat">
+		<RadzenStack JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+			<RadzenStack Gap="0">
+				<RadzenRow RowGap="0">
+					<SBLabelCol Size="12" Title="Total" Text="@Portfolio.Total.MonetaryFormat()" />					
+				</RadzenRow>
+			</RadzenStack>
+			<RadzenStack Gap="0">
+				<RadzenRow RowGap="0">
+					<RadzenColumn Size="2">
+						
+					</RadzenColumn>
+					<RadzenColumn Size="1">
+						<RadzenText TextStyle="TextStyle.Overline">Var</RadzenText>
+					</RadzenColumn>
+					<RadzenColumn Size="1">
+						<RadzenText TextStyle="TextStyle.Overline">Fix</RadzenText>
+					</RadzenColumn>
+				</RadzenRow>
+			</RadzenStack>
+			<RadzenStack Gap="0">
+				<RadzenRow RowGap="0">
+					<RadzenColumn Size="2">
+						Atual
+					</RadzenColumn>
+					<RadzenColumn Size="1">
+						<RadzenText TextStyle="TextStyle.Body1">@Portfolio.Variable.Current.Proportion.PercentageFormat()</RadzenText>
+					</RadzenColumn>
+					<RadzenColumn Size="1">
+						<RadzenText TextStyle="TextStyle.Body1">@Portfolio.Fix.Current.Proportion.PercentageFormat()</RadzenText>
+					</RadzenColumn>
+					<RadzenColumn Size="8" class="rz-py-1">
+						<RadzenProgressBar ProgressBarStyle="@ProgressBarStyle.Primary" Value=@Portfolio.Variable.Current.Proportion.ToPercentage() ShowValue="false" Style="--rz-progressbar-height: 1rem;" />
+					</RadzenColumn>
+				</RadzenRow>
+			</RadzenStack>
+			<RadzenStack Gap="0">
+				<RadzenRow RowGap="0">
+					<RadzenColumn Size="2">
+						Alvo
+					</RadzenColumn>
+					<RadzenColumn Size="1">
+						<RadzenText TextStyle="TextStyle.Body1">@Portfolio.Variable.Target.Proportion.PercentageFormat()</RadzenText>
+					</RadzenColumn>
+					<RadzenColumn Size="1">
+						<RadzenText TextStyle="TextStyle.Body1">@Portfolio.Fix.Target.Proportion.PercentageFormat()</RadzenText>
+					</RadzenColumn>
+					<RadzenColumn Size="8" class="rz-py-1">
+						<RadzenProgressBar ProgressBarStyle="@ProgressBarStyle.Primary" Value=@Portfolio.Variable.Target.Proportion.ToPercentage() ShowValue="false" Style="--rz-progressbar-height: 1rem;" />
+					</RadzenColumn>
+				</RadzenRow>
+			</RadzenStack>
+		</RadzenStack>
+	</RadzenCard>
+	<PortfolioCategoryDetailCard Group="@Portfolio.Variable" Style="@ProgressBarStyle.Primary" />
+	<PortfolioCategoryDetailCard Group="@Portfolio.Fix" Style="@ProgressBarStyle.Info" />
+
+</RadzenCardGroup>
+
+@code {
+	[Parameter]
+	public Portfolio Portfolio { get; set; }
+}
+

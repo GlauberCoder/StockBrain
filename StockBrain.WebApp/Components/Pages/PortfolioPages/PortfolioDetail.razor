@@ -1,0 +1,21 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+
+
+<RadzenTabs SelectedIndex="0" TabPosition="TabPosition.Right">
+	<Tabs>
+		<RadzenTabsItem Text="Dashboard"><PortfolioDetailDashboard Portfolio="@Portfolio" /></RadzenTabsItem>
+		<RadzenTabsItem Text="Ações"><PortfolioDetailAssetList Portfolio="@Portfolio" AssetType="AssetType.Acoes" /></RadzenTabsItem>
+		<RadzenTabsItem Text="FIIs"><PortfolioDetailAssetList Portfolio="@Portfolio" AssetType="AssetType.FII" /></RadzenTabsItem>
+		<RadzenTabsItem Text="BDR"><PortfolioDetailAssetList Portfolio="@Portfolio" AssetType="AssetType.BDR" /></RadzenTabsItem>
+		<RadzenTabsItem Text="Fix"><PortfolioDetailBondList Portfolio="@Portfolio" /></RadzenTabsItem>
+	</Tabs>
+</RadzenTabs>
+
+
+
+
+@code {
+	[Parameter]
+	public Portfolio Portfolio { get; set; }
+}

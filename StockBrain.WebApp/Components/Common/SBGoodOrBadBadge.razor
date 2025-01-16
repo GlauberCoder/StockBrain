@@ -1,0 +1,10 @@
+﻿<RadzenBadge class="rz-p-1 rz-mr-4" Shade="Shade.Light" BadgeStyle="@(Good ? BadgeStyle.Info : BadgeStyle.Danger)" Variant="Variant.Outlined" Text="@(Good ? TextGood : TextBad)" />
+
+@code {
+	[Parameter]
+	public bool Good { get; set; }
+	[Parameter]
+	public string TextGood { get; set; }
+	[Parameter]
+	public string TextBad { get; set; }
+}

@@ -1,0 +1,15 @@
+﻿<RadzenColumn Size="@Size">
+	<SBLabel Title="@Title" Text="@Text" TextClass="@TextClass" TitleClass="@TitleClass" />
+</RadzenColumn>
+@code {
+	[Parameter]
+	public string Title { get; set; }
+	[Parameter]
+	public string Text { get; set; }
+	[Parameter]
+	public int Size { get; set; }
+	[Parameter]
+	public string TitleClass { get; set; }
+	[Parameter]
+	public string TextClass { get; set; }
+}

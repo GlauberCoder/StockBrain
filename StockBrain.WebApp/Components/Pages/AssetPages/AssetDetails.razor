@@ -1,0 +1,20 @@
+﻿@using StockBrain.Domain.Models
+
+<RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
+	<Tabs>
+		<RadzenTabsItem Text="Info">
+			<AssetData Asset="@Asset" />
+		</RadzenTabsItem>
+		@if (!Asset.Risk)
+		{
+			<RadzenTabsItem Text="Critérios">
+				<AssetEvaluation Asset="@Asset" />
+			</RadzenTabsItem>
+		}
+	</Tabs>
+</RadzenTabs>
+
+@code {
+	[Parameter]
+	public Asset Asset { get; set; }
+}

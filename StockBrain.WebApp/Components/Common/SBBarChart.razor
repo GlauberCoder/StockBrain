@@ -1,0 +1,39 @@
+﻿@using StockBrain.WebApp.Models
+
+<RadzenStack AlignItems="AlignItems.Start">
+	<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+		<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" class="float-end">
+			<RadzenLabel Text="Valores" Component="Values" />
+			<RadzenSwitch @bind-Value="@ShowValues" Name="Values" />
+		</RadzenStack>
+	</RadzenStack>
+</RadzenStack>
+<RadzenChart style="@HtmlStyle">
+	@foreach (var item in Itens)
+	{
+		<RadzenBarSeries Data="item.Value" ValueProperty="Value" CategoryProperty="Category" Title="@item.Key" LineType="LineType.Dashed">
+			<RadzenSeriesDataLabels Visible="@ShowValues" />
+		</RadzenBarSeries>
+	}
+	<RadzenValueAxis Formatter="@FormatLabel">
+		<RadzenGridLines Visible="true" />
+	</RadzenValueAxis>
+	<RadzenBarOptions Radius="5" Height="20" />
+	<RadzenLegend Visible="@LegendVisible" />
+</RadzenChart>
+
+
+@code {
+	bool ShowValues = true;
+	[Parameter]
+	public IDictionary<string, SBChartDataItem[]> Itens { get; set; }
+	[Parameter]
+	public Func<object, string> FormatLabel { get; set; }
+	[Parameter]
+	public int Height { get; set; }
+	[Parameter]
+	public bool LegendVisible { get; set; } = true;
+
+	string HtmlStyle => $"height: {Height}px";
+
+}

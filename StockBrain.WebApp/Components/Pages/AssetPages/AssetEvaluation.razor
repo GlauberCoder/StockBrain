@@ -1,0 +1,84 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.Infra.Repositories.Abstractions
+
+<RadzenRow RowGap="0">
+	<SBLabelCol Size="3" Title="Última Revisão" Text="@Asset.LastReview.Date.ToString()" />
+	<SBLabelCol Size="3" Title="Última Revisão" Text="@Asset.LastReview.Span.YearMonthFormat()" />
+	<RadzenColumn SizeSM="6" >
+		<RadzenButton Click="@SaveEvaluations" Variant="Variant.Outlined" Text="Avaliar" ButtonStyle="ButtonStyle.Primary" style="float:right;" />
+		<a href="@GetInvestidor10URL(Asset)" target="_blank" style="float:right;" class="rz-mx-2">
+			<RadzenButton Variant="Variant.Outlined" Text="Investidor10" ButtonStyle="ButtonStyle.Dark" />
+		</a>
+	</RadzenColumn>
+</RadzenRow>
+
+<RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Gap="1rem">
+	<RadzenStack Gap="0">
+		<RadzenStack JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" JustifyContent="JustifyContent.SpaceBetween">
+				<RadzenText TextStyle="TextStyle.H6">@Asset.Points() Points</RadzenText>
+				<RadzenText TextStyle="TextStyle.H6" class="rz-m-0">@($" {Math.Round(Points)}%")</RadzenText>
+			</RadzenStack>
+			<RadzenProgressBar @bind-Value=@Points ShowValue="false" Style="--rz-progressbar-height: 1rem;" />
+		</RadzenStack>
+	</RadzenStack>
+	@foreach (var answer in Asset.Factors.Where(f => f.Factor.Strategy == DecisionFactorAnswerStrategy.Manual))
+	{
+		<RadzenStack Gap="0">
+			<RadzenRow RowGap="0">
+				<RadzenColumn SizeSM="8">
+					<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name</RadzenText>
+				</RadzenColumn>
+				<RadzenColumn SizeSM="4">
+					<RadzenSelectBar Change="@(() => UpdateData())" TValue="bool?" Size="ButtonSize.ExtraSmall" @bind-Value="@answer.Answer">
+						<Items>
+							<RadzenSelectBarItem Value="true" Text="Sim" />
+							<RadzenSelectBarItem Value="false" Text="Não" />
+							<RadzenSelectBarItem Value="null" Text="Não Aplica" />
+						</Items>
+					</RadzenSelectBar>
+				</RadzenColumn>
+			</RadzenRow>
+		</RadzenStack>
+	}
+</RadzenStack>
+
+
+@code {
+	[Parameter]
+	public Asset Asset { get; set; }
+	[Inject]
+	IAssets Assets { get; set; }
+	[Inject]
+	NotificationService NotificationService { get; set; }
+
+	string GetInvestidor10URL(Asset asset)
+	{
+		var urlType = asset.Type switch
+		{
+			AssetType.Acoes => "acoes",
+			AssetType.FII => "fiis",
+			AssetType.BDR => "bdrs",
+			_ => null
+		};
+		return $"https://investidor10.com.br/{urlType}/{asset.Ticker}";
+	} 
+
+	protected override void OnInitialized()
+	{
+		UpdateData();
+		base.OnInitialized();
+	}
+	void UpdateData()
+	{
+		Points = Asset.ManualEvaluationPercentage();
+		StateHasChanged();
+	}
+	void SaveEvaluations()
+	{
+		Assets.SaveEvaluation(Asset);
+		NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Asset Evaluated", Detail = "Asset Evaluation saved.", Duration = 4000 });
+	}
+	public double Points { get; set; }
+}

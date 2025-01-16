@@ -1,0 +1,40 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+
+
+
+
+<RadzenCard Variant="@Variant.Flat">
+	<RadzenStack JustifyContent="JustifyContent.End" Gap="1rem" class="rz-mb-12">
+		<RadzenStack Gap="0">
+			<RadzenRow RowGap="0">
+				<SBLabelCol Size="4" Title="Tipo" Text="@Group.Name" />
+				<SBLabelCol Size="4" Title="Atual" Text="@Group.Current.Value.MonetaryFormat()" />
+				<SBLabelCol Size="4" Title="Alvo" Text="@Group.Target.Value.MonetaryFormat()" />
+			</RadzenRow>
+		</RadzenStack>
+		<RadzenStack Gap="0" class="rz-mt-10">
+			<RadzenRow RowGap="0">
+				<RadzenColumn Size="12" class="rz-py-1">
+					<RadzenProgressBar ProgressBarStyle="@Style" Value=@Group.Current.Proportion.ToPercentage() ShowValue="true" Style="--rz-progressbar-height: 1rem;" />
+				</RadzenColumn>
+			</RadzenRow>
+		</RadzenStack>
+		<RadzenStack Gap="0">
+			<RadzenRow RowGap="0">
+				<RadzenColumn Size="12" class="rz-py-1">
+					<RadzenProgressBar ProgressBarStyle="@Style" Value=@Group.Target.Proportion.ToPercentage() ShowValue="true" Style="--rz-progressbar-height: 1rem;" />
+				</RadzenColumn>
+			</RadzenRow>
+		</RadzenStack>		
+	</RadzenStack>
+</RadzenCard>
+
+
+
+@code {
+	[Parameter]
+	public PortfolioAssetGroup Group { get; set; }
+	[Parameter]
+	public ProgressBarStyle Style { get; set; }
+}

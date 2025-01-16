@@ -1,0 +1,60 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Infra.Repositories.Abstractions
+@using StockBrain.WebApp.Components.Pages.AssetPages
+@using StockBrain.WebApp.Models
+
+
+<RadzenCard Variant="@Variant.Filled" class="rz-mt-2">
+	<RadzenRow>
+		<RadzenColumn Size="12">
+			<RadzenButton Variant="Variant.Outlined" Click=@SaveSelected Text="ADD Carrinho" ButtonStyle="ButtonStyle.Primary" class="float-end" />
+		</RadzenColumn>
+	</RadzenRow>
+	<RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start" Wrap="FlexWrap.Wrap">
+		@foreach (var item in Movements)
+		{
+			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+				<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+					<RadzenCheckBox @bind-Value=@item.Selected />
+				</RadzenStack>
+				<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+					<RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.Asset(item.Model.Asset)) Text="@item.Model.Asset.Ticker" ButtonStyle="ButtonStyle.Primary" />
+				</RadzenStack>
+				<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+					<RadzenFormField Text="QTD" Variant="Variant.Text">
+						<RadzenNumeric @bind-Value="@item.Model.Quantity" />
+					</RadzenFormField>
+				</RadzenStack>
+				<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+					<RadzenFormField Text="Aporte" Variant="Variant.Text">
+						<RadzenNumeric Format="c" @bind-Value="@item.Model.Investment" />
+					</RadzenFormField>
+				</RadzenStack>
+			</RadzenStack>
+		}
+	</RadzenStack>
+</RadzenCard>
+
+
+@code {
+	[Parameter]
+	public InvestmentRecommendation Recommendation { get; set; }
+	[Inject]
+	Dialogs Dialogs { get; set; }
+	[Inject]
+	IAssetMovements Repository { get; set; }
+	[Inject]
+	NavigationManager Navigation { get; set; }
+	IEnumerable<SelectableItem<AssetMovement>> Movements { get; set; }
+
+	void SaveSelected()
+	{
+		Repository.Save(Movements.Where(m => m.Selected).Select(m => m.Model));
+		Navigation.NavigateTo("ShoppingCart");
+	}
+	protected override void OnParametersSet()
+	{
+		Movements = Recommendation.Movements.Select(m => new SelectableItem<AssetMovement>(m, true));
+		base.OnParametersSet();
+	}
+}

@@ -1,0 +1,79 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Infra.Repositories.Abstractions
+@if (Recommendation != null)
+{
+	<RadzenCard Variant="@Variant.Filled" class="rz-mt-2">
+	<RadzenRow>
+		<RadzenColumn Size="12">
+			<RadzenButton Variant="Variant.Outlined" Click=@SaveSelected Text="ADD Carrinho" ButtonStyle="ButtonStyle.Primary" class="float-end"/>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenCard>
+<RadzenDataGrid Data="@Recommendation.Groups" TItem="InvestmentGroup">
+	<Columns>
+		<RadzenDataGridColumn Title="Nome" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="group">
+				<span class="@($"rz-pl-{group.Level*2}")">@group.Name</span>
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Aporte" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="group">
+				@group.Investment.Value.MonetaryFormat()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="QTD" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="group">
+				@group.Quantity
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Aporte %" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="group">
+				@group.Investment.Proportion.PercentageFormat()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Atual" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="group">
+				@group.Current.Value.MonetaryFormat()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Atual %" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="group">
+				@group.Current.Proportion.PercentageFormat()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Alvo" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="group">
+				@group.Target.Value.MonetaryFormat()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Alvo %" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="group">
+				@group.Target.Proportion.PercentageFormat()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Final" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="group">
+				@group.After.Value.MonetaryFormat()
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Final %" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="group">
+				@group.After.Proportion.PercentageFormat()
+			</Template>
+		</RadzenDataGridColumn>
+	</Columns>
+</RadzenDataGrid>
+}
+@code {
+	[Parameter]
+	public InvestmentRecommendation Recommendation { get; set; }
+	[Inject]
+	IAssetMovements Repository { get; set; }
+	[Inject]
+	NavigationManager Navigation { get; set; }
+	void SaveSelected()
+	{
+		Repository.Save(Recommendation.Movements);
+		Navigation.NavigateTo("ShoppingCart");
+	}
+}

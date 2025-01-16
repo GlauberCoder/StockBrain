@@ -1,0 +1,38 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.WebApp.Models
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" class="float-end rz-mx-4">
+	<RadzenLabel Text="% / $" Component="QTD" />
+	<RadzenSwitch @bind-Value="@ShowMonetary" Name="QTD" />
+</RadzenStack>
+
+<SBBarChart Itens="@GetDataItems()" FormatLabel="@FormatLabel" Height="400" />
+
+@code {
+	[Parameter]
+	public Portfolio Portfolio { get; set; }
+	bool ShowMonetary = true;
+
+	IDictionary<string, SBChartDataItem[]> GetDataItems()
+	{
+		var itens = new Dictionary<string, SBChartDataItem[]>();
+		
+		itens.Add("Actual", GetDataItems(Portfolio.Types.ToDictionary(t => t.Key, t => t.Value.Current)));
+		itens.Add("Target", GetDataItems(Portfolio.Types.ToDictionary(t => t.Key, t => t.Value.Target)));
+
+		return itens;
+	}
+
+	SBChartDataItem[] GetDataItems(IDictionary<AssetType, PercentageValue> values)
+	{
+		return values.Select(d => new SBChartDataItem { Category = d.Key.ToString(), Value = ShowMonetary ? d.Value.Value : d.Value.Proportion }).ToArray();
+	}
+	string FormatLabel(object value)
+	{
+		var number = ((double)value);
+		return ShowMonetary ? number.MonetaryThousandFormat() : number.PercentageFormat(0);
+	}
+	bool showValue = true;
+	double value = 100;
+}

@@ -1,0 +1,31 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+
+
+<RadzenStack>
+	<RadzenRow>
+		<RadzenColumn Size="12">
+			<PortfolioCategoryDetail Portfolio="@Portfolio" />
+		</RadzenColumn>
+	</RadzenRow>
+	<RadzenRow>
+		<RadzenColumn Size="5">
+			<RadzenCard Variant="Variant.Text">
+				<PortfolioActualXTargetChart Portfolio="@Portfolio" />
+			</RadzenCard>
+		</RadzenColumn>
+		<RadzenColumn Size="7">
+			<RadzenCard Variant="Variant.Filled">
+				<AssetsProfitability Portfolio="@Portfolio" />
+			</RadzenCard>
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenStack>
+
+
+
+
+@code {
+	[Parameter]
+	public Portfolio Portfolio { get; set; }
+}

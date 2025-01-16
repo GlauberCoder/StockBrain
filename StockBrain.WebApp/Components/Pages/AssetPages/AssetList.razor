@@ -1,0 +1,24 @@
+﻿@page "/assets"
+@using Radzen.Blazor
+@using StockBrain.Domain.Models
+@using StockBrain.Infra.Repositories.Abstractions
+@rendermode InteractiveServer
+
+<PageTitle>Assets</PageTitle>
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left"
+				Data="@Assets" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
+	<Columns>
+		<RadzenDataGridColumn Title="Ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="asset">
+				<RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.Asset(asset)) Text="@asset.Ticker" ButtonStyle="ButtonStyle.Primary" />
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Property="@nameof(Asset.Name)" Title="Empresa" Frozen="true" Width="160px" />
+		<RadzenDataGridColumn Property="@nameof(Asset.MarketPrice)" FormatString="{0:C}" Title="Preço" Frozen="true" Width="160px" />
+		<RadzenDataGridColumn Property="@nameof(Asset.Type)" Title="Tipo" Frozen="true" Width="160px" />
+		<RadzenDataGridColumn Property="@nameof(Asset.Risk)" Title="Arriscada" Frozen="true" Width="160px" />
+		<RadzenDataGridColumn Property="@nameof(Asset.ReviewExpired)" Title="Expirada" Frozen="true" Width="160px" />
+
+	</Columns>
+</RadzenDataGrid>

@@ -1,0 +1,25 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.Infra.Repositories.Abstractions
+@typeparam TItem where TItem : struct, Enum
+
+<RadzenDropDown Data=@Entities TValue="TItem" @bind-Value=@Entity
+				AllowClear="true" AllowFiltering="true" Style="width: 100%; max-width: 400px;" Name="EntitySelector" Change="OnChange">
+</RadzenDropDown>
+
+@code {
+	[Parameter]
+	public TItem Entity { get; set; }
+	IEnumerable<TItem> Entities { get; set; }
+	[Parameter]
+	public EventCallback<TItem> EntityChanged { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		Entities = Enum.GetValues<TItem>().ToList<TItem>();
+	}
+	async Task OnChange()
+	{
+		EntityChanged.InvokeAsync(Entity);
+	}
+}

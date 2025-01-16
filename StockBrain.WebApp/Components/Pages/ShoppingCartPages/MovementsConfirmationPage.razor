@@ -1,0 +1,115 @@
+﻿@using Radzen.Blazor
+@using StockBrain.Domain.Abstractions
+@using StockBrain.Domain.Models
+@using StockBrain.Infra.Repositories.Abstractions
+@using StockBrain.WebApp.Components.Pages.AssetPages
+@using StockBrain.WebApp.Models
+@rendermode InteractiveServer
+
+<RadzenRow>
+	<RadzenColumn Size="12">
+		<RadzenButton Variant="Variant.Filled" Click=@Confirm Text="Confirmar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" Disabled="@ConfirmDisabled" class="float-end rz-mr-2" />
+	</RadzenColumn>
+</RadzenRow>
+<RadzenRow AlignItems="AlignItems.Center">
+	<RadzenColumn Size="1"></RadzenColumn>
+	<RadzenColumn Size="11">Portfólio</RadzenColumn>
+</RadzenRow>
+@foreach (var item in Portfolios)
+{
+	<RadzenRow AlignItems="AlignItems.Center" class="rz-mt-1">
+		<RadzenColumn Size="1"><RadzenCheckBox @bind-Value=item.Selected /></RadzenColumn>
+		<RadzenColumn Size="11">@item.Model.Name</RadzenColumn>
+	</RadzenRow>
+}
+
+<RadzenDataGrid PagerHorizontalAlign="HorizontalAlign.Left" Data="@Assets" ColumnWidth="300px" class="rz-mt-4">
+	<Columns>
+		<RadzenDataGridColumn Title="Ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.Asset.Ticker
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="QTD" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.Quantity
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Investimento" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.Investment
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Corretora" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="movement">
+				@movement.Broker.Name
+			</Template>
+		</RadzenDataGridColumn>
+	</Columns>
+</RadzenDataGrid>
+
+<RadzenDataGrid PagerHorizontalAlign="HorizontalAlign.Left" Data="@Bonds" ColumnWidth="300px" class="rz-mt-4">
+	<Columns>
+		<RadzenDataGridColumn Title="Tipo" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Type
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Index" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Index
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Taxs" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Tax.PercentageFormat(5)
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Corretora" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Broker.Name
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Emissor" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Issuer.Name
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Vencimento" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Expiration
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Valor" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="bond">
+				@bond.Value.MonetaryFormat()
+			</Template>
+		</RadzenDataGridColumn>
+	</Columns>
+</RadzenDataGrid>
+
+@code {
+	[Parameter]
+	public IEnumerable<AssetMovement> Assets { get; set; }
+	[Parameter]
+	public IEnumerable<BondMovement> Bonds { get; set; }
+	[Inject]
+	IPortfolios PortfoliosRepository { get; set; }
+	[Inject]
+	IPortfolioAssetManager PortfolioManager { get; set; }
+	[Inject]
+	NavigationManager Navigation { get; set; }
+
+	IEnumerable<SelectableItem<Portfolio>> Portfolios { get; set; }
+	bool ConfirmDisabled => !Portfolios.Any(p => p.Selected);
+
+	protected override async Task OnInitializedAsync()
+	{
+		Portfolios = PortfoliosRepository.FromCurrentAccount().Select(m => new SelectableItem<Portfolio>(m, true)).ToList();
+	}
+	void Confirm()
+	{
+		PortfolioManager.ConfirmMovements(Portfolios.Where(p => p.Selected).Select(p => p.Model), Assets, Bonds);
+		Navigation.NavigateTo("");
+	}
+}

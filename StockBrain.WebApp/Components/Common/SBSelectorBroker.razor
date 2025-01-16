@@ -1,0 +1,26 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Infra.Repositories.Abstractions
+
+
+<RadzenDropDown Data=@Entities TValue="Broker" @bind-Value=@Entity
+				AllowClear="true" AllowFiltering="true" Style="width: 100%; max-width: 400px;" Name="EntitySelector" Change="OnChange">
+</RadzenDropDown>
+
+@code {
+	[Parameter]
+	public Broker Entity { get; set; }
+	IEnumerable<Broker> Entities { get; set; }
+	[Parameter]
+	public EventCallback<Broker> EntityChanged { get; set; }
+
+	[Inject]
+	IBrokers Repository { get; set; }
+	protected override async Task OnInitializedAsync()
+	{
+		Entities = Repository.All();
+	}
+	async Task OnChange()
+	{
+		EntityChanged.InvokeAsync(Entity);
+	}
+}

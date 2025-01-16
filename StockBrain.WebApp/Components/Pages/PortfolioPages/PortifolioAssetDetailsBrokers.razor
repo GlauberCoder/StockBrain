@@ -1,0 +1,25 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.WebApp.Components.Pages.AssetPages
+
+<RadzenDataGrid  PagerHorizontalAlign="HorizontalAlign.Left" Data="@Asset.Asset.Brokers" ColumnWidth="300px">
+	<Columns>
+		<RadzenDataGridColumn Title="Ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="broker">
+				@broker.Broker.Name
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="QTD" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+			<Template Context="broker">
+				@broker.Quantity
+			</Template>
+		</RadzenDataGridColumn>
+
+	</Columns>
+</RadzenDataGrid>
+
+
+
+@code {
+	[Parameter]
+	public PortfolioAssetDetail Asset { get; set; }
+}

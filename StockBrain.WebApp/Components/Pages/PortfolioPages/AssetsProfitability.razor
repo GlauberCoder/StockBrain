@@ -1,0 +1,56 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.WebApp.Models
+@using StockBrain.Domain.Models.Extensions
+
+
+<RadzenStack Gap="0">
+	<RadzenRow RowGap="0">
+		<SBLabelCol Size="3" Title="Atual" Text="@Group.DeltaInvested.Final.MonetaryFormat()" />
+		<SBLabelCol Size="3" Title="Investido" Text="@Group.DeltaInvested.Initial.MonetaryFormat()" />
+		<SBLabelCol Size="3" Title="Delta" Text="@Group.DeltaInvested.Difference.MonetaryFormat()" />
+		<SBLabelCol Size="3" Title="Evolução" Text="@Group.DeltaInvested.Percentage.PercentageFormat()" />
+	</RadzenRow>
+</RadzenStack>
+<div class="rz-mt-4">
+	<RadzenArcGauge Style="width: 100%; height: 250px;">
+		<RadzenArcGaugeScale Step="20" Min="-50" Max="250" MinorStep="2" Radius="1.5" TickPosition=@GaugeTickPosition.Outside Y="0.9" Margin="0">
+			<RadzenArcGaugeScaleValue Fill="#6966db" Value=@Group.DeltaInvested.Percentage.ToPercentage(0) ShowValue="true">
+				<Template Context="pointer">
+					<RadzenStack AlignItems="AlignItems.Center" Gap="0" Style="margin-top: -50%;">
+						<RadzenText TextStyle="TextStyle.H5" class="rz-m-0"><strong>@pointer.Value</strong> %</RadzenText>
+					</RadzenStack>
+				</Template>
+			</RadzenArcGaugeScaleValue>
+		</RadzenArcGaugeScale>
+	</RadzenArcGauge>
+</div>
+<hr />
+<div class="rz-mt-4">
+	<SBBarChart LegendVisible="false" Itens="@GetDataItems()" FormatLabel="@FormatLabel" Height="300" />
+</div>
+
+@code {
+	[Parameter]
+	public Portfolio Portfolio { get; set; }
+	PortfolioAssetGroup Group => Portfolio.Categories[AssetCategory.Var];
+
+	IDictionary<string, SBChartDataItem[]> GetDataItems()
+	{
+		var itens = new Dictionary<string, SBChartDataItem[]>();
+
+		itens.Add("-", GetDataItems(Portfolio.Types));
+
+		return itens;
+	}
+
+	SBChartDataItem[] GetDataItems(IDictionary<AssetType, PortfolioAssetGroup> values)
+	{
+		return values.Where(t => t.Key.Category() == AssetCategory.Var).Select(d => new SBChartDataItem { Category = d.Key.ToString(), Value = d.Value.DeltaInvested.Difference }).ToArray();
+	}
+	string FormatLabel(object value)
+	{
+		var number = ((double)value);
+		return number.MonetaryThousandFormat();
+	}
+}

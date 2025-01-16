@@ -1,0 +1,97 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.Infra.Repositories.Abstractions
+<RadzenRow AlignItems="AlignItems.End">
+	<RadzenColumn Size="12" >
+		<RadzenButton Variant="Variant.Filled" Icon="Add" Click=@Save Text="Salvar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" Disabled="@(!IsValid)" class="rz-border-radius-10 rz-shadow-10 float-end" />
+	</RadzenColumn>
+</RadzenRow>
+<RadzenRow class="rz-mt-5">
+	<RadzenColumn Size="12">
+		<RadzenFormField Text="Tipo" Style="width: 100%;">
+			<SBSelectorEnum @bind-Entity=@Movement.Type />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="12">
+		<RadzenFormField Text="Index" Style="width: 100%;">
+			<SBSelectorEnum @bind-Entity=@Movement.Index />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="12">
+		<RadzenFormField Text="Corretora" Style="width: 100%;">
+			<SBSelectorBroker @bind-Entity=@Movement.Broker />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="6">
+		<RadzenFormField Text="TAX" Style="width: 100%;">
+			<RadzenNumeric Format="p" @bind-Value=@Movement.Tax />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="6">
+		<RadzenFormField Text="Valor" Style="width: 100%;">
+			<RadzenNumeric Format="c" @bind-Value=@Movement.Value />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="6">
+		<RadzenFormField Text="Vencimento" Style="width: 100%;">
+			<RadzenDatePicker @bind-Value=@Movement.Expiration />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="6">
+		<RadzenFormField Text="Data" Style="width: 100%;">
+			<RadzenDatePicker @bind-Value=@Movement.Date />
+		</RadzenFormField>
+	</RadzenColumn>
+</RadzenRow>
+@if (Movement.Type != BondType.Gov)
+{
+<RadzenRow class="rz-mt-5">
+	<RadzenColumn Size="6">
+		<RadzenStack Orientation="Orientation.Horizontal" class="rz-mt-5">
+			<RadzenLabel Text="Novo Emissor" Component="True" />
+			<RadzenSwitch @bind-Value=@NewIssuer Change=@(args => OnChangeIssuerType()) />
+		</RadzenStack>
+	</RadzenColumn>
+</RadzenRow>
+<RadzenRow class="rz-mt-5">
+	<RadzenColumn Size="12">
+		@if (NewIssuer)
+		{
+			<RadzenFormField Text="Novo Emissor" Style="width: 100%;">
+				<RadzenTextBox @bind-Value=@Movement.Issuer.Name />
+			</RadzenFormField>
+
+		}
+		else
+		{
+			<RadzenFormField Text="Emissor" Style="width: 100%;">
+				<SBSelectorIssuer @bind-Entity=@Movement.Issuer />
+			</RadzenFormField>
+		}
+	</RadzenColumn>
+</RadzenRow>
+}
+
+@code {
+	[Inject]
+	Dialogs Dialogs { get; set; }
+	[Inject]
+	Context Context { get; set; }
+	[Inject]
+	IBondMovements Repository { get; set; }
+	[Parameter] 
+	public Action SaveCallBack { get; set; }
+	bool NewIssuer { get; set; }
+	BondMovement Movement = new BondMovement() { Issuer = new BondIssuer(), Tax = 0.084, Value = 3000, Expiration = new DateOnly(2025, 01, 18), Date = new DateOnly(2025, 01, 11) };
+	bool IsValid => Movement.Tax > 0 && Movement.Value > 0 && Movement.Expiration > Context.Today && Movement.Broker != null && Movement.Issuer != null;
+	void Save()
+	{
+		Repository.Save(Movement);
+		Dialogs.Close();
+		SaveCallBack();
+	}
+	void OnChangeIssuerType()
+	{
+		Movement.Issuer = new BondIssuer();
+	}
+}

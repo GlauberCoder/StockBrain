@@ -1,0 +1,49 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Infra.Repositories.Abstractions
+<hr />
+<RadzenRow AlignItems="AlignItems.End">
+	<RadzenColumn Size="12" >
+		<RadzenButton Variant="Variant.Filled" Icon="Add" Click=@Save Text="Salvar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" Disabled="@(!IsValid)" class="rz-border-radius-10 rz-shadow-10 float-end" />
+	</RadzenColumn>
+</RadzenRow>
+<RadzenRow class="rz-mt-5">
+	<RadzenColumn Size="12">
+		<RadzenFormField Text="Asset" Style="width: 100%;">
+			<SBSelectorAsset @bind-Entity=@Movement.Asset />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="12">
+		<RadzenFormField Text="Broker" Style="width: 100%;">
+			<SBSelectorBroker @bind-Entity=@Movement.Broker />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="6">
+		<RadzenFormField Text="QTD" Style="width: 100%;">
+			<RadzenNumeric @bind-Value="@Movement.Quantity" />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="6">
+		<RadzenFormField Text="Valor" Style="width: 100%;">
+			<RadzenNumeric Format="c" @bind-Value="@Movement.Investment" />
+		</RadzenFormField>
+	</RadzenColumn>
+</RadzenRow>
+
+
+@code {
+	[Inject]
+	Dialogs Dialogs { get; set; }
+	[Inject]
+	IAssetMovements Repository { get; set; }
+	[Parameter] 
+	public Action SaveCallBack { get; set; }
+
+	AssetMovement Movement = new AssetMovement();
+	bool IsValid => Movement.Quantity > 0 && Movement.Investment > 0 && Movement.Broker != null && Movement.Asset != null;
+	void Save()
+	{
+		Repository.Save(Movement);
+		Dialogs.Close();
+		SaveCallBack();
+	}
+}

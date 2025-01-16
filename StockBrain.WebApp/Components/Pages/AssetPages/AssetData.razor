@@ -1,0 +1,43 @@
+﻿@using StockBrain.Domain.Models
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem">
+	<RadzenStack Gap="0">
+		<RadzenRow RowGap="0">
+			<SBLabelCol Size="12" Title="Empresa" Text="@Asset.Name"/>
+		</RadzenRow>
+		<RadzenRow RowGap="0">
+			<SBLabelCol Size="4" Title="Ticker" Text="@Asset.Ticker"/>
+			<SBLabelCol Size="4" Title="Tipo" Text="@Asset.Type.ToString()"/>
+			<SBLabelCol Size="4" Title="Preço" Text="@Asset.MarketPrice?.MonetaryFormat()" />
+			<SBLabelCol Size="4" Title="Setor" Text="@Asset.Sector.Name" />
+			<SBLabelCol Size="8" Title="Segmento" Text="@Asset.Segment.Name" />
+		</RadzenRow>
+	</RadzenStack>
+</RadzenStack>
+<SBGoodOrBadBadge Good="@(!Asset.Risk)" TextGood="Seguro" TextBad="Arriscado" />
+@if (!Asset.Risk)
+{
+	<SBGoodOrBadBadge Good="@(!Asset.ReviewExpired)" TextGood="Revisado" TextBad="Expirado" />
+}
+<RadzenCard class="rz-background-color-primary-light rz-shadow-0 rz-border-radius-0 rz-p-8" style="margin: 1rem calc(-1 * var(--rz-card-padding));">
+	<RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">@Asset.Description</RadzenText>
+	<hr />
+	<RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">IPO</RadzenText>
+	<RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@Asset.IPO.Date</b> @Asset.IPO.Span.YearMonthFormat()</RadzenText>
+	<RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Fundação</RadzenText>
+	<RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@Asset.Foundation.Date</b> @Asset.Foundation.Span.YearMonthFormat()</RadzenText>
+
+</RadzenCard>
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem">
+	<RadzenStack Gap="0">
+		<RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Positivo</RadzenText>
+		<RadzenText TextStyle="TextStyle.Body1"><b>@Asset.PositiveNotes</b> </RadzenText>
+		<RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Negativo</RadzenText>
+		<RadzenText TextStyle="TextStyle.Body1"><b>@Asset.NegativeNotes</b></RadzenText>
+	</RadzenStack>
+</RadzenStack>
+
+
+@code {
+	[Parameter]
+	public Asset Asset { get; set; }
+}

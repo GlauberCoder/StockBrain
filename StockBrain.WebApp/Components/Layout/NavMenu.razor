@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using StockBrain.WebApp.Services
+
+<RadzenHeader>
+	<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+		<RadzenSidebarToggle Click="@(() => ToggleSideBar())" />
+		<RadzenLabel Text="Stock Brain" />
+	</RadzenStack>
+</RadzenHeader>
+<AuthorizeView>
+	<Authorized>
+		<RadzenSidebar Responsive="false" Style="width: 50px">
+			<RadzenPanelMenu DisplayStyle="MenuItemDisplayStyle.Icon" ShowArrow="false">
+				<RadzenPanelMenuItem Text="Carteira" Icon="account_balance_wallet" Path="" />
+				<RadzenPanelMenuItem Text="Investir" Icon="Payments" Path="Investment" />
+				<RadzenPanelMenuItem Text="Ativos" Icon="loyalty" Path="assets" />
+				<RadzenPanelMenuItem Text="Carrinho" Icon="add_shopping_cart" Path="ShoppingCart" />
+				<RadzenPanelMenuItem Text="Logout" Icon="power_settings_new" Path="login" />
+			</RadzenPanelMenu>
+		</RadzenSidebar>
+	</Authorized>
+</AuthorizeView>
+@code {
+
+	bool sidebarExpanded = true;
+
+	void ToggleSideBar()
+	{
+		sidebarExpanded = !sidebarExpanded;
+		StateHasChanged();
+	}
+}

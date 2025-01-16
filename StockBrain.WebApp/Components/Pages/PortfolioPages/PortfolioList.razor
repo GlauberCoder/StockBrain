@@ -1,0 +1,19 @@
+﻿@page "/"
+@using Radzen.Blazor
+@rendermode InteractiveServer
+
+<PageTitle>Portifolios</PageTitle>
+<RadzenTabs @bind-SelectedIndex=@selectedIndex >
+	<Tabs>
+		@foreach (var portifolio in Portfolios)
+		{
+			<RadzenTabsItem Text="@portifolio.Name">
+				<PortfolioDetail Portfolio="@portifolio" />
+			</RadzenTabsItem>
+		}
+	</Tabs>
+</RadzenTabs>
+
+@code {
+	int selectedIndex = 0;
+}

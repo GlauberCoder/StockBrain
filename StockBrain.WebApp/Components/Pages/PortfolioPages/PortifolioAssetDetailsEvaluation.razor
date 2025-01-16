@@ -1,0 +1,36 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.WebApp.Components.Pages.AssetPages
+
+
+
+<RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Gap="1rem">
+	<RadzenStack Gap="0">
+		<RadzenStack JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" JustifyContent="JustifyContent.SpaceBetween">
+				<RadzenText TextStyle="TextStyle.H6">@Asset.Asset.Points() Points</RadzenText>
+				<RadzenText TextStyle="TextStyle.H6" class="rz-m-0">@PointPercentage.PercentageFormat()</RadzenText>
+			</RadzenStack>
+			<RadzenProgressBar Value=@PointPercentage.ToPercentage() ShowValue="false" Style="--rz-progressbar-height: 1rem;" />
+		</RadzenStack>
+	</RadzenStack>
+	@foreach (var answer in Asset.Asset.Asset.Factors)
+	{
+		var points = answer.Points(Asset.Asset);
+		<RadzenStack Gap="0">
+			<RadzenRow RowGap="0">
+				<RadzenColumn SizeSM="8">
+					<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name</RadzenText>
+				</RadzenColumn>
+				<RadzenColumn SizeSM="4">
+					<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="points == 0 ? BadgeStyle.Dark : points > 0 ? BadgeStyle.Primary : BadgeStyle.Danger" Text="@points.ToString()" class="float-end" Style="width:30px" />
+				</RadzenColumn>
+			</RadzenRow>
+		</RadzenStack>
+	}
+</RadzenStack>
+
+@code {
+	[Parameter]
+	public PortfolioAssetDetail Asset { get; set; }
+	public double PointPercentage => Asset.Asset.EvaluationPercentage();
+}

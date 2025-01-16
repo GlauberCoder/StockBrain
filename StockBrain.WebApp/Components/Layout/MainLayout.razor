@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using StockBrain.Domain.Models
+@using StockBrain.Infra.Repositories.Abstractions
+@using StockBrain.WebApp.Components.Pages
+@using System.Security.Claims
+@using StockBrain.WebApp.Services
+@inherits LayoutComponentBase
+
+
+<RadzenComponents @rendermode="InteractiveServer" />
+
+<RadzenLayout>
+	<NavMenu />
+	<RadzenBody>
+		<AuthorizeView>
+			<Authorized>
+				@Body
+			</Authorized>
+			<NotAuthorized>
+				<Login />
+			</NotAuthorized>
+		</AuthorizeView>
+
+	</RadzenBody>
+
+
+
+
+
+
+</RadzenLayout>
+
+

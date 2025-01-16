@@ -1,0 +1,61 @@
+﻿@page "/Investment"
+@using StockBrain.Domain.Abstractions
+@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.Domain.Models.Model
+@using StockBrain.Infra.Repositories.Abstractions
+@using StockBrain.Domain.Models.Extensions;
+@rendermode InteractiveServer
+
+<RadzenRow AlignItems="AlignItems.End" Wrap="FlexWrap.Wrap" Gap="1rem">
+	<RadzenColumn Size="3">
+		<RadzenFormField Text="Aporte" Variant="Variant.Text" Style="width: 100%;">
+			<RadzenNumeric Format="c" @bind-Value="@Value" />
+		</RadzenFormField>
+	</RadzenColumn>
+	<RadzenColumn Size="4">
+		<RadzenButton Click=@OpenConfigs Icon="Settings" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" class="float-end" />
+		<RadzenButton Click=@Calculate Text="Recomendar" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" class="float-end rz-mr-2" />
+	</RadzenColumn>
+</RadzenRow>
+<hr />
+<InvestmentRecommendationPage Recommendation="Recommendation" />
+
+
+@code {
+	[Inject]
+	IPortfolios Portfolios { get; set; }
+	[Inject]
+	IInvestmentRecommender Recommender { get; set; }
+	[Inject]
+	IInvestmentRecommenderConfigCalculator ConfigCalculator { get; set; }
+	[Inject]
+	Dialogs Dialogs { get; set; }
+	Portfolio Portfolio { get; set; }
+	InvestmentRecommendation Recommendation { get; set; }
+	double Value { get; set; } = 15000;
+	IDictionary<AssetType, InvestmentRecommendationTypeConfig> Configs { get; set; }
+
+	protected override void OnInitialized()
+	{
+		Portfolio = Portfolios.FromCurrentAccount().FirstOrDefault(p => p.Main);
+		Configs = ConfigCalculator.Calc(Portfolio);
+		Calculate();
+		OpenConfigs();
+		base.OnInitialized();
+	}
+	void Calculate()
+	{
+		Recommendation = Recommender.Recommend(Portfolio, Value, Configs);
+		StateHasChanged();
+	}
+	void OpenConfigs()
+	{
+		Dialogs.InvestmentConfig(Portfolio, Configs, (c =>
+		{
+			Configs = c;
+			StateHasChanged();
+		}));
+
+	}
+}
