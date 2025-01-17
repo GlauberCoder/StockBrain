@@ -100,13 +100,13 @@ internal class Program
 	}
 	static void UpdateAllPrices()
 	{
-		Task.WaitAll(GetService<IPriceUpdater>().UpdateAll());
+		Task.WaitAll(GetService<IPriceUpdater>().UpdateAll(a => { }));
 		ListNullPriceTickers();
 		Console.WriteLine("Atualizado");
 	}
 	static void UpdateMissingPrices()
 	{
-		Task.WaitAll(GetService<IPriceUpdater>().UpdateMissing());
+		Task.WaitAll(GetService<IPriceUpdater>().UpdateMissing(a => { }));
 		ListNullPriceTickers();
 		Console.WriteLine("Atualizado");
 	}

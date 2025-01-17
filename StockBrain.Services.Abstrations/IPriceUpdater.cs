@@ -1,7 +1,9 @@
-﻿namespace StockBrain.Services.Abstrations;
+﻿using StockBrain.Domain.Models;
+
+namespace StockBrain.Services.Abstrations;
 
 public interface IPriceUpdater
 {
-	Task UpdateAll();
-	Task UpdateMissing();
+	Task UpdateAll(Action<IEnumerable<Asset>> onFinish);
+	Task UpdateMissing(Action<IEnumerable<Asset>> onFinish);
 }

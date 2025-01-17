@@ -6,9 +6,22 @@
 
 <PageTitle>Assets</PageTitle>
 
+	<RadzenCard Variant="@Variant.Filled">
+		<RadzenRow>
+			<RadzenColumn Size="12">
+			<RadzenButton Variant="Variant.Outlined" Click=@UpdatePrices Text="@(PriceUpdating ? "Carregando..." : "Atualizar preços")" Disabled="PriceUpdating" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" class="float-end rz-mr-2 rz-mt-2" />
+			</RadzenColumn>
+		</RadzenRow>
+	</RadzenCard>
+
 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left"
 				Data="@Assets" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
 	<Columns>
+		<RadzenDataGridColumn Title="Preço atualizado" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="asset">
+				<RadzenIcon Icon="@(PriceUpdated[asset.ID] ? "task_alt" : "cancel")" />
+			</Template>
+		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
 			<Template Context="asset">
 				<RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.Asset(asset)) Text="@asset.Ticker" ButtonStyle="ButtonStyle.Primary" />

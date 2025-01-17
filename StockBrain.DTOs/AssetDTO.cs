@@ -27,6 +27,7 @@ public class AssetDTO : BaseEntity
 		SectorID = asset.Sector.ID;
 		SegmentID = asset.Segment.ID;
 		MarketPrice = asset.MarketPrice;
+		LastPriceUpdate = asset.LastPriceUpdate;
 	}
 	public string Ticker { get; set; }
 	public string Description { get; set; }
@@ -34,6 +35,7 @@ public class AssetDTO : BaseEntity
 	public string PositiveNotes { get; set; }
 	public string NegativeNotes { get; set; }
 	public DateOnly LastReview { get; set; }
+	public DateOnly LastPriceUpdate { get; set; }
 	public DateOnly IPO { get; set; }
 	public DateOnly Foundation { get; set; }
 	public AssetType Type { get; set; }
@@ -63,7 +65,8 @@ public class AssetDTO : BaseEntity
 			Foundation = new DateOnlySpan(Foundation, context.Today),
 			MarketPrice = MarketPrice,
 			Sector = sector,
-			Segment = segment
+			Segment = segment,
+			LastPriceUpdate = LastPriceUpdate
 		};
 	}
 }

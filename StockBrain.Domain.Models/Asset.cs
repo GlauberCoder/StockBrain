@@ -10,6 +10,7 @@ public class Asset : BaseEntity
 	public required string PositiveNotes { get; init; }
 	public required string NegativeNotes { get; init; }
 	public required IEnumerable<AssetDecisionFactor> Factors { get; init; }
+	public required DateOnly LastPriceUpdate { get; set; }
 	public required DateOnlySpan LastReview { get; set; }
 	public required bool ReviewExpired { get; init; }
 	public required bool Risk { get; init; }
