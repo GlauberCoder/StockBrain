@@ -24,7 +24,7 @@ public abstract class BaseJSONFIleRepository<TEntity, TDTO>
 	protected virtual IEnumerable<TDTO> AllDTO()
 	{
 		var json = File.ReadAllText(GetPath());
-		return json.Deserialize<List<TDTO>>();
+		return json.Deserialize<List<TDTO>>().OrderBy(e => e.ID);
 
 	}
 	public IEnumerable<TEntity> All()
