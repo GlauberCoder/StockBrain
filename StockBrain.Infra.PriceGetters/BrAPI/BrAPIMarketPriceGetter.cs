@@ -2,6 +2,7 @@
 using StockBrain.Utils;
 
 namespace StockBrain.Infra.PriceGetters.BrAPI;
+
 /// <summary>
 /// https://brapi.dev/docs
 /// </summary>
