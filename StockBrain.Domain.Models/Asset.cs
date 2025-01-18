@@ -1,4 +1,5 @@
 ﻿using StockBrain.Domain.Models.Enums;
+using StockBrain.Utils;
 
 namespace StockBrain.Domain.Models;
 
@@ -20,9 +21,16 @@ public class Asset : BaseEntity
 	public required Sector Sector { get; init; }
 	public required Segment Segment { get; init; }
 	public double? MarketPrice { get; set; }
-	public int Points() => Risk ? 0 : Math.Max(0, Factors.Sum(s => s.Answer.HasValue ? s.Answer.Value ? 1 : -1 : 0));
-	public double ManualEvaluationPercentage() {
-		var maxPoints = Factors.Count(f => f.Factor.Strategy == DecisionFactorAnswerStrategy.Manual);
+	public int Points() {
+		var points = 0;
+
+		foreach (var factor in Factors.Where(f => !f.Factor.IsPortfolio))
+			points += factor.Factor.Points(this, factor);
+
+		return points;
+	}
+	public double AssetEvaluationPercentage() {
+		var maxPoints = Factors.Count(f => !f.Factor.IsPortfolio);
 		return maxPoints == 0 ? 0 : ((double)Points() / maxPoints) * 100;
 	}
 	public override bool Equals(object o)
