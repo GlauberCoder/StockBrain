@@ -22,7 +22,7 @@
 					<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name</RadzenText>
 				</RadzenColumn>
 				<RadzenColumn SizeSM="4">
-					<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="points == 0 ? BadgeStyle.Dark : points > 0 ? BadgeStyle.Primary : BadgeStyle.Danger" Text="@points.ToString()" class="float-end" Style="width:30px" />
+					<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="GetBadgeStyle(answer)" Text="@GetBadgeLabel(answer)" class="float-end" Style="width:30px" />
 				</RadzenColumn>
 			</RadzenRow>
 		</RadzenStack>
@@ -32,5 +32,29 @@
 @code {
 	[Parameter]
 	public PortfolioAssetDetail Asset { get; set; }
-	public double PointPercentage => Asset.Asset.EvaluationPercentage();
+	public double PointPercentage => Asset.Asset.EvaluationPercentage(); 
+	BadgeStyle GetBadgeStyle(AssetDecisionFactor factor)
+	{
+		switch (factor.Points(Asset.Asset))
+		{
+			case 1:
+				return BadgeStyle.Primary;
+			case -1:
+				return BadgeStyle.Danger;
+			default:
+				return BadgeStyle.Dark;
+		}
+	}
+	string GetBadgeLabel(AssetDecisionFactor factor)
+	{
+		switch (factor.Points(Asset.Asset))
+		{
+			case 1:
+				return "+1";
+			case -1:
+				return "-1";
+			default:
+				return "0";
+		}
+	}
 }

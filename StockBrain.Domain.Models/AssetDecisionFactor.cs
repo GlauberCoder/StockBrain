@@ -14,4 +14,11 @@ public class AssetDecisionFactor : BaseEntity
 		else
 			return Factor.Points(asset);
 	}
+	public int Points(Asset asset)
+	{
+		if (Factor.Strategy == DecisionFactorAnswerStrategy.Manual)
+			return Answer.HasValue ? Answer.Value ? 1 : -1 : 0;
+		else
+			return Factor.Points(asset, this);
+	}
 }

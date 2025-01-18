@@ -30,11 +30,11 @@
 			<RadzenStack Gap="0">
 				<RadzenRow RowGap="0">
 					<RadzenColumn SizeSM="8">
-						<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name</RadzenText>
+						<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name [@answer.Factor.Strategy]</RadzenText>
 					</RadzenColumn>
 					<RadzenColumn SizeSM="4" >
 						<div class="float-end">
-							<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="!answer.Answer.HasValue ? BadgeStyle.Dark : answer.Answer.Value ? BadgeStyle.Primary : BadgeStyle.Danger" Text="@(!answer.Answer.HasValue ? "0" : answer.Answer.Value ? "+1" : "-1")" class="float-end rz-ml-4 rz-mt-1" Style="width:30px" />
+							<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="GetBadgeStyle(answer)" Text="@GetBadgeLabel(answer)" class="float-end rz-ml-4 rz-mt-1" Style="width:30px" />
 						<RadzenSelectBar Change="@(() => UpdateData())" TValue="bool?" Size="ButtonSize.ExtraSmall" @bind-Value="@answer.Answer">
 							<Items>
 								<RadzenSelectBarItem Value="true" Text="Sim" />
@@ -52,10 +52,10 @@
 			<RadzenStack Gap="0">
 				<RadzenRow RowGap="0">
 					<RadzenColumn SizeSM="8">
-						<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name</RadzenText>
+						<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name [@answer.Factor.Strategy]</RadzenText>
 					</RadzenColumn>
 					<RadzenColumn SizeSM="4">
-						<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="!answer.Answer.HasValue ? BadgeStyle.Dark : answer.Answer.Value ? BadgeStyle.Primary : BadgeStyle.Danger" Text="@(!answer.Answer.HasValue ? "0" : answer.Answer.Value ? "+1" : "-1")" class="float-end" Style="width:30px" />
+						<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="GetBadgeStyle(answer)" Text="@GetBadgeLabel(answer)" class="float-end" Style="width:30px" />
 					</RadzenColumn>
 				</RadzenRow>
 			</RadzenStack>
@@ -100,4 +100,29 @@
 		NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Asset Evaluated", Detail = "Asset Evaluation saved.", Duration = 4000 });
 	}
 	public double Points { get; set; }
+
+	BadgeStyle GetBadgeStyle(AssetDecisionFactor factor)
+	{
+		switch (factor.Points(Asset))
+		{
+			case 1:
+				return BadgeStyle.Primary;
+			case -1:
+				return BadgeStyle.Danger;
+			default:
+				return BadgeStyle.Dark;
+		}
+	}
+	string GetBadgeLabel(AssetDecisionFactor factor)
+	{
+		switch (factor.Points(Asset))
+		{
+			case 1:
+				return "+1";
+			case -1:
+				return "-1";
+			default:
+				return "0";
+		}
+	}
 }

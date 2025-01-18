@@ -27,7 +27,7 @@ public class Asset : BaseEntity
 		foreach (var factor in Factors.Where(f => !f.Factor.IsPortfolio))
 			points += factor.Factor.Points(this, factor);
 
-		return points;
+		return Math.Max(points, 0);
 	}
 	public double AssetEvaluationPercentage() {
 		var maxPoints = Factors.Count(f => !f.Factor.IsPortfolio);

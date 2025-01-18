@@ -19,16 +19,15 @@ public class DecisionFactor : BaseEntity
 	}
 	public int Points(Asset asset, AssetDecisionFactor factor)
 	{
-		if (factor == null) return 0;
 		switch (Strategy)
 		{
 			case DecisionFactorAnswerStrategy.IPOOver5Years:
 				return asset.IPO.Span.Years() >= 5 ? 1 : -1; ;
 			case DecisionFactorAnswerStrategy.FoundedOver10Years:
-				return asset.Foundation.Span.Years() >= 5 ? 1 : -1;
+				return asset.Foundation.Span.Years() >= 10 ? 1 : -1;
 			case DecisionFactorAnswerStrategy.Manual:
 			case DecisionFactorAnswerStrategy.FromScrap:
-				return factor.Answer.HasValue ? factor.Answer.Value ? 1 : -1 : 0;
+				return factor.Answer.HasValue || factor == null ? factor.Answer.Value ? 1 : -1 : 0;
 			default:
 				return 0;
 		}
