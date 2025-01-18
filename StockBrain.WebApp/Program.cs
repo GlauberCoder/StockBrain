@@ -6,6 +6,8 @@ using Radzen;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
+using StockBrain.Infra.IndicatorGetters.Abstractions;
+using StockBrain.Infra.IndicatorGetters.Investidor10;
 using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
@@ -114,6 +116,7 @@ namespace StockBrain.WebApp
 					.AddScoped<IPortfolioAssetBrokers, PortfolioAssetBrokers>()
 					.AddScoped<IPortfolioAssetManager, PortfolioAssetManager>()
 					.AddScoped<IInvestmentRecommenderConfigCalculator, InvestmentRecommenderConfigCalculator>()
+					.AddScoped<IDecisionFactorAnswer, Investidor10DecisionFactorAnswer>()
 					.AddScoped<Dialogs>()
 					.BuildServiceProvider();
 		}

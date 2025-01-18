@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\StockBrain.Domain.Repositories.Abstractions\StockBrain.Infra.Repositories.Abstractions.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.IndicatorGetters.Abstractions\StockBrain.Infra.IndicatorGetters.Abstractions.csproj" />
+    <ProjectReference Include="..\StockBrain.Infra.Repositories.JSONFiles\StockBrain.Infra.Repositories.JSONFiles.csproj" />
   </ItemGroup>
 
 </Project>
