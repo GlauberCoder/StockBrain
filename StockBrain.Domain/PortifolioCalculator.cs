@@ -2,6 +2,7 @@
 using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.Enums;
 using StockBrain.Domain.Models.Extensions;
+using StockBrain.Utils;
 
 namespace StockBrain.Domain;
 
@@ -9,9 +10,9 @@ public class PortifolioCalculator : IPortifolioCalculator
 {
 	public Portfolio Calc(BaseEntity portifolio, Dictionary<AssetType, double> targets, string name, bool main, IEnumerable<PortfolioAsset> assets, IEnumerable<Bond> bonds)
 	{
-		var variableTotal = assets.Sum(a => a.CurrentValue);
-		var fixedTotal = bonds.Sum(a => a.Value);
-		var total = variableTotal + fixedTotal;
+		var variableTotal = assets.Sum(a => a.CurrentValue).ToPrecision(2);
+		var fixedTotal = bonds.Sum(a => a.Value).ToPrecision(2);
+		var total = (variableTotal + fixedTotal).ToPrecision(2);
 		var types = GetTypeDetails(total, targets, assets, bonds);
 
 		return new Portfolio
@@ -37,12 +38,13 @@ public class PortifolioCalculator : IPortifolioCalculator
 		var portfolioAssets = new List<PortfolioAssetDetail>();
 		var typeTotal = assets.Sum(a => a.CurrentValue);
 		var typeTarget = total * target.Proportion;
-		var totalScore = assets.Sum(a => (double)a.Points());
+		var totalScore = assets.Sum(a => a.Points());
 
 		foreach (var asset in assets)
 		{
-			var targetPercentage = totalScore > 0 ? (double)asset.Points() / totalScore : 0;
-			var assetTarget = new PercentageValue(targetPercentage * target.Proportion, total, 2);
+			var typePercentage = (totalScore > 0 ? (asset.Points() / (double)totalScore) : 0).ToPrecision(4);
+			var globalPercentage = (typePercentage * target.Proportion).ToPrecision(4);
+			var assetTarget = new PercentageValue(globalPercentage, total, 2);
 
 			portfolioAssets.Add(new PortfolioAssetDetail
 			{

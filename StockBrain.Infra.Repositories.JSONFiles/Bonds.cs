@@ -38,5 +38,5 @@ public class Bonds : BaseJSONFIleRepository<Bond, BondDTO>, IBonds
 
 	protected override IEnumerable<BondDTO> FromEntity(IEnumerable<Bond> entities) => entities.Select(FromEntity);
 
-	public IEnumerable<Bond> ByPortifolio(long portifolioID) => FromDTO(AllDTO().Where(a => a.PortifolioID == portifolioID)).Where(b => !b.Expired);
+	public IEnumerable<Bond> ByPortifolio(long portifolioID) => FromDTO(AllDTO().Where(a => a.PortifolioID == portifolioID)).Where(b => b.Active);
 }

@@ -22,14 +22,24 @@ public class Investidor10DecisionFactorAnswer : IDecisionFactorAnswer
 		Assets = assets;
 		FileConfig = fileConfig;
 	}
-	private const string BaseUrl = "https://investidor10.com.br/acoes/";
+	private const string BaseUrl = "https://investidor10.com.br/";
 
 
-	string GetURI(string ticker) => $"{BaseUrl}/{ticker}/";
-
-	async Task<IDictionary<long, bool>> Get(string ticker, IDictionary<long, string> map, HttpClient client)
+	string GetURI(string ticker, AssetType type)
 	{
-		var document = await GetDocument(ticker, client);
+		var typeUrl = type switch
+		{
+			AssetType.Acoes => "acoes",
+			AssetType.BDR => "bdrs",
+			AssetType.FII => "fiis",
+			_ => ""
+		};
+		return $"{BaseUrl}/{typeUrl}/{ticker}/";
+	}
+
+	async Task<IDictionary<long, bool>> Get(string ticker, AssetType type, IDictionary<long, string> map, HttpClient client)
+	{
+		var document = await GetDocument(ticker, type, client);
 		var items = new Dictionary<long, bool>();
 
 		foreach (var criteria in map)
@@ -37,16 +47,16 @@ public class Investidor10DecisionFactorAnswer : IDecisionFactorAnswer
 
 		return items;
 	}
-	HttpClient GetClient() 
+	HttpClient GetClient()
 	{
 		var client = new HttpClient();
 		client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
 		return client;
 	}
 	IDictionary<long, string> GetMap() => File.ReadAllText(Path.Combine(FileConfig.BasePath, "decisionFactorsInvestidor10Checkilist.json")).Deserialize<Dictionary<long, string>>();
-	async Task<HtmlDocument> GetDocument(string ticker, HttpClient client) 
+	async Task<HtmlDocument> GetDocument(string ticker, AssetType type, HttpClient client)
 	{
-		var response = await client.GetAsync(GetURI(ticker));
+		var response = await client.GetAsync(GetURI(ticker, type));
 		var html = await response.Content.ReadAsStringAsync();
 
 		var document = new HtmlDocument();
@@ -58,8 +68,8 @@ public class Investidor10DecisionFactorAnswer : IDecisionFactorAnswer
 		var map = GetMap();
 		var assets = Assets.All();
 		var assetDecisionFactor = AssetDecisionFactors.All().Where(f => f.Factor.Strategy == DecisionFactorAnswerStrategy.FromScrap);
-		var factors = DecitionFactors.All().Where(f => f.Type == AssetType.Acoes && f.Strategy == DecisionFactorAnswerStrategy.FromScrap);
-		var answers = await Answer(assets.Where(a => a.Type == AssetType.Acoes && !a.Risk), assetDecisionFactor, factors);
+		var factors = DecitionFactors.All().Where(f => (f.Type == AssetType.Acoes || f.Type == AssetType.BDR) && f.Strategy == DecisionFactorAnswerStrategy.FromScrap);
+		var answers = await Answer(assets.Where(a => (a.Type == AssetType.Acoes || a.Type == AssetType.BDR) && !a.Risk), assetDecisionFactor, factors);
 
 		AssetDecisionFactors.Save(answers);
 
@@ -73,7 +83,7 @@ public class Investidor10DecisionFactorAnswer : IDecisionFactorAnswer
 		foreach (var asset in assets)
 		{
 			var oldAnswers = assetDecisionFactors.Where(a => a.AssetID == asset.ID).ToDictionary(a => a.Factor.ID, a => a);
-			var answers = await Get(asset.Ticker, map, client);
+			var answers = await Get(asset.Ticker, asset.Type, map, client);
 			foreach (var factor in factors)
 			{
 				if (!oldAnswers.TryGetValue(factor.ID, out var assetAnswer))

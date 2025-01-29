@@ -3,6 +3,7 @@ using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.Enums;
 using StockBrain.Domain.Models.Extensions;
 using StockBrain.Domain.Models.Model;
+using StockBrain.Utils;
 using System.Linq;
 
 namespace StockBrain.Domain;
@@ -17,7 +18,7 @@ public class InvestmentRecommender : IInvestmentRecommender
 	}
 	public InvestmentRecommendation Recommend(Portfolio portfolio, double investment, IDictionary<AssetType, InvestmentRecommendationTypeConfig> config)
 	{
-		var newTotal = portfolio.Total + investment;
+		var newTotal = (portfolio.Total + investment).ToPrecision(2);
 		var types = GetTypes(portfolio, investment, newTotal, config);
 		return new InvestmentRecommendation(types, investment, newTotal, Context.Today);
 	}

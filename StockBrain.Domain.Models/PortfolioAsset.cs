@@ -14,8 +14,8 @@ public class PortfolioAsset : BaseEntity
 	public DateOnly LastAquisition { get; set; }
 	public IEnumerable<PortfolioAssetMovement> Movements { get; set; }
 	public IEnumerable<PortfolioAssetBroker> Brokers { get; set; }
-	public double AveragePrice => InvestedValue / Quantity;
-	public double CurrentValue => (Asset.MarketPrice ?? 0) * Quantity;
+	public double AveragePrice => (InvestedValue / Quantity).ToPrecision(2);
+	public double CurrentValue => ((Asset.MarketPrice ?? 0) * Quantity).ToPrecision(2);
 	public DeltaValue DeltaPrice => new DeltaValue(AveragePrice, Asset.MarketPrice ?? 0);
 	public DeltaValue DeltaTotal => new DeltaValue(InvestedValue, CurrentValue);
 

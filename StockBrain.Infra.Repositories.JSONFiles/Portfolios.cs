@@ -32,8 +32,8 @@ public class Portfolios : BaseJSONFIleRepository<Portfolio, PortfolioDTO>, IPort
 	{
 		var portifolios = new List<Portfolio>();
 		var assets = PortfolioAssets.All().GroupBy(p => p.PortfolioID).ToDictionary(g => g.Key, g => g);
-		var bonds = Bonds.All().Where(b => !b.Expired).GroupBy(p => p.PortfolioID).ToDictionary(g => g.Key, g => g);
-		return dtos.Select(d => Calculator.Calc(d, d.Targets, d.Name, d.Main, assets[d.ID], bonds[d.ID]));
+		var bonds = Bonds.All().Where(b => b.Active).GroupBy(p => p.PortfolioID).ToDictionary(g => g.Key, g => g);
+		return dtos.Select(d => Calculator.Calc(d, d.Targets, d.Name, d.Main, assets.ContainsKey(d.ID) ? assets[d.ID] : Enumerable.Empty<PortfolioAsset>(), bonds.ContainsKey(d.ID) ? bonds[d.ID] : Enumerable.Empty<Bond>()));
 	}
 
 	protected override IEnumerable<PortfolioDTO> FromEntity(IEnumerable<Portfolio> entities) => entities.Select(FromEntity);

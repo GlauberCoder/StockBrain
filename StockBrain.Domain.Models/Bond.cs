@@ -29,4 +29,5 @@ public class Bond : BaseEntity
 		}
 	}
 	public bool Redeemed => Redeem.HasValue;
+	public bool Active => !Redeemed && !Expired;
 }
