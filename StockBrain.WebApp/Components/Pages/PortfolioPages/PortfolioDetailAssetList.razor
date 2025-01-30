@@ -26,75 +26,91 @@
 	</RadzenArcGauge>
 </div>
 
-<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left"
-				Data="@Assets" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
+<RadzenDataGrid PagerHorizontalAlign="HorizontalAlign.Left" Data="@Assets" ColumnWidth="100px" >
 	<Columns>
-		<RadzenDataGridColumn Title="Ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Ticker" TextAlign="TextAlign.Center">
 			<Template Context="asset">
 				<RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.PortfolioAsset(asset)) Text="@asset.Asset.Asset.Ticker" ButtonStyle="ButtonStyle.Primary" />
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Nome" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Sinal" TextAlign="TextAlign.Center">
+			<Template Context="asset">
+				@if (asset.Asset.DeltaTotal.Difference >= 0)
+				{
+					<RadzenIcon Icon="arrow_circle_up" IconColor="@Colors.Success" />
+				}
+				else
+				{
+					<RadzenIcon Icon="arrow_circle_down" IconColor="@Colors.Danger" />
+				}
+
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Nome" TextAlign="TextAlign.Center" Width="150px">
 			<Template Context="asset">
 				@asset.Asset.Asset.Name
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="QTD" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="QTD" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				@asset.Asset.Quantity
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.Quantity</RadzenText>				
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Preço" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Preço" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				@asset.Asset.Asset.MarketPrice.Value.MonetaryFormat()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.Asset.MarketPrice.Value.MonetaryFormat()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Preço Médio" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Preço Médio" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				@asset.Asset.AveragePrice.MonetaryFormat()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.AveragePrice.MonetaryFormat()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Evolução" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Evolução" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				@asset.Asset.DeltaTotal.Percentage.PercentageFormat()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.DeltaTotal.Percentage.PercentageFormat()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Nota" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Resultado" TextAlign="TextAlign.Center" Width="150px">
 			<Template Context="asset">
-				@asset.Asset.Points()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.DeltaTotal.Difference.MonetaryFormat()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Alvo" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Nota" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				@asset.Target.Proportion.PercentageFormat()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.Points()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Percentual" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Alvo" TextAlign="TextAlign.Center" Width="150px">
 			<Template Context="asset">
-				@asset.Target.Proportion.PercentageFormat()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Target.Value.MonetaryFormat()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Investido" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Percentual" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				@asset.Asset.InvestedValue.MonetaryFormat()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Target.Proportion.PercentageFormat()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Valor Atual" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Investido" TextAlign="TextAlign.Center" Width="150px">
 			<Template Context="asset">
-				@asset.Asset.CurrentValue.MonetaryFormat()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.InvestedValue.MonetaryFormat()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Valor Alvo" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Valor Atual" TextAlign="TextAlign.Center" Width="150px">
 			<Template Context="asset">
-				@asset.Target.Value.MonetaryFormat()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.CurrentValue.MonetaryFormat()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Delta Alvo" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
+		<RadzenDataGridColumn Title="Valor Alvo" TextAlign="TextAlign.Center" Width="150px">
 			<Template Context="asset">
-				@asset.DeltaTarget.Difference.MonetaryFormat()
+				<RadzenText TextAlign="TextAlign.Right">@asset.Target.Value.MonetaryFormat()</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
-
+		<RadzenDataGridColumn Title="Delta Alvo" TextAlign="TextAlign.Center" Width="150px">
+			<Template Context="asset">
+				<RadzenText TextAlign="TextAlign.Right">@asset.DeltaTarget.Difference.MonetaryFormat()</RadzenText>
+			</Template>
+		</RadzenDataGridColumn>
 	</Columns>
 </RadzenDataGrid>
 
