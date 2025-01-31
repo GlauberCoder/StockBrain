@@ -76,6 +76,7 @@ public abstract class BaseJSONFIleRepository<TEntity, TDTO>
 			else
 			{
 				var index = updatedList.IndexOf(oldEntity);
+				entity.ID = oldEntity.ID;
 				updatedList[index] = entity;
 			}
 		}

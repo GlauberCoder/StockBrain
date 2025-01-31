@@ -26,8 +26,13 @@ internal class Program
 		//	option = PrintOptions();
 		//	RunOption(option);
 		//}
-
-		printStockInfo(GetStockInfo("FLRY3"));
+		var ticker = "FLRY3";
+		var config = GetService<AssetEvaluationConfig>();
+		var asset = GetService<IAssets>().ByTicker(ticker);
+		var stockInfo = GetService<IStockInfos>().ByTicker(ticker);
+		var stockStats = new StockStats(asset, stockInfo, config);
+		printStockInfo(stockStats.Info);
+		printStockStats(stockStats);
 	}
 	private static T GetService<T>() => ServiceProvider.GetService<T>();
 	static void RunOption(string option)
@@ -59,14 +64,34 @@ internal class Program
 		}
 		Console.ReadKey();
 	}
+	static void CreateStockInfo(string ticker)
+	{
+		var stockInfo = GetStockInfo("FLRY3");
+		SaveStockInfo(stockInfo);
+		printStockInfo(stockInfo);
+	}
 	static void SaveStockInfo(StockInfo info) 
-	{ 
-	
+	{
+		GetService<IStockInfos>().Save(info);
 	}
 	static StockInfo GetStockInfo(string ticker) 
 	{
 		var asset = GetService<IAssets>().ByTicker(ticker);
 		return GetService<IAssetInfoGetter>().GetStock(asset).Result;
+	}
+	static void printStockStats(StockStats asset)
+	{
+		Console.WriteLine($"DY AVG: {asset.DividendAVG}");
+		Console.WriteLine($"Bazin: {asset.BazinPrice}");
+		Console.WriteLine($"Graham: {asset.GrahamPrice}");
+		Console.WriteLine($"Fast AVG: {asset.FastAvg}");
+		Console.WriteLine($"Slow AVG: {asset.SlowAvg}");
+		Console.WriteLine($"Down Trend: {asset.DownTrend}");
+		Console.WriteLine($"Has Liquidity: {asset.HasLiquidity}");
+		Console.WriteLine($"Low Debt To Equity: {asset.LowDebtToEquity}");
+		Console.WriteLine($"HasAcceptable ROE: {asset.HasAcceptableROE}");
+		Console.WriteLine($"Positive Revenue CAGR: {asset.PositiveRevenueCAGR}");
+		Console.WriteLine($"Positive Profit CAGR: {asset.PositiveProfitCAGR}");
 	}
 	static void printStockInfo(StockInfo asset)
 	{
@@ -157,6 +182,7 @@ internal class Program
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
 			.AddScoped(sp => new Context { Account = new Account { GUID = Guid.NewGuid().ToString(), ID = 1, Name = "Glauber" } })
 			.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\DEV" })
+			.AddScoped(sp => new AssetEvaluationConfig { BazinStockExpectedReturn = 0.06, FastAvgSize = 13, SlowAvgSize = 90, StockGoodAge = 10, GrahamConstant = 22.5, BazinYearAmount = 5, GoodDailyLiquidity = 2000000, StockGoodROE = 0.1 })
 					.AddScoped<IAccounts, Accounts>()
 					.AddScoped<IAssets, Assets>()
 					.AddScoped<ISectors, Sectors>()
@@ -164,6 +190,7 @@ internal class Program
 					.AddScoped<IBrokers, Brokers>()
 					.AddScoped<IBondIssuers, BondIssuers>()
 					.AddScoped<IBonds, Bonds>()
+					.AddScoped<IStockInfos, StockInfos>()
 					.AddScoped<IDecisionFactors, DecisionFactors>()
 					.AddScoped<IAssetDecisionFactors, AssetDecisionFactors>()
 					.AddScoped<IPortfolioAssets, PortfolioAssets>()

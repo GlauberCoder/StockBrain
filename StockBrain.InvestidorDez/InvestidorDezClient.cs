@@ -26,13 +26,13 @@ public class InvestidorDezClient : IDisposable
 	{
 		var json = await GetResponse(GetStockDividendURI(ticker));
 		var values = json.Deserialize<List<ValueYear>>();
-		return values.ToDictionary(v => v.Year, v => v.Value);
+		return values.OrderByDescending(v => v.Year).ToDictionary(v => v.Year, v => v.Value);
 	}
 	async Task<IDictionary<DateOnly, double>> GetStockPrices(string ticker)
 	{
 		var json = await GetResponse(GetStockPriceURI(ticker));
 		var result = json.Deserialize<InvestidorDezCotacoes>(new Newtonsoft.Json.JsonSerializerSettings { DateFormatString = "dd/MM/yyyy HH:mm" });
-		return result.Real.ToDictionary(v => v.Date.ToDateOnly(), v => v.Value.ToPrecision(2));
+		return result.Real.OrderByDescending(v => v.Date).ToDictionary(v => v.Date.ToDateOnly(), v => v.Value.ToPrecision(2));
 	}
 	async Task<string> GetResponse(string uri) 
 	{

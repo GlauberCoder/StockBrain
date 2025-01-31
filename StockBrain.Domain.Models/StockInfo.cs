@@ -2,7 +2,7 @@
 
 namespace StockBrain.Domain.Models;
 
-public class StockInfo
+public class StockInfo : BaseEntity
 {
 	public StockInfo(string ticker)
 	{
@@ -13,7 +13,11 @@ public class StockInfo
 	{
 
 	}
-	public string Ticker { get; }
+	public StockInfo()
+	{
+
+	}
+	public string Ticker { get; set; }
 	public IDictionary<DateOnly, double> Prices { get; set; }
 	public IDictionary<int, double> Dividends { get; set; }
 	public double Price { get; set; }
