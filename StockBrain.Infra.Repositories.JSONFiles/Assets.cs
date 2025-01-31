@@ -65,4 +65,6 @@ public class Assets(Context context, DataJSONFilesConfig config, ISectors sector
 		AssetDecisionFactors.Save(asset.Factors);
 		return asset;
 	}
+
+	public Asset ByTicker(string ticker) => FromDTO(AllDTO().First(a => a.Ticker == ticker));
 }

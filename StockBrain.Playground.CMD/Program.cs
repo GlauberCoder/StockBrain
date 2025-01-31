@@ -5,6 +5,7 @@ using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Infra.Repositories.JSONFiles;
+using StockBrain.InvestidorDez;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
 using StockBrain.Utils;
@@ -18,13 +19,15 @@ internal class Program
 	static void Main(string[] args)
 	{
 		BuildServices();
-		string option = string.Empty;
+		//string option = string.Empty;
 
-		while (option != "E")
-		{
-			option = PrintOptions();
-			RunOption(option);
-		}
+		//while (option != "E")
+		//{
+		//	option = PrintOptions();
+		//	RunOption(option);
+		//}
+
+		printStockInfo(GetStockInfo("FLRY3"));
 	}
 	private static T GetService<T>() => ServiceProvider.GetService<T>();
 	static void RunOption(string option)
@@ -55,6 +58,39 @@ internal class Program
 				break;
 		}
 		Console.ReadKey();
+	}
+	static void SaveStockInfo(StockInfo info) 
+	{ 
+	
+	}
+	static StockInfo GetStockInfo(string ticker) 
+	{
+		var asset = GetService<IAssets>().ByTicker(ticker);
+		return GetService<IAssetInfoGetter>().GetStock(asset).Result;
+	}
+	static void printStockInfo(StockInfo asset)
+	{
+		Console.WriteLine($"Ticker: {asset.Ticker}");
+		Console.WriteLine($"HasNeverPostedLosses: {asset.HasNeverPostedLosses}");
+		Console.WriteLine($"ProfitableLastQuarters: {asset.ProfitableLastQuarters}");
+		Console.WriteLine($"PaidAcceptableDividends: {asset.PaidAcceptableDividends}");
+		Console.WriteLine($"WellRated: {asset.WellRated}");
+		Console.WriteLine($"Price: {asset.Price}");
+		Console.WriteLine($"Divida: {asset.Debt}");
+		Console.WriteLine($"ROE: {asset.ROE}");
+		Console.WriteLine($"LPA: {asset.LPA}");
+		Console.WriteLine($"VPA: {asset.VPA}");
+		Console.WriteLine($"Revenue CAGR: {asset.RevenueCAGR}");
+		Console.WriteLine($"Profit CAGR: {asset.ProfitCAGR}");
+		Console.WriteLine($"Daily Liquidity: {asset.DailyLiquidity}");
+		Console.WriteLine($"Patrimonio: {asset.Equity}");
+
+		foreach (var dividend in asset.Dividends)
+			Console.WriteLine($"{dividend.Key}: {dividend.Value}");
+
+
+		foreach (var price in asset.Prices.Take(10))
+			Console.WriteLine($"{price.Key}: {price.Value}");
 	}
 	static string PrintOptions()
 	{
@@ -120,7 +156,7 @@ internal class Program
 		ServiceProvider = new ServiceCollection()
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
 			.AddScoped(sp => new Context { Account = new Account { GUID = Guid.NewGuid().ToString(), ID = 1, Name = "Glauber" } })
-			.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain" })
+			.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\DEV" })
 					.AddScoped<IAccounts, Accounts>()
 					.AddScoped<IAssets, Assets>()
 					.AddScoped<ISectors, Sectors>()
@@ -134,6 +170,7 @@ internal class Program
 					.AddScoped<IPortfolios, Portfolios>()
 					.AddScoped<IPriceGetter, BrAPIMarketPriceGetter>()
 					.AddScoped<IPriceUpdater, PriceUpdater>()
+					.AddScoped<IAssetInfoGetter, InvestidorDezAssetInfoGetter>()
 			.BuildServiceProvider();
 	}
 	private static string WriteYearAndMonths(TimeSpan span)

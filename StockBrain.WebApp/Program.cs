@@ -1,7 +1,3 @@
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using Radzen;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
@@ -14,6 +10,7 @@ using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Infra.Repositories.JSONFiles;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
+
 using StockBrain.WebApp.Components;
 using StockBrain.WebApp.Services;
 
