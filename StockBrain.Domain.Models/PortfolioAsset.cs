@@ -19,12 +19,5 @@ public class PortfolioAsset : BaseEntity
 	public DeltaValue DeltaPrice => new DeltaValue(AveragePrice, Asset.MarketPrice ?? 0);
 	public DeltaValue DeltaTotal => new DeltaValue(InvestedValue, CurrentValue);
 
-	public int Points() {
-		return Asset.Factors.Sum(f => f.Points(this));
-	}
-	public double EvaluationPercentage()
-	{
-		var maxPoints = Asset.Factors.Count();
-		return maxPoints == 0 ? 0 : ((double)Points() / maxPoints);
-	}
+	public PercentageValue Score { get; set; } = new PercentageValue(1, 1);
 }

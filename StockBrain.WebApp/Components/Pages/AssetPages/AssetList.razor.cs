@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Radzen;
 using StockBrain.Domain.Models;
-using StockBrain.Infra.IndicatorGetters.Abstractions;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Services.Abstrations;
 using StockBrain.WebApp.Services;
@@ -18,8 +17,6 @@ namespace StockBrain.WebApp.Components.Pages.AssetPages
 		IAssets Repository { get; set; }
 		[Inject]
 		IPriceUpdater PriceUpdater { get; set; }
-		[Inject]
-		IDecisionFactorAnswer DecisionFactorAnswer { get; set; }
 		IEnumerable<Asset> Assets { get; set; } = new List<Asset>();
 		Asset Asset { get; set; }
 		IDictionary<long, bool> PriceUpdated { get; set; }
@@ -46,15 +43,6 @@ namespace StockBrain.WebApp.Components.Pages.AssetPages
 		{
 			OnLoadAssets(assets);
 			PriceUpdating = false;
-			StateHasChanged();
-		}
-		async Task UpdateEvaluation()
-		{
-			EvaluationUpdating = true;
-			StateHasChanged();
-			var assets = await DecisionFactorAnswer.All();
-			EvaluationUpdating = false;
-			OnLoadAssets(Repository.All());
 			StateHasChanged();
 		}
 	}

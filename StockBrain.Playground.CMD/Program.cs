@@ -191,8 +191,6 @@ internal class Program
 					.AddScoped<IBondIssuers, BondIssuers>()
 					.AddScoped<IBonds, Bonds>()
 					.AddScoped<IStockInfos, StockInfos>()
-					.AddScoped<IDecisionFactors, DecisionFactors>()
-					.AddScoped<IAssetDecisionFactors, AssetDecisionFactors>()
 					.AddScoped<IPortfolioAssets, PortfolioAssets>()
 					.AddScoped<IPortfolios, Portfolios>()
 					.AddScoped<IPriceGetter, BrAPIMarketPriceGetter>()

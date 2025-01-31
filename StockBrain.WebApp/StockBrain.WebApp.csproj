@@ -12,8 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StockBrain.Domain\StockBrain.Domain.csproj" />
-    <ProjectReference Include="..\StockBrain.Infra.IndicatorGetters.Abstractions\StockBrain.Infra.IndicatorGetters.Abstractions.csproj" />
-    <ProjectReference Include="..\StockBrain.Infra.IndicatorGetters\StockBrain.Infra.IndicatorGetters.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.PriceGetters\StockBrain.Infra.PriceGetters.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.Repositories.JSONFiles\StockBrain.Infra.Repositories.JSONFiles.csproj" />
     <ProjectReference Include="..\StockBrain.Services\StockBrain.Services.csproj" />

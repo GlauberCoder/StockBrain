@@ -44,7 +44,7 @@ public class AssetDTO : BaseEntity
 	public long SegmentID { get; set; }
 	public double? MarketPrice { get; set; }
 
-	public Asset ToAsset(Sector sector, Segment segment, IEnumerable<AssetDecisionFactor> factors, Context context) 
+	public Asset ToAsset(Sector sector, Segment segment, Context context) 
 	{
 		var maxMonthsToExpire = 3;
 		return new Asset
@@ -60,7 +60,6 @@ public class AssetDTO : BaseEntity
 			NegativeNotes = NegativeNotes,
 			LastReview = new DateOnlySpan(LastReview, context.Today),
 			ReviewExpired = LastReview.AddMonths(maxMonthsToExpire) < context.Today,
-			Factors = factors,
 			IPO = new DateOnlySpan(IPO, context.Today),
 			Foundation = new DateOnlySpan(Foundation, context.Today),
 			MarketPrice = MarketPrice,

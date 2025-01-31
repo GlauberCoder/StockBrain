@@ -4,7 +4,7 @@ namespace StockBrain.Domain.Models;
 
 public class StockStats 
 {
-	public StockStats(Asset asset, StockInfo info, AssetEvaluationConfig config)
+	public StockStats(PortfolioAsset asset, StockInfo info, AssetEvaluationConfig config)
 	{
 		Asset = asset;
 		Info = info;
@@ -19,15 +19,25 @@ public class StockStats
 		HasAcceptableROE = info.ROE >= config.StockGoodROE;
 		PositiveRevenueCAGR = info.RevenueCAGR > 0;
 		PositiveProfitCAGR = info.ProfitCAGR > 0;
+		HasEnoughYearsInMarket = asset.Asset.Foundation.Span.Years() >= config.StockGoodAge;
+		HasEnoughYearsOfIPO = asset.Asset.IPO.Span.Years() >= config.StockGoodIPOTime;
+		CurrentPriceBelowPortfolioAverage = asset.Asset.MarketPrice < asset.AveragePrice;
+		BazinCeilingPriceBelowCurrent = BazinPrice < asset.Asset.MarketPrice;
+		GrahamFairPriceBelowCurrent = GrahamPrice < asset.Asset.MarketPrice;
 
 	}
-	public Asset Asset { get; }
+	public PortfolioAsset Asset { get; }
 	public StockInfo Info { get; }
 	public double BazinPrice { get; }
 	public double GrahamPrice { get; }
 	public double DividendAVG { get; }
 	public double SlowAvg { get; }
 	public double FastAvg { get; }
+	public bool BazinCeilingPriceBelowCurrent { get; }
+	public bool GrahamFairPriceBelowCurrent { get; }
+	public bool CurrentPriceBelowPortfolioAverage { get; }
+	public bool HasEnoughYearsInMarket { get; }
+	public bool HasEnoughYearsOfIPO { get; }
 	public bool HasAcceptableROE { get; }
 	public bool LowDebtToEquity { get; }
 	public bool PositiveRevenueCAGR { get; }

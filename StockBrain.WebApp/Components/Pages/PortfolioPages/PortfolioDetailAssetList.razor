@@ -78,7 +78,7 @@
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Nota" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.Points()</RadzenText>
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.Score.Value</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Alvo" TextAlign="TextAlign.Center" Width="150px">
