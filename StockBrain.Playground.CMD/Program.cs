@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
+using StockBrain.Domain.Models.AssetInfos;
 using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Infra.Repositories.JSONFiles;
-using StockBrain.InvestidorDez;
+using StockBrain.InvestidorDez.InfoGetters;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
 using StockBrain.Utils;
@@ -26,13 +27,35 @@ internal class Program
 		//	option = PrintOptions();
 		//	RunOption(option);
 		//}
-		var ticker = "FLRY3";
+		//CreateBDRInfo("ROXO34");
+		PrintBDREvaluation("ROXO34");
+		//printStockInfo(GetStockInfo("FLRY3"));
+	}
+	private static void PrintStockEvaluation(string ticker)
+	{
 		var config = GetService<AssetEvaluationConfig>();
-		var asset = GetService<IAssets>().ByTicker(ticker);
-		var stockInfo = GetService<IStockInfos>().ByTicker(ticker);
-		var stockStats = new StockStats(asset, stockInfo, config);
-		printStockInfo(stockStats.Info);
-		printStockStats(stockStats);
+		var asset = GetService<IPortfolioAssets>().ByPortifolio(2).First(p => p.Asset.Ticker == ticker);
+		var info = GetService<IStockInfos>().ByTicker(ticker);
+		var stats = new StockStats(asset, info, config);
+		printInfo(stats.Info);
+		printStats(stats);
+		var factors = GetService<IDecisionFactors>().GetAnswers(stats);
+		foreach (var factor in factors)
+			Console.WriteLine($"{factor.Factor.Name}: {factor.Answer}");
+
+	}
+	private static void PrintBDREvaluation(string ticker)
+	{
+		var config = GetService<AssetEvaluationConfig>();
+		var asset = GetService<IPortfolioAssets>().ByPortifolio(2).First(p => p.Asset.Ticker == ticker);
+		var info = GetService<IBDRInfos>().ByTicker(ticker);
+		var stats = new BDRStats(asset, info, config);
+		printInfo(stats.Info);
+		printStats(stats);
+		var factors = GetService<IDecisionFactors>().GetAnswers(stats);
+		foreach (var factor in factors)
+			Console.WriteLine($"{factor.Factor.Name}: {factor.Answer}");
+
 	}
 	private static T GetService<T>() => ServiceProvider.GetService<T>();
 	static void RunOption(string option)
@@ -66,20 +89,35 @@ internal class Program
 	}
 	static void CreateStockInfo(string ticker)
 	{
-		var stockInfo = GetStockInfo("FLRY3");
-		SaveStockInfo(stockInfo);
-		printStockInfo(stockInfo);
+		var info = GetStockInfo(ticker);
+		SaveInfo(info);
+		printInfo(info);
 	}
-	static void SaveStockInfo(StockInfo info) 
+	static void CreateBDRInfo(string ticker)
+	{
+		var info = GetBDRInfo(ticker);
+		SaveInfo(info);
+		printInfo(info);
+	}
+	static void SaveInfo(StockInfo info) 
 	{
 		GetService<IStockInfos>().Save(info);
+	}
+	static void SaveInfo(BDRInfo info)
+	{
+		GetService<IBDRInfos>().Save(info);
 	}
 	static StockInfo GetStockInfo(string ticker) 
 	{
 		var asset = GetService<IAssets>().ByTicker(ticker);
-		return GetService<IAssetInfoGetter>().GetStock(asset).Result;
+		return GetService<IStockInfoGetter>().Get(asset).Result;
 	}
-	static void printStockStats(StockStats asset)
+	static BDRInfo GetBDRInfo(string ticker)
+	{
+		var asset = GetService<IAssets>().ByTicker(ticker);
+		return GetService<IBDRInfoGetter>().Get(asset).Result;
+	}
+	static void printStats(StockStats asset)
 	{
 		Console.WriteLine($"DY AVG: {asset.DividendAVG}");
 		Console.WriteLine($"Bazin: {asset.BazinPrice}");
@@ -93,7 +131,7 @@ internal class Program
 		Console.WriteLine($"Positive Revenue CAGR: {asset.PositiveRevenueCAGR}");
 		Console.WriteLine($"Positive Profit CAGR: {asset.PositiveProfitCAGR}");
 	}
-	static void printStockInfo(StockInfo asset)
+	static void printInfo(StockInfo asset)
 	{
 		Console.WriteLine($"Ticker: {asset.Ticker}");
 		Console.WriteLine($"HasNeverPostedLosses: {asset.HasNeverPostedLosses}");
@@ -116,6 +154,35 @@ internal class Program
 
 		foreach (var price in asset.Prices.Take(10))
 			Console.WriteLine($"{price.Key}: {price.Value}");
+	}
+	static void printInfo(BDRInfo asset)
+	{
+		Console.WriteLine($"Ticker: {asset.Ticker}");
+		Console.WriteLine($"HasNeverPostedLosses: {asset.HasNeverPostedLosses}");
+		Console.WriteLine($"ProfitableLastQuarters: {asset.ProfitableLastQuarters}");
+		Console.WriteLine($"WellRated: {asset.WellRated}");
+		Console.WriteLine($"Price: {asset.Price}");
+		Console.WriteLine($"ROE: {asset.ROE}");
+		Console.WriteLine($"LPA: {asset.LPA}");
+		Console.WriteLine($"VPA: {asset.VPA}");
+		Console.WriteLine($"Patrimonio: {asset.Equity}");
+
+		foreach (var dividend in asset.Dividends)
+			Console.WriteLine($"{dividend.Key}: {dividend.Value}");
+
+
+		foreach (var price in asset.Prices.Take(10))
+			Console.WriteLine($"{price.Key}: {price.Value}");
+	}
+	static void printStats(BDRStats asset)
+	{
+		Console.WriteLine($"DY AVG: {asset.DividendAVG}");
+		Console.WriteLine($"Bazin: {asset.BazinPrice}");
+		Console.WriteLine($"Graham: {asset.GrahamPrice}");
+		Console.WriteLine($"Fast AVG: {asset.FastAvg}");
+		Console.WriteLine($"Slow AVG: {asset.SlowAvg}");
+		Console.WriteLine($"Down Trend: {asset.DownTrend}");
+		Console.WriteLine($"HasAcceptable ROE: {asset.HasAcceptableROE}");
 	}
 	static string PrintOptions()
 	{
@@ -182,7 +249,7 @@ internal class Program
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
 			.AddScoped(sp => new Context { Account = new Account { GUID = Guid.NewGuid().ToString(), ID = 1, Name = "Glauber" } })
 			.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\DEV" })
-			.AddScoped(sp => new AssetEvaluationConfig { BazinStockExpectedReturn = 0.06, FastAvgSize = 13, SlowAvgSize = 90, StockGoodAge = 10, GrahamConstant = 22.5, BazinYearAmount = 5, GoodDailyLiquidity = 2000000, StockGoodROE = 0.1 })
+			.AddScoped(sp => new AssetEvaluationConfig { BazinStockExpectedReturn = 0.06, FastAvgSize = 13, SlowAvgSize = 90, StockGoodAge = 15, GrahamConstant = 22.5, BazinYearAmount = 5, GoodDailyLiquidity = 2000000, StockGoodROE = 0.1, StockGoodIPOTime = 10 })
 					.AddScoped<IAccounts, Accounts>()
 					.AddScoped<IAssets, Assets>()
 					.AddScoped<ISectors, Sectors>()
@@ -191,11 +258,16 @@ internal class Program
 					.AddScoped<IBondIssuers, BondIssuers>()
 					.AddScoped<IBonds, Bonds>()
 					.AddScoped<IStockInfos, StockInfos>()
+					.AddScoped<IBDRInfos, BDRInfos>()
 					.AddScoped<IPortfolioAssets, PortfolioAssets>()
+					.AddScoped<IPortfolioAssetMovements, PortfolioAssetMovements>()
+					.AddScoped<IPortfolioAssetBrokers, PortfolioAssetBrokers>()
 					.AddScoped<IPortfolios, Portfolios>()
 					.AddScoped<IPriceGetter, BrAPIMarketPriceGetter>()
 					.AddScoped<IPriceUpdater, PriceUpdater>()
-					.AddScoped<IAssetInfoGetter, InvestidorDezAssetInfoGetter>()
+					.AddScoped<IDecisionFactors, DecisionFactors>()
+					.AddScoped<IStockInfoGetter, InvestidorDezStockInfoGetter>()
+					.AddScoped<IBDRInfoGetter, InvestidorDezBDRInfoGetter>()
 			.BuildServiceProvider();
 	}
 	private static string WriteYearAndMonths(TimeSpan span)

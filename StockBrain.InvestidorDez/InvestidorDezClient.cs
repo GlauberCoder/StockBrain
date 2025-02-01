@@ -18,23 +18,31 @@ public class InvestidorDezClient : IDisposable
 	public async Task<InvestidorDezPage> GetPage(string ticker, AssetType type)
 	{
 		var document = await GetDocument(ticker, type);
-		var dividends = await GetStockDividends(ticker);
-		var prices = await GetStockPrices(ticker);
-		return new InvestidorDezPage(document, dividends, prices);
+		var page = new InvestidorDezPage(document, type);
+		page.Dividends = await GetStockDividends(ticker, type, page.ID);
+		page.Prices = await GetStockPrices(ticker, type, page.ID);
+		return page;
 	}
-	async Task<IDictionary<int, double>> GetStockDividends(string ticker)
+	async Task<IDictionary<int, double>> GetStockDividends(string ticker, AssetType type, long id)
 	{
-		var json = await GetResponse(GetStockDividendURI(ticker));
+		var json = await GetResponse(GetStockDividendURI(ticker, type, id));
 		var values = json.Deserialize<List<ValueYear>>();
-		return values.OrderByDescending(v => v.Year).ToDictionary(v => v.Year, v => v.Value);
+		return values.Any() ? values.OrderByDescending(v => v.Year).ToDictionary(v => v.Year, v => v.Value) : new Dictionary<int, double>();
 	}
-	async Task<IDictionary<DateOnly, double>> GetStockPrices(string ticker)
+	async Task<IDictionary<DateOnly, double>> GetStockPrices(string ticker, AssetType type, long id)
 	{
-		var json = await GetResponse(GetStockPriceURI(ticker));
-		var result = json.Deserialize<InvestidorDezCotacoes>(new Newtonsoft.Json.JsonSerializerSettings { DateFormatString = "dd/MM/yyyy HH:mm" });
-		return result.Real.OrderByDescending(v => v.Date).ToDictionary(v => v.Date.ToDateOnly(), v => v.Value.ToPrecision(2));
+		var json = await GetResponse(GetStockPriceURI(ticker, type, id));
+		IEnumerable<ValueDate> prices = null;
+
+		if (type == AssetType.Acoes)
+			prices = json.Deserialize<InvestidorDezCotacoes>(new Newtonsoft.Json.JsonSerializerSettings { DateFormatString = "dd/MM/yyyy HH:mm" }).Real;
+		else
+			prices = json.Deserialize<List<ValueDate>>(new Newtonsoft.Json.JsonSerializerSettings { DateFormatString = "dd/MM/yyyy" });
+
+		return prices.OrderByDescending(v => v.Date).ToDictionary(v => v.Date.ToDateOnly(), v => v.Value.ToPrecision(2));
 	}
-	async Task<string> GetResponse(string uri) 
+
+	async Task<string> GetResponse(string uri)
 	{
 		var response = await Client.GetAsync(uri);
 		return await response.Content.ReadAsStringAsync();
@@ -63,8 +71,28 @@ public class InvestidorDezClient : IDisposable
 		};
 		return $"{BaseUrl}/{typeUrl}/{ticker}/";
 	}
-	string GetStockDividendURI(string ticker) => $"{BaseAPIUrl}/dividendos/chart/{ticker}/1825/ano/";
-	string GetStockPriceURI(string ticker) => $"{BaseAPIUrl}/cotacoes/acao/chart/{ticker}/365/true/real/";
+	string GetStockDividendURI(string ticker, AssetType type, long id)
+	{
+		return type switch
+		{
+			AssetType.Acoes => $"{BaseAPIUrl}/dividendos/chart/{ticker}/1825/ano/",
+			AssetType.BDR => $"{BaseAPIUrl}/bdr/dividend-yield/chart/{id}/1825/ano",
+			AssetType.FII => "",
+			_ => ""
+		};
+
+	}
+	string GetStockPriceURI(string ticker, AssetType type, long id)
+	{
+		return type switch
+		{
+			AssetType.Acoes => $"{BaseAPIUrl}/cotacoes/acao/chart/{ticker}/365/true/real/",
+			AssetType.BDR => $"{BaseAPIUrl}/bdr/cotacoes/chart/{id}/365/true",
+			AssetType.FII => "",
+			_ => ""
+		};
+
+	}
 
 	public void Dispose()
 	{

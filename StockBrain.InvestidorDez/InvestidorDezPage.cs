@@ -1,21 +1,23 @@
 ﻿using HtmlAgilityPack;
+using StockBrain.Domain.Models.Enums;
 using StockBrain.Utils;
 using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace StockBrain.InvestidorDez;
 
 public class InvestidorDezPage
 {
 	HtmlDocument Document { get; }
-	long ID { get; }
-	public IDictionary<int, double> Dividends { get; }
-	public IDictionary<DateOnly, double> Prices { get; }
-	public InvestidorDezPage(HtmlDocument document, IDictionary<int, double> dividends, IDictionary<DateOnly, double> prices)
+	public AssetType Type { get; }
+	public long ID { get; }
+	public IDictionary<int, double> Dividends { get; set; }
+	public IDictionary<DateOnly, double> Prices { get; set; }
+	public InvestidorDezPage(HtmlDocument document, AssetType type)
 	{
 		Document = document;
-		Dividends = dividends;
+		Type = type;
 		ID = GetID();
-		Prices = prices;
 	}
 	public string GetText(string selector, bool selectByID) => FindNode(selector, selectByID)?.InnerHtml.Trim() ?? string.Empty;
 	public bool GetChekbox(string selector, bool selectByID) => FindNode(selector, selectByID).Attributes.Contains("checked");
@@ -26,7 +28,21 @@ public class InvestidorDezPage
 		var number = CleanTextToNumber(text).ToDouble();
 		return (number * multiplier) / divisor;
 	}
-	long GetID()
+	long GetID() {
+		return Type switch
+		{
+			AssetType.Acoes => GetIDAcao(),
+			AssetType.BDR => GetIDBDR(),
+			AssetType.FII => 1l,
+			_ => 1
+		};
+	}
+	long GetIDBDR()
+	{
+		var buttonNode = Document.DocumentNode.SelectSingleNode("//button[@id='follow-company-mobile']");
+		return long.Parse(buttonNode.GetAttributeValue("data-id", ""));
+	}
+	long GetIDAcao()
 	{
 		var nodes = Document.DocumentNode.Descendants("script");
 		var id = 1;

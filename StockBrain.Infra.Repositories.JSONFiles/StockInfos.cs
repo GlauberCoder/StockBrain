@@ -1,4 +1,5 @@
 ﻿using StockBrain.Domain.Models;
+using StockBrain.Domain.Models.AssetInfos;
 using StockBrain.Infra.Repositories.Abstractions;
 
 namespace StockBrain.Infra.Repositories.JSONFiles;

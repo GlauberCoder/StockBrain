@@ -2,7 +2,7 @@
 
 namespace StockBrain.Infra.Repositories.Abstractions;
 
-public interface IStockInfos :  IBaseRepository<StockInfo>
+public interface IBDRInfos :  IBaseRepository<BDRInfo>
 {
-	StockInfo ByTicker(string ticker);
+	BDRInfo ByTicker(string ticker);
 }
