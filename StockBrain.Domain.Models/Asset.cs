@@ -1,5 +1,4 @@
 ﻿using StockBrain.Domain.Models.Enums;
-using StockBrain.Utils;
 
 namespace StockBrain.Domain.Models;
 
@@ -12,16 +11,17 @@ public class Asset : BaseEntity
 	public required string NegativeNotes { get; init; }
 	public required IEnumerable<AssetDecisionFactor> Factors { get; init; }
 	public required DateOnly LastPriceUpdate { get; set; }
-	public required DateOnlySpan LastReview { get; set; }
 	public required bool ReviewExpired { get; init; }
 	public required bool Risk { get; init; }
+	public required DateOnlySpan LastReview { get; set; }
 	public required DateOnlySpan IPO { get; init; }
 	public required DateOnlySpan Foundation { get; init; }
 	public required AssetType Type { get; init; }
 	public required Sector Sector { get; init; }
 	public required Segment Segment { get; init; }
 	public double? MarketPrice { get; set; }
-	public int Points() {
+	public int Points()
+	{
 		var points = 0;
 
 		foreach (var factor in Factors.Where(f => !f.Factor.IsPortfolio))
@@ -29,7 +29,8 @@ public class Asset : BaseEntity
 
 		return Math.Max(points, 0);
 	}
-	public double AssetEvaluationPercentage() {
+	public double AssetEvaluationPercentage()
+	{
 		var maxPoints = Factors.Count(f => !f.Factor.IsPortfolio);
 		return maxPoints == 0 ? 0 : ((double)Points() / maxPoints) * 100;
 	}
