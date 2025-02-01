@@ -12,4 +12,5 @@ public class DateOnlySpan
 
 	public DateOnly Date { get; }
 	public TimeSpan Span { get; }
+
 }

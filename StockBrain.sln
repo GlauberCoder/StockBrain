@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockBrain.Infra.IndicatorG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockBrain.Infra.IndicatorGetters.Abstractions", "StockBrain.Infra.IndicatorGetters.Abstractions\StockBrain.Infra.IndicatorGetters.Abstractions.csproj", "{EA7F9844-70AE-464A-888E-648E826A5AB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockBrain.Infra.DBContext", "StockBrain.Infra.DBContext\StockBrain.Infra.DBContext.csproj", "{B42DB0F5-3E27-4ADB-BCC2-0A45B7AB13D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,10 @@ Global
 		{EA7F9844-70AE-464A-888E-648E826A5AB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA7F9844-70AE-464A-888E-648E826A5AB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA7F9844-70AE-464A-888E-648E826A5AB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B42DB0F5-3E27-4ADB-BCC2-0A45B7AB13D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B42DB0F5-3E27-4ADB-BCC2-0A45B7AB13D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B42DB0F5-3E27-4ADB-BCC2-0A45B7AB13D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B42DB0F5-3E27-4ADB-BCC2-0A45B7AB13D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
