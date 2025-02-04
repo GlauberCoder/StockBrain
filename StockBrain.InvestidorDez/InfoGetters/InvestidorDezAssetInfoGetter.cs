@@ -1,5 +1,6 @@
 ﻿using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.AssetInfos;
+using StockBrain.InvestidorDez.Clients;
 using StockBrain.InvestidorDez.Mapper;
 using StockBrain.Services.Abstrations;
 

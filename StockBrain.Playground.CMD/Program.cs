@@ -27,8 +27,14 @@ internal class Program
 		//	option = PrintOptions();
 		//	RunOption(option);
 		//}
+		//	printInfo(GetStockInfo("FLRY3"));
+		//	printInfo(GetBDRInfo("ROXO34"));
+			printInfo(GetREITInfo("HGLG11"));
 		//CreateBDRInfo("ROXO34");
-		PrintBDREvaluation("ROXO34");
+		//PrintBDREvaluation("ROXO34");
+		//Console.WriteLine("=================");
+		//CreateStockInfo("FLRY3");
+		//PrintStockEvaluation("FLRY3");
 		//printStockInfo(GetStockInfo("FLRY3"));
 	}
 	private static void PrintStockEvaluation(string ticker)
@@ -117,6 +123,11 @@ internal class Program
 		var asset = GetService<IAssets>().ByTicker(ticker);
 		return GetService<IBDRInfoGetter>().Get(asset).Result;
 	}
+	static REITInfo GetREITInfo(string ticker)
+	{
+		var asset = GetService<IAssets>().ByTicker(ticker);
+		return GetService<IREITInfoGetter>().Get(asset).Result;
+	}
 	static void printStats(StockStats asset)
 	{
 		Console.WriteLine($"DY AVG: {asset.DividendAVG}");
@@ -154,6 +165,34 @@ internal class Program
 
 		foreach (var price in asset.Prices.Take(10))
 			Console.WriteLine($"{price.Key}: {price.Value}");
+	}
+	static void printInfo(REITInfo asset)
+	{
+		Console.WriteLine($"Ticker: {asset.Ticker}");
+		Console.WriteLine($"Price: {asset.Price}");
+		Console.WriteLine($"P/VP: {asset.PVP}");
+		Console.WriteLine($"Liquidez Diária: {asset.DailyLiquidity}");
+		Console.WriteLine($"ROI 5y: {asset.NominalROIRecent}");
+		Console.WriteLine($"ROI 10y: {asset.NominalROIConsolidated}");
+		Console.WriteLine($"ROI Real 5y: {asset.RealROIRecent}");
+		Console.WriteLine($"ROI Real 10y: {asset.RealROIConsolidated}");
+		Console.WriteLine($"Taxa de gestão: {asset.ManagementFee}");
+		Console.WriteLine($"Taxa de vacância: {asset.VacancyRate}");
+		Console.WriteLine($"Patrimônio: {asset.AssetValue}");
+		Console.WriteLine($"Well Rated: {asset.IsWellRated}");
+		Console.WriteLine($"Regions: {asset.RegionCount}");
+		Console.WriteLine($"Properties: {asset.PropertyCount}");
+
+		//foreach (var dividend in asset.Dividends)
+		//	Console.WriteLine($"{dividend.Key}: {dividend.Value}");
+
+
+		//foreach (var price in asset.Prices.Take(10))
+		//	Console.WriteLine($"{price.Key}: {price.Value}");
+
+		//if(asset.DividendYields != null)
+		//	foreach (var price in asset.DividendYields.Take(10))
+		//		Console.WriteLine($"{price.Key}: {price.Value}");
 	}
 	static void printInfo(BDRInfo asset)
 	{
@@ -268,6 +307,7 @@ internal class Program
 					.AddScoped<IDecisionFactors, DecisionFactors>()
 					.AddScoped<IStockInfoGetter, InvestidorDezStockInfoGetter>()
 					.AddScoped<IBDRInfoGetter, InvestidorDezBDRInfoGetter>()
+					.AddScoped<IREITInfoGetter, InvestidorDezREITInfoGetter>()
 			.BuildServiceProvider();
 	}
 	private static string WriteYearAndMonths(TimeSpan span)

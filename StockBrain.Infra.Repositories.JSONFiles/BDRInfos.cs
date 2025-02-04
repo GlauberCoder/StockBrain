@@ -16,4 +16,13 @@ public class BDRInfos : BaseJSONFIleRepository<BDRInfo, BDRInfo>, IBDRInfos
 	protected override IEnumerable<BDRInfo> FromDTO(IEnumerable<BDRInfo> dtos) => dtos;
 	protected override BDRInfo FromEntity(BDRInfo entity) => entity;
 	protected override IEnumerable<BDRInfo> FromEntity(IEnumerable<BDRInfo> entities) => entities;
+	protected override BDRInfo BeforeSave(BDRInfo entity)
+	{
+		entity.GUID = entity.Ticker;
+		return base.BeforeSave(entity);
+	}
+	protected override string GenerateGUID(BDRInfo entity)
+	{
+		return entity.Ticker;
+	}
 }

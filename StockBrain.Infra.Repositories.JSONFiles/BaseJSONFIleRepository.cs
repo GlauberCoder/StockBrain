@@ -69,7 +69,7 @@ public abstract class BaseJSONFIleRepository<TEntity, TDTO>
 			if (oldEntity == null)
 			{
 				entity.ID = id++;
-				entity.GUID = Guid.NewGuid().ToString();
+				entity.GUID = GenerateGUID(entity);
 				BeforeCreate(entity);
 				updatedList.Add(entity);
 			}
@@ -85,4 +85,5 @@ public abstract class BaseJSONFIleRepository<TEntity, TDTO>
 	string GetPath() => Path.Combine(Config.BasePath, $"{FileName}.json");
 	protected virtual TEntity BeforeCreate(TEntity entity) => entity;
 	protected virtual TEntity BeforeSave(TEntity entity) => entity;
+	protected virtual string GenerateGUID(TEntity entity) => Guid.NewGuid().ToString();
 }

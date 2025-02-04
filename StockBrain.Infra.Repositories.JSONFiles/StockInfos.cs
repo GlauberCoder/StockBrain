@@ -16,4 +16,13 @@ public class StockInfos : BaseJSONFIleRepository<StockInfo, StockInfo>, IStockIn
 	protected override IEnumerable<StockInfo> FromDTO(IEnumerable<StockInfo> dtos) => dtos;
 	protected override StockInfo FromEntity(StockInfo entity) => entity;
 	protected override IEnumerable<StockInfo> FromEntity(IEnumerable<StockInfo> entities) => entities;
+	protected override StockInfo BeforeSave(StockInfo entity)
+	{
+		entity.GUID = entity.Ticker;
+		return base.BeforeSave(entity);
+	}
+	protected override string GenerateGUID(StockInfo entity)
+	{
+		return entity.Ticker;
+	}
 }

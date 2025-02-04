@@ -1,8 +1,8 @@
 ﻿using HtmlAgilityPack;
 using StockBrain.Domain.Models.Enums;
+using StockBrain.InvestidorDez.Clients;
 using StockBrain.Utils;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace StockBrain.InvestidorDez;
 
@@ -11,13 +11,15 @@ public class InvestidorDezPage
 	HtmlDocument Document { get; }
 	public AssetType Type { get; }
 	public long ID { get; }
-	public IDictionary<int, double> Dividends { get; set; }
-	public IDictionary<DateOnly, double> Prices { get; set; }
-	public InvestidorDezPage(HtmlDocument document, AssetType type)
+	public IDictionary<DateOnly, double> Dividends { get; }
+	public IDictionary<DateOnly, double> Prices { get; }
+	public InvestidorDezPage(HtmlDocument document, string ticker, AssetType type, InvestidorRequester requester)
 	{
 		Document = document;
 		Type = type;
 		ID = GetID();
+		Prices = requester.GetPrices(ticker, ID).Result;
+		Dividends = requester.GetDividends(ticker, ID).Result;
 	}
 	public string GetText(string selector, bool selectByID) => FindNode(selector, selectByID)?.InnerHtml.Trim() ?? string.Empty;
 	public bool GetChekbox(string selector, bool selectByID) => FindNode(selector, selectByID).Attributes.Contains("checked");
@@ -31,9 +33,9 @@ public class InvestidorDezPage
 	long GetID() {
 		return Type switch
 		{
-			AssetType.Acoes => GetIDAcao(),
+			AssetType.Acoes => GetIDStock(),
 			AssetType.BDR => GetIDBDR(),
-			AssetType.FII => 1l,
+			AssetType.FII => GetIDREIT(),
 			_ => 1
 		};
 	}
@@ -42,7 +44,9 @@ public class InvestidorDezPage
 		var buttonNode = Document.DocumentNode.SelectSingleNode("//button[@id='follow-company-mobile']");
 		return long.Parse(buttonNode.GetAttributeValue("data-id", ""));
 	}
-	long GetIDAcao()
+	long GetIDStock() => GetIDREITorStock(@"'id':\s*'([^']*)'");
+	long GetIDREIT() => GetIDREITorStock(@"""id""\s*:\s*(\d+)");
+	long GetIDREITorStock(string regex)
 	{
 		var nodes = Document.DocumentNode.Descendants("script");
 		var id = 1;
@@ -51,24 +55,24 @@ public class InvestidorDezPage
 			var scriptInner = node.InnerHtml.Trim();
 			if (scriptInner.Contains("var tickerToCompare"))
 			{
-				var match = Regex.Match(scriptInner, @"'id':\s*'([^']*)'");
+				var match = Regex.Match(scriptInner, regex);
 				if (match.Success)
 					return long.Parse(match.Groups[1].Value);
 			}
 		}
 		return id;
 	}
-	HtmlNode FindNode(string selector, bool selectByID) => selectByID ? Document.GetElementbyId(selector) : Document.DocumentNode.SelectSingleNode(selector);
+	public HtmlNode FindNode(string selector, bool selectByID) => selectByID ? Document.GetElementbyId(selector) : Document.DocumentNode.SelectSingleNode(selector);
 	string CleanTextToNumber(string text)
 	{
-		return text.ToLower().Remove("b").Remove("bilhões").Remove("m").Remove("milhões").Remove("r$").Remove("%").Trim();
+		return text.ToLower().Remove("bilhões").Remove("milhões").Remove("b").Remove("m").Remove("r$").Remove("%").Remove("a.a").Trim();
 	}
 	int FindMultiplier(string text)
 	{
 		return text.ToLower() switch
 		{
 			string t when t.Contains("b") || t.Contains("bilhões") => 1000000000,
-			string t when t.Contains("m") || t.Contains("milhões") => 100000,
+			string t when t.Contains("m") || t.Contains("milhões") => 1000000,
 			_ => 1
 		};
 	}
