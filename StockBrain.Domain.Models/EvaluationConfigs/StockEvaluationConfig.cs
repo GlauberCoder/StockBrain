@@ -10,6 +10,7 @@ public class StockEvaluationConfig
 	public required double DividendYieldThreshold { get; init; }
 	public required int DividendYieldTimeInYears { get; init; }
 	public required int RevenueGrowthTimeInYears { get; init; }
+	public required int ProfitableTimeInQuarters { get; init; }
 	public required int ProfitGrowthTimeInYears { get; init; }
 	public required double GrahamConstant { get; init; }
 	public required int BazinYearAmount { get; init; }

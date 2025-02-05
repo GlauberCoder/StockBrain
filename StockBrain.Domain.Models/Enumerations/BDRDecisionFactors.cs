@@ -1,4 +1,5 @@
 ﻿using StockBrain.Domain.Models.AssetInfos;
+using StockBrain.Utils;
 
 namespace StockBrain.Domain.Models.Enumerations;
 
@@ -9,12 +10,12 @@ public class BDRDecisionFactors
 		Factor = new DecisionFactor
 		{
 			Key = "HasEnoughYearsInMarket",
-			Name = "Empresa com mais de 10 anos de Bolsa?",
-			Description = "Favorece empresas que estão há mais de 10 anos no mercado, indicando estabilidade e histórico sólido."
+			Name = "Empresa com mais de {0} anos de Bolsa?",
+			Description = "Favorece empresas que estão há mais de {0} anos no mercado, indicando estabilidade e histórico sólido."
 		},
 		Evaluator = s => s.HasEnoughYearsInMarket,
-		NameParts = c => new List<string> { },
-		DescriptionPartsParts = c => new List<string> { }
+		NameParts = c => new List<string> { c.Config.AgeThreshold.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.AgeThreshold.ToString() }
 	};
 
 	public static DecisionFactorEvaluator<BDRStats> HasNeverPostedLosses = new DecisionFactorEvaluator<BDRStats>
@@ -35,11 +36,11 @@ public class BDRDecisionFactors
 		Factor = new DecisionFactor
 		{
 			Key = "ProfitableLastQuarters",
-			Name = "Empresa com lucro nos últimos trimestres?",
+			Name = "Empresa com lucro nos últimos {0} trimestres?",
 			Description = "Indica empresas que mantêm um histórico consistente de lucro trimestral."
 		},
 		Evaluator = s => s.Info.ProfitableLastQuarters,
-		NameParts = c => new List<string> { },
+		NameParts = c => new List<string> { c.Config.ProfitableTimeInQuarters.ToString() },
 		DescriptionPartsParts = c => new List<string> { }
 	};
 
@@ -48,12 +49,12 @@ public class BDRDecisionFactors
 		Factor = new DecisionFactor
 		{
 			Key = "HasAcceptableROE",
-			Name = "Empresa possui ROE aceitável",
+			Name = "Empresa possui ROE acimde de {0}",
 			Description = "Favorece empresas com bom retorno sobre o patrimônio, mostrando eficiência em gerar lucros."
 		},
 		Evaluator = s => s.HasAcceptableROE,
-		NameParts = c => new List<string> { },
-		DescriptionPartsParts = c => new List<string> { }
+		NameParts = c => new List<string> { c.Config.DividendYieldThreshold.PercentageFormat(2), c.Config.DividendYieldTimeInYears.ToString() },
+		DescriptionPartsParts = c => new List<string>()
 	};
 
 	public static DecisionFactorEvaluator<BDRStats> WellRated = new DecisionFactorEvaluator<BDRStats>
@@ -87,12 +88,12 @@ public class BDRDecisionFactors
 		Factor = new DecisionFactor
 		{
 			Key = "HasEnoughYearsOfIPO",
-			Name = "Empresa com IPO há mais de 5 anos?",
+			Name = "Empresa com IPO há mais de {0} anos?",
 			Description = "Considera empresas que estão no mercado público há mais tempo, indicando maturidade."
 		},
 		Evaluator = s => s.HasEnoughYearsOfIPO,
-		NameParts = c => new List<string> { },
-		DescriptionPartsParts = c => new List<string> { }
+		NameParts = c => new List<string> { c.Config.IPOTimeThreshold.ToString() },
+		DescriptionPartsParts = c => new List<string>()
 	};
 
 	public static DecisionFactorEvaluator<BDRStats> BazinCeilingPriceBelowCurrent = new DecisionFactorEvaluator<BDRStats>

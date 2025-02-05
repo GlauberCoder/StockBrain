@@ -28,7 +28,7 @@ public abstract class InvestidorRequester
 	{
 		var json = await GetResponse(uri);
 		var values = deserializer(json);
-		return values.Any() ? values.OrderByDescending(v => v.Date).ToDictionary(v => v.Date.ToDateOnly(), v => (v.Value/ (toPercentual ? 100 : 1)).ToPrecision(precision)) : new Dictionary<DateOnly, double>();
+		return values.Any() ? values.GroupBy(v => v.Date.ToDateOnly()).OrderByDescending(v => v.Key).ToDictionary(v => v.Key, v => (v.Sum(s => s.Value)/ (toPercentual ? 100 : 1)).ToPrecision(precision)) : new Dictionary<DateOnly, double>();
 	}
 
 	async Task<string> GetResponse(string uri)
@@ -39,7 +39,8 @@ public abstract class InvestidorRequester
 	public async Task<HtmlDocument> GetDocument(string ticker)
 	{
 		var document = new HtmlDocument();
-		document.LoadHtml(await GetResponse(GetDocumentURI(ticker)));
+		var html = await GetResponse(GetDocumentURI(ticker));
+		document.LoadHtml(html);
 		return document;
 	}
 	protected IEnumerable<ValueDate> DeserializeFromValueYear(string json) => json.Replace("Atual", Context.Today.Year.ToString()).Deserialize<List<ValueYear>>().Select(r => new ValueDate(r));

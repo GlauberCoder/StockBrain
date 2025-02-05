@@ -29,6 +29,8 @@ public class InvestidorDezPage
 	public bool GetChekbox(string selector, bool selectByID) => FindNode(selector, selectByID).Attributes.Contains("checked");
 	public double GetDouble(string selector, bool selectByID) {
 		var text = GetText(selector, selectByID);
+		if (string.IsNullOrWhiteSpace(text))
+			return 0;
 		var multiplier = FindMultiplier(text);
 		var divisor = FindDivisor(text);
 		var number = CleanTextToNumber(text).ToDouble();
@@ -69,7 +71,12 @@ public class InvestidorDezPage
 	public HtmlNode FindNode(string selector, bool selectByID) => selectByID ? Document.GetElementbyId(selector) : Document.DocumentNode.SelectSingleNode(selector);
 	string CleanTextToNumber(string text)
 	{
-		return text.ToLower().Remove("bilhões").Remove("milhões").Remove("b").Remove("m").Remove("r$").Remove("%").Remove("a.a").Trim();
+		Regex regex = new Regex(@"(?<!\d)(\d{1,3}(?:\.\d{3})*(?:,\d+)?)(?!\d)");
+		var matches = regex.Matches(text.ToLower().Trim());
+		if (matches.Count > 0)
+			return matches[0].Value.Trim();
+		else
+			return "0";
 	}
 	int FindMultiplier(string text)
 	{

@@ -7,6 +7,7 @@ using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Infra.Repositories.JSONFiles;
+using StockBrain.InvestidorDez;
 using StockBrain.InvestidorDez.InfoGetters;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
@@ -18,7 +19,7 @@ internal class Program
 {
 	static ServiceProvider ServiceProvider { get; set; }
 	static long PortifolioID { get; set; } = 1;
-	static void Main(string[] args)
+	static async Task Main(string[] args)
 	{
 		BuildServices();
 		//string option = string.Empty;
@@ -37,9 +38,10 @@ internal class Program
 		//CreateBDRInfo("ROXO34");
 		//PrintBDREvaluation("ROXO34");
 
-
 		//CreateStockInfo("FLRY3");
-		PrintStockEvaluation("FLRY3");
+		//PrintStockEvaluation("FLRY3");
+
+		await CreateInfos();
 	}
 	private static void PrintStockEvaluation(string ticker)
 	{
@@ -80,6 +82,16 @@ internal class Program
 			Console.WriteLine($"{factor.Factor.Name}: {factor.Answer}");
 
 	}
+	static async Task CreateInfos(params string[] tickers)
+	{
+		await GetService<IAssetInfoUpdater>().UpdateAll(s => { 
+			Console.Clear();
+			foreach (var status in s) 
+			{
+				Console.WriteLine($"{status.Key} done: {status.Value.Done} error: {status.Value.ErrorMessage}");
+			}
+		}, tickers);
+	}
 	private static T GetService<T>() => ServiceProvider.GetService<T>();
 	static void RunOption(string option)
 	{
@@ -110,51 +122,6 @@ internal class Program
 		}
 		Console.ReadKey();
 	}
-	static void CreateStockInfo(string ticker)
-	{
-		var info = GetStockInfo(ticker);
-		SaveInfo(info);
-		printInfo(info);
-	}
-	static void CreateBDRInfo(string ticker)
-	{
-		var info = GetBDRInfo(ticker);
-		SaveInfo(info);
-		printInfo(info);
-	}
-	static void CreateREITInfo(string ticker)
-	{
-		var info = GetREITInfo(ticker);
-		SaveInfo(info);
-		printInfo(info);
-	}
-	static void SaveInfo(StockInfo info) 
-	{
-		GetService<IStockInfos>().Save(info);
-	}
-	static void SaveInfo(BDRInfo info)
-	{
-		GetService<IBDRInfos>().Save(info);
-	}
-	static void SaveInfo(REITInfo info)
-	{
-		GetService<IREITInfos>().Save(info);
-	}
-	static StockInfo GetStockInfo(string ticker) 
-	{
-		var asset = GetService<IAssets>().ByTicker(ticker);
-		return GetService<IStockInfoGetter>().Get(asset).Result;
-	}
-	static BDRInfo GetBDRInfo(string ticker)
-	{
-		var asset = GetService<IAssets>().ByTicker(ticker);
-		return GetService<IBDRInfoGetter>().Get(asset).Result;
-	}
-	static REITInfo GetREITInfo(string ticker)
-	{
-		var asset = GetService<IAssets>().ByTicker(ticker);
-		return GetService<IREITInfoGetter>().Get(asset).Result;
-	}
 	static void printStats(StockStats asset)
 	{
 		Console.WriteLine($"DY AVG: {asset.DividendAVG}");
@@ -173,7 +140,7 @@ internal class Program
 	{
 		Console.WriteLine($"Ticker: {asset.Ticker}");
 		Console.WriteLine($"HasNeverPostedLosses: {asset.HasNeverPostedLosses}");
-		Console.WriteLine($"ProfitableLastQuarters: {asset.ProfitableLast5Years}");
+		Console.WriteLine($"ProfitableLastQuarters: {asset.ProfitableLastQuarters}");
 		Console.WriteLine($"PaidAcceptableDividends: {asset.PaidAcceptableDividends}");
 		Console.WriteLine($"WellRated: {asset.WellRated}");
 		Console.WriteLine($"Price: {asset.Price}");
@@ -349,7 +316,8 @@ internal class Program
 								AgeThreshold = 15, 
 								GrahamConstant = 22.5, 
 								BazinYearAmount = 5, 
-								DailyLiquidityThreshold = 2000000, 
+								DailyLiquidityThreshold = 2000000,
+								ProfitableTimeInQuarters = 20,
 								ROEThreshold = 0.1, 
 								IPOTimeThreshold = 10,
 								DividendYieldThreshold = 0.05,
@@ -377,6 +345,8 @@ internal class Program
 								VacancyRateThreshold = 0.1,
 								PropertyThreshold = 15,
 								RegionsThreshold = 4,
+								RecentROIInYears = 5,
+								ConsolidatedROIInYears = 10,
 								PVPThreshold = 1
 								
 			})
@@ -397,9 +367,7 @@ internal class Program
 					.AddScoped<IPriceGetter, BrAPIMarketPriceGetter>()
 					.AddScoped<IPriceUpdater, PriceUpdater>()
 					.AddScoped<IDecisionFactors, DecisionFactors>()
-					.AddScoped<IStockInfoGetter, InvestidorDezStockInfoGetter>()
-					.AddScoped<IBDRInfoGetter, InvestidorDezBDRInfoGetter>()
-					.AddScoped<IREITInfoGetter, InvestidorDezREITInfoGetter>()
+					.AddScoped<IAssetInfoUpdater, InvestidorDezAssetInfoUpdater>()
 			.BuildServiceProvider();
 	}
 	private static string WriteYearAndMonths(TimeSpan span)

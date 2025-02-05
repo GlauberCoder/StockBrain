@@ -1,13 +1,15 @@
 ﻿using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.AssetInfos;
+using StockBrain.InvestidorDez.Clients;
 using StockBrain.InvestidorDez.Mapper;
-using StockBrain.Services.Abstrations;
 
 namespace StockBrain.InvestidorDez.InfoGetters;
 
-public class InvestidorDezStockInfoGetter : InvestidorDezAssetInfoGetter<StockInfo, StockInfoMap>, IStockInfoGetter
+public class InvestidorDezStockInfoGetter : InvestidorDezAssetInfoGetter<StockInfo>
 {
-	public InvestidorDezStockInfoGetter(Context context) : base(context)
+	public InvestidorDezStockInfoGetter(Context context, InvestidorDezClient client) : base(context, client)
 	{
 	}
+
+	protected override AssetInfoMap<StockInfo> GetMap() => new StockInfoMap();
 }

@@ -6,41 +6,40 @@ using StockBrain.Services.Abstrations;
 
 namespace StockBrain.InvestidorDez.InfoGetters;
 
-public abstract class InvestidorDezAssetInfoGetter<TInfo, TMap> : IAssetInfoGetter<TInfo>
+public abstract class InvestidorDezAssetInfoGetter<TInfo> : IAssetInfoGetter<TInfo>
 	where TInfo : AssetInfo, new()
-	where TMap : AssetInfoMap<TInfo>, new()
 {
 	Context Context { get; }
+	InvestidorDezClient Client { get; }
 
-	public InvestidorDezAssetInfoGetter(Context context)
+	public InvestidorDezAssetInfoGetter(Context context, InvestidorDezClient client)
 	{
 		Context = context;
+		Client = client;
 	}
-	public async Task<TInfo> Get(Asset asset) => (await Get(new List<Asset> { asset })).First();
 	public async Task<IEnumerable<TInfo>> Get(IEnumerable<Asset> assets)
 	{
-		using var client = GetClient();
 		var results = new List<TInfo>();
 
 		foreach (var asset in assets)
-			results.Add(await GetInfo(asset, client));
+			results.Add(await Get(asset));
 
 		return results;
 	}
 
-	async Task<TInfo> GetInfo(Asset asset, InvestidorDezClient client)
+	public async Task<TInfo> Get(Asset asset)
 	{
 		var result = new TInfo();
 		result.Ticker = asset.Ticker;
-		var page = await GetPage(asset, client);
-		new TMap().Set(result, page);
+		var page = await GetPage(asset);
+		GetMap().Set(result, page);
 		result.Dividends = page.Dividends;
 		result.Prices = page.Prices;
 		result.DividendYields = page.DividendYields;
-		return OnGetInfoFinish(result, page, client);
+		return OnGetInfoFinish(result, page, Client);
 	}
-	async Task<InvestidorDezPage> GetPage(Asset asset, InvestidorDezClient client) => await client.GetPage(asset.Ticker, asset.Type);
-	InvestidorDezClient GetClient() => new InvestidorDezClient(Context);
+	async Task<InvestidorDezPage> GetPage(Asset asset) => await Client.GetPage(asset.Ticker, asset.Type);
 	protected virtual TInfo OnGetInfoFinish(TInfo info, InvestidorDezPage page, InvestidorDezClient client) => info;
+	protected abstract AssetInfoMap<TInfo> GetMap();
 
 }

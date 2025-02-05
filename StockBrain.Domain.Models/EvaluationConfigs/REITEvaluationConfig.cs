@@ -14,6 +14,8 @@ public class REITEvaluationConfig
 	public required int PropertyThreshold { get; init; }
 	public required double DividendYieldRecentThreshold { get; init; }
 	public required double DividendYieldConsolidatedThreshold { get; init; }
+	public required int RecentROIInYears { get; init; }
+	public required int ConsolidatedROIInYears { get; init; }
 	public required double RealROIThresholdRecent { get; init; }
 	public required double RealROIThresholdConsolidated { get; init; }
 	public required double NominalROIThresholdRecent { get; init; }

@@ -17,7 +17,7 @@ public class StockInfoMap : AssetInfoMap<StockInfo>
 		Map(s => s.RevenueCAGR, Indicator(30), false);
 		Map(s => s.ProfitCAGR, Indicator(31), false);
 		MapCheckbox(s => s.HasNeverPostedLosses, "styled-checkbox-profitable", true);
-		MapCheckbox(s => s.ProfitableLast5Years, "styled-checkbox-profitable5years", true);
+		MapCheckbox(s => s.ProfitableLastQuarters, "styled-checkbox-profitable5years", true);
 		MapCheckbox(s => s.PaidAcceptableDividends, "styled-checkbox-dy", true);
 		MapCheckbox(s => s.WellRated, "styled-checkbox-rating", true);
 	}

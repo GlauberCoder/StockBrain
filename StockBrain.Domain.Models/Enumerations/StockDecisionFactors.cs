@@ -36,11 +36,11 @@ public class StockDecisionFactors
 		Factor = new DecisionFactor
 		{
 			Key = "ProfitableLastQuarters",
-			Name = "Empresa com lucro nos últimos 5 anos?",
+			Name = "Empresa com lucro nos últimos {0} trimestres?",
 			Description = "Indica empresas que mantêm um histórico consistente de lucro trimestral."
 		},
-		Evaluator = s => s.Info.ProfitableLast5Years,
-		NameParts = c => new List<string>(),
+		Evaluator = s => s.Info.ProfitableLastQuarters,
+		NameParts = c => new List<string>{ c.Config.ProfitableTimeInQuarters.ToString() },
 		DescriptionPartsParts = c => new List<string> { }
 	};
 
