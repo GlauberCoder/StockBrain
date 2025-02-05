@@ -13,6 +13,8 @@ public class InvestidorDezPage
 	public long ID { get; }
 	public IDictionary<DateOnly, double> Dividends { get; }
 	public IDictionary<DateOnly, double> Prices { get; }
+	public IDictionary<DateOnly, double> DividendYields { get; }
+	public InvestidorRequester Requester { get; }
 	public InvestidorDezPage(HtmlDocument document, string ticker, AssetType type, InvestidorRequester requester)
 	{
 		Document = document;
@@ -20,6 +22,8 @@ public class InvestidorDezPage
 		ID = GetID();
 		Prices = requester.GetPrices(ticker, ID).Result;
 		Dividends = requester.GetDividends(ticker, ID).Result;
+		DividendYields = requester.GetDividendYields(ticker, ID).Result;
+		Requester = requester;
 	}
 	public string GetText(string selector, bool selectByID) => FindNode(selector, selectByID)?.InnerHtml.Trim() ?? string.Empty;
 	public bool GetChekbox(string selector, bool selectByID) => FindNode(selector, selectByID).Attributes.Contains("checked");
@@ -28,7 +32,7 @@ public class InvestidorDezPage
 		var multiplier = FindMultiplier(text);
 		var divisor = FindDivisor(text);
 		var number = CleanTextToNumber(text).ToDouble();
-		return (number * multiplier) / divisor;
+		return ((number * multiplier) / divisor).ToPrecision(4);
 	}
 	long GetID() {
 		return Type switch

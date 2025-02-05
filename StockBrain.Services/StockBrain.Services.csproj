@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\StockBrain.Domain.Models\StockBrain.Domain.Models.csproj" />
     <ProjectReference Include="..\StockBrain.Domain.Repositories.Abstractions\StockBrain.Infra.Repositories.Abstractions.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.PriceGetters.Abstractions\StockBrain.Infra.PriceGetters.Abstractions.csproj" />
     <ProjectReference Include="..\StockBrain.Services.Abstrations\StockBrain.Services.Abstrations.csproj" />

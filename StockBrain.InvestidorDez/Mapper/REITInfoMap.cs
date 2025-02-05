@@ -19,7 +19,7 @@ public class REITInfoMap : AssetInfoMap<REITInfo>
 		Map(s => s.ManagementFee, Company(9), false);
 		Map(s => s.VacancyRate, Company(10), false);
 		Map(s => s.AssetValue, Company(14), false);
-		Map(s => s.IsWellRated, "//span[@id='rating-component']/div[@class='content-rating']", false, GetRating);
+		Map(s => s.WellRated, "//span[@id='rating-component']/div[@class='content-rating']", false, GetRating);
 		Map(s => s.PropertyCount, "//table[@id='properties-index-table']", false, GetPropertyCount);
 		Map(s => s.RegionCount, "//table[@id='properties-index-table']", false, GetRegionCount);
 	}

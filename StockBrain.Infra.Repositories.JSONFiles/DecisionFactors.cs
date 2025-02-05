@@ -16,6 +16,7 @@ public class DecisionFactors : IDecisionFactors
 
 	public DataJSONFilesConfig Config { get; }
 
+	public IEnumerable<DecisionFactorAnswer> GetAnswers(REITStats stats) => GetAnswers(stats, AssetType.FII, REITDecisionFactors.DecisionFactors);
 	public IEnumerable<DecisionFactorAnswer> GetAnswers(StockStats stats) => GetAnswers(stats, AssetType.Acoes, StockDecisionFactors.DecisionFactors);
 	public IEnumerable<DecisionFactorAnswer> GetAnswers(BDRStats stats) => GetAnswers(stats, AssetType.BDR, BDRDecisionFactors.DecisionFactors);
 	public IEnumerable<DecisionFactorAnswer> GetAnswers<TStats>(TStats stats, AssetType type, IDictionary<string, DecisionFactorEvaluator<TStats>> evaluators)

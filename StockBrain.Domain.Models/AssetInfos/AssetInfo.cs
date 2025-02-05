@@ -11,5 +11,6 @@ public abstract class AssetInfo : BaseEntity
 	public string Ticker { get; set; }
 	public IDictionary<DateOnly, double> Prices { get; set; }
 	public IDictionary<DateOnly, double> Dividends { get; set; }
+	public IDictionary<DateOnly, double> DividendYields { get; set; }
 
 }

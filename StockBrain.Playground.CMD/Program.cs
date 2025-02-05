@@ -2,6 +2,7 @@
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.AssetInfos;
+using StockBrain.Domain.Models.EvaluationConfigs;
 using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
@@ -29,17 +30,20 @@ internal class Program
 		//}
 		//	printInfo(GetStockInfo("FLRY3"));
 		//	printInfo(GetBDRInfo("ROXO34"));
-			printInfo(GetREITInfo("HGLG11"));
+
+		//CreateREITInfo("HGLG11");
+		//PrintREITEvaluation("HGLG11");
+
 		//CreateBDRInfo("ROXO34");
 		//PrintBDREvaluation("ROXO34");
-		//Console.WriteLine("=================");
+
+
 		//CreateStockInfo("FLRY3");
-		//PrintStockEvaluation("FLRY3");
-		//printStockInfo(GetStockInfo("FLRY3"));
+		PrintStockEvaluation("FLRY3");
 	}
 	private static void PrintStockEvaluation(string ticker)
 	{
-		var config = GetService<AssetEvaluationConfig>();
+		var config = GetService<StockEvaluationConfig>();
 		var asset = GetService<IPortfolioAssets>().ByPortifolio(2).First(p => p.Asset.Ticker == ticker);
 		var info = GetService<IStockInfos>().ByTicker(ticker);
 		var stats = new StockStats(asset, info, config);
@@ -47,15 +51,28 @@ internal class Program
 		printStats(stats);
 		var factors = GetService<IDecisionFactors>().GetAnswers(stats);
 		foreach (var factor in factors)
-			Console.WriteLine($"{factor.Factor.Name}: {factor.Answer}");
+			Console.WriteLine($"{factor.Factor.Name} {factor.Answer}");
 
 	}
 	private static void PrintBDREvaluation(string ticker)
 	{
-		var config = GetService<AssetEvaluationConfig>();
+		var config = GetService<StockEvaluationConfig>();
 		var asset = GetService<IPortfolioAssets>().ByPortifolio(2).First(p => p.Asset.Ticker == ticker);
 		var info = GetService<IBDRInfos>().ByTicker(ticker);
 		var stats = new BDRStats(asset, info, config);
+		printInfo(stats.Info);
+		printStats(stats);
+		var factors = GetService<IDecisionFactors>().GetAnswers(stats);
+		foreach (var factor in factors)
+			Console.WriteLine($"{factor.Factor.Name}: {factor.Answer}");
+
+	}
+	private static void PrintREITEvaluation(string ticker)
+	{
+		var config = GetService<REITEvaluationConfig>();
+		var asset = GetService<IPortfolioAssets>().ByPortifolio(2).First(p => p.Asset.Ticker == ticker);
+		var info = GetService<IREITInfos>().ByTicker(ticker);
+		var stats = new REITStats(asset, info, config);
 		printInfo(stats.Info);
 		printStats(stats);
 		var factors = GetService<IDecisionFactors>().GetAnswers(stats);
@@ -105,6 +122,12 @@ internal class Program
 		SaveInfo(info);
 		printInfo(info);
 	}
+	static void CreateREITInfo(string ticker)
+	{
+		var info = GetREITInfo(ticker);
+		SaveInfo(info);
+		printInfo(info);
+	}
 	static void SaveInfo(StockInfo info) 
 	{
 		GetService<IStockInfos>().Save(info);
@@ -112,6 +135,10 @@ internal class Program
 	static void SaveInfo(BDRInfo info)
 	{
 		GetService<IBDRInfos>().Save(info);
+	}
+	static void SaveInfo(REITInfo info)
+	{
+		GetService<IREITInfos>().Save(info);
 	}
 	static StockInfo GetStockInfo(string ticker) 
 	{
@@ -146,7 +173,7 @@ internal class Program
 	{
 		Console.WriteLine($"Ticker: {asset.Ticker}");
 		Console.WriteLine($"HasNeverPostedLosses: {asset.HasNeverPostedLosses}");
-		Console.WriteLine($"ProfitableLastQuarters: {asset.ProfitableLastQuarters}");
+		Console.WriteLine($"ProfitableLastQuarters: {asset.ProfitableLast5Years}");
 		Console.WriteLine($"PaidAcceptableDividends: {asset.PaidAcceptableDividends}");
 		Console.WriteLine($"WellRated: {asset.WellRated}");
 		Console.WriteLine($"Price: {asset.Price}");
@@ -179,7 +206,7 @@ internal class Program
 		Console.WriteLine($"Taxa de gestão: {asset.ManagementFee}");
 		Console.WriteLine($"Taxa de vacância: {asset.VacancyRate}");
 		Console.WriteLine($"Patrimônio: {asset.AssetValue}");
-		Console.WriteLine($"Well Rated: {asset.IsWellRated}");
+		Console.WriteLine($"Well Rated: {asset.WellRated}");
 		Console.WriteLine($"Regions: {asset.RegionCount}");
 		Console.WriteLine($"Properties: {asset.PropertyCount}");
 
@@ -222,6 +249,33 @@ internal class Program
 		Console.WriteLine($"Slow AVG: {asset.SlowAvg}");
 		Console.WriteLine($"Down Trend: {asset.DownTrend}");
 		Console.WriteLine($"HasAcceptable ROE: {asset.HasAcceptableROE}");
+	}
+	static void printStats(REITStats asset)
+	{
+		Console.WriteLine($"BazinPrice: {asset.BazinPrice}");
+		Console.WriteLine($"DividendAVG: {asset.DividendAVG}");
+		Console.WriteLine($"SlowAvg: {asset.SlowAvg}");
+		Console.WriteLine($"FastAvg: {asset.FastAvg}");
+		Console.WriteLine($"DYAvgRecent: {asset.DYAvgRecent}");
+		Console.WriteLine($"DYAvgConsolidated: {asset.DYAvgConsolidated}");
+		Console.WriteLine($"BazinCeilingPriceAboveCurrent: {asset.BazinCeilingPriceAboveCurrent}");
+		Console.WriteLine($"CurrentPriceBelowPortfolioAverage: {asset.CurrentPriceBelowPortfolioAverage}");
+		Console.WriteLine($"HasEnoughYearsOfIPO: {asset.HasEnoughYearsOfIPO}");
+		Console.WriteLine($"DownTrend: {asset.DownTrend}");
+		Console.WriteLine($"PVPBellowThreshold: {asset.PVPBellowThreshold}");
+		Console.WriteLine($"ManagementFeeBellowThreshold: {asset.ManagementFeeBellowThreshold}");
+		Console.WriteLine($"VacancyBellowThreshold: {asset.VacancyBellowThreshold}");
+		Console.WriteLine($"AssetValueAboveThreshold: {asset.AssetValueAboveThreshold}");
+		Console.WriteLine($"RegionsAboveThreshold: {asset.RegionsAboveThreshold}");
+		Console.WriteLine($"PropertyAmountAboveThreshold: {asset.PropertyAmountAboveThreshold}");
+		Console.WriteLine($"DailyLiquidityThreshold: {asset.DailyLiquidityAboveThreshold}");
+		Console.WriteLine($"DYAboveThresholdRecent: {asset.DYAboveThresholdRecent}");
+		Console.WriteLine($"DYAboveThresholdConsolidated: {asset.DYAboveThresholdConsolidated}");
+		Console.WriteLine($"RealROIAboveThresholdRecent: {asset.RealROIAboveThresholdRecent}");
+		Console.WriteLine($"RealROIAboveThresholdConsolidated: {asset.RealROIAboveThresholdConsolidated}");
+		Console.WriteLine($"NominalROIAboveThresholdRecent: {asset.NominalROIAboveThresholdRecent}");
+		Console.WriteLine($"NominalROIAboveThresholdConsolidated: {asset.NominalROIAboveThresholdConsolidated}");
+		Console.WriteLine($"DividendAVG: {asset.DividendAVG}");
 	}
 	static string PrintOptions()
 	{
@@ -288,7 +342,44 @@ internal class Program
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
 			.AddScoped(sp => new Context { Account = new Account { GUID = Guid.NewGuid().ToString(), ID = 1, Name = "Glauber" } })
 			.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\DEV" })
-			.AddScoped(sp => new AssetEvaluationConfig { BazinStockExpectedReturn = 0.06, FastAvgSize = 13, SlowAvgSize = 90, StockGoodAge = 15, GrahamConstant = 22.5, BazinYearAmount = 5, GoodDailyLiquidity = 2000000, StockGoodROE = 0.1, StockGoodIPOTime = 10 })
+			.AddScoped(sp => new StockEvaluationConfig { 
+								BazinExpectedReturn = 0.06, 
+								FastAvgSize = 13, 
+								SlowAvgSize = 90, 
+								AgeThreshold = 15, 
+								GrahamConstant = 22.5, 
+								BazinYearAmount = 5, 
+								DailyLiquidityThreshold = 2000000, 
+								ROEThreshold = 0.1, 
+								IPOTimeThreshold = 10,
+								DividendYieldThreshold = 0.05,
+								DividendYieldTimeInYears = 5,
+								ProfitGrowthTimeInYears = 5,
+								RevenueGrowthTimeInYears = 5
+			})
+			.AddScoped(sp => new REITEvaluationConfig { 
+								BazinExpectedReturn = 0.007,
+								FastAvgSize = 13,
+								SlowAvgSize = 90,
+								IPOTimeThreshold = 5,
+								AssetValueThreshold = 2000000,
+								BazinYearAmount = 2,
+								DailyLiquidityThreshold = 2000000,
+								DividendYieldConsolidatedAmount = 24,
+								DividendYieldConsolidatedThreshold = 0.006,
+								DividendYieldRecentAmount = 12,
+								DividendYieldRecentThreshold = 0.006,
+								ManagementFeeThreshold = 0.01,
+								NominalROIThresholdConsolidated = 1,
+								NominalROIThresholdRecent = 0.15,
+								RealROIThresholdConsolidated = 0.5,
+								RealROIThresholdRecent = 0.05,
+								VacancyRateThreshold = 0.1,
+								PropertyThreshold = 15,
+								RegionsThreshold = 4,
+								PVPThreshold = 1
+								
+			})
 					.AddScoped<IAccounts, Accounts>()
 					.AddScoped<IAssets, Assets>()
 					.AddScoped<ISectors, Sectors>()
@@ -298,6 +389,7 @@ internal class Program
 					.AddScoped<IBonds, Bonds>()
 					.AddScoped<IStockInfos, StockInfos>()
 					.AddScoped<IBDRInfos, BDRInfos>()
+					.AddScoped<IREITInfos, REITInfos>()
 					.AddScoped<IPortfolioAssets, PortfolioAssets>()
 					.AddScoped<IPortfolioAssetMovements, PortfolioAssetMovements>()
 					.AddScoped<IPortfolioAssetBrokers, PortfolioAssetBrokers>()
@@ -373,3 +465,5 @@ internal class Program
 		Console.WriteLine();
 	}
 }
+
+

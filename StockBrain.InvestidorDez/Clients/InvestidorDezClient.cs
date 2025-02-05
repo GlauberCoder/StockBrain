@@ -1,4 +1,5 @@
-﻿using StockBrain.Domain.Models.Enums;
+﻿using StockBrain.Domain.Models;
+using StockBrain.Domain.Models.Enums;
 
 namespace StockBrain.InvestidorDez.Clients;
 
@@ -7,9 +8,12 @@ public class InvestidorDezClient : IDisposable
 	private const string BaseUrl = "https://investidor10.com.br";
 	private const string BaseAPIUrl = $"{BaseUrl}/api";
 	HttpClient Client { get; }
-	public InvestidorDezClient()
+	Context Context { get; }
+
+	public InvestidorDezClient(Context context)
 	{
 		Client = GetClient();
+		Context = context;
 	}
 
 	public async Task<InvestidorDezPage> GetPage(string ticker, AssetType type)
@@ -23,9 +27,9 @@ public class InvestidorDezClient : IDisposable
 	{
 		return type switch
 		{
-			AssetType.Acoes => new InvestidorStockRequester(Client),
-			AssetType.BDR => new InvestidorBDRRequester(Client),
-			AssetType.FII => new InvestidorREITRequester(Client),
+			AssetType.Acoes => new InvestidorStockRequester(Client, Context),
+			AssetType.BDR => new InvestidorBDRRequester(Client, Context),
+			AssetType.FII => new InvestidorREITRequester(Client, Context),
 			_ => null
 		};
 	}

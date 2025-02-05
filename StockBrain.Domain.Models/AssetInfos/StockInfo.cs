@@ -18,7 +18,7 @@ public class StockInfo : AssetInfo
 	public double ProfitCAGR { get; set; }
 	public double DailyLiquidity { get; set; }
 	public bool HasNeverPostedLosses { get; set; }
-	public bool ProfitableLastQuarters { get; set; }
+	public bool ProfitableLast5Years { get; set; }
 	public bool PaidAcceptableDividends { get; set; }
 	public bool WellRated { get; set; }
 
