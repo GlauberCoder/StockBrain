@@ -1,0 +1,61 @@
+﻿@page "/infoUpdate"
+@using StockBrain.Services
+@using StockBrain.Services.Abstrations
+@rendermode InteractiveServer
+<RadzenCard Variant="@Variant.Filled">
+	<RadzenRow>
+		<RadzenColumn Size="12">
+			<RadzenButton Variant="Variant.Outlined" Click=@Update Text="@(Updating ? "Carregando..." : "Atualizar")" Disabled="Updating" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" class="float-end rz-mr-2 rz-mt-2" />
+		</RadzenColumn>
+	</RadzenRow>
+</RadzenCard>
+
+<RadzenDataGrid PagerHorizontalAlign="HorizontalAlign.Left"Data="@Status" ColumnWidth="300px">
+	<Columns>
+		<RadzenDataGridColumn Title="ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="status">
+				@status.Key
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Status" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="status">
+				@if (status.Value.Done)
+				{
+					<RadzenIcon Icon="@(status.Value.HasError ? "error" : "check_circle")" IconStyle="@(status.Value.HasError ? IconStyle.Danger : IconStyle.Primary)" />
+				}
+				else
+				{
+					<RadzenIcon Icon="pending" IconStyle="IconStyle.Info" />
+				}
+			</Template>
+		</RadzenDataGridColumn>
+		<RadzenDataGridColumn Title="Erro" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
+			<Template Context="status">
+				@status.Value.ErrorMessage
+			</Template>
+		</RadzenDataGridColumn>
+
+	</Columns>
+</RadzenDataGrid>
+
+@code {
+	[Inject]
+	IAssetInfoUpdater Updater { get; set; }
+	bool Updating = false;
+	IDictionary<string, IAssetInfoUpdateStatus> Status = new Dictionary<string, IAssetInfoUpdateStatus>();
+
+	private void Update()
+	{
+		Updating = true;
+		InvokeAsync(StateHasChanged).ContinueWith(r =>
+		{
+			Updater.UpdateAll((status, finished) =>
+			{
+				Status = status;
+				Updating = !finished;
+				InvokeAsync(StateHasChanged);
+
+			});			
+		});
+	}
+}

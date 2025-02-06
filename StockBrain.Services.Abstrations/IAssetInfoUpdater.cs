@@ -2,5 +2,5 @@
 
 public interface IAssetInfoUpdater
 {
-	Task UpdateAll(Action<IDictionary<string, IAssetInfoUpdateStatus>> callback, IEnumerable<string> tickersFilter = null);
+	Task UpdateAll(Action<IDictionary<string, IAssetInfoUpdateStatus>, bool>  onUpdate = null, IEnumerable<string> tickersFilter = null);
 }

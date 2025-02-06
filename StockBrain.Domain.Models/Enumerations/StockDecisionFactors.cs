@@ -62,7 +62,7 @@ public class StockDecisionFactors
 		Factor = new DecisionFactor
 		{
 			Key = "HasAcceptableROE",
-			Name = "Empresa possui ROE acimde de {0}",
+			Name = "Empresa possui ROE acima de {0} ?",
 			Description = "Favorece empresas com bom retorno sobre o patrimônio, mostrando eficiência em gerar lucros."
 		},
 		Evaluator = s => s.HasAcceptableROE,

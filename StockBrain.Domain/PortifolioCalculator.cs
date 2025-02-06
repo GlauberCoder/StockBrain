@@ -38,11 +38,11 @@ public class PortifolioCalculator : IPortifolioCalculator
 		var portfolioAssets = new List<PortfolioAssetDetail>();
 		var typeTotal = assets.Sum(a => a.CurrentValue);
 		var typeTarget = total * target.Proportion;
-		var totalScore = assets.Sum(a => a.Score.Value);
+		var totalScore = assets.Sum(a => a.Score?.Value ?? 0);
 
 		foreach (var asset in assets)
 		{
-			var typePercentage = (totalScore > 0 ? (asset.Score.Value / (double)totalScore) : 0).ToPrecision(4);
+			var typePercentage = (totalScore > 0 ? ((asset.Score?.Value ?? 0) / (double)totalScore) : 0).ToPrecision(4);
 			var globalPercentage = (typePercentage * target.Proportion).ToPrecision(4);
 			var assetTarget = new PercentageValue(globalPercentage, total, 2);
 

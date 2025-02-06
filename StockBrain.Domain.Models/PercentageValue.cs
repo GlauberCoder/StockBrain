@@ -12,7 +12,8 @@ public class PercentageValue
 	{
 		Value = value;
 		Total = total;
-		Proportion = value/total;
+		if(total > 0)
+			Proportion = value/total;
 	}
 	public PercentageValue(double percentage, double total, int? precision)
 	{

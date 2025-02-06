@@ -40,9 +40,11 @@ internal class Program
 		//PrintBDREvaluation("ROXO34");
 
 		//CreateStockInfo("FLRY3");
-		PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
+		//PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
+		CreateInfos();
 
-		
+
+
 	}
 	private static void PrintEvaluation(params string[] tickers)
 	{
@@ -62,13 +64,7 @@ internal class Program
 	}
 	static async Task CreateInfos(params string[] tickers)
 	{
-		await GetService<IAssetInfoUpdater>().UpdateAll(s => { 
-			Console.Clear();
-			foreach (var status in s) 
-			{
-				Console.WriteLine($"{status.Key} done: {status.Value.Done} error: {status.Value.ErrorMessage}");
-			}
-		}, tickers);
+		await GetService<IAssetInfoUpdater>().UpdateAll(tickers);
 	}
 	private static T GetService<T>() => ServiceProvider.GetService<T>();
 	static void RunOption(string option)

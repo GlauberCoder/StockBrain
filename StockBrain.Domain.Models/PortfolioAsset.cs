@@ -25,8 +25,7 @@ public class PortfolioAsset : BaseEntity
 		var max = answers.Count();
 		Answers = answers;
 		var points = Math.Max(answers.Sum(a => a.Answer ? 1 : -1), 0);
-		if(max != 0)
-			Score = new PercentageValue(points, max);
+		Score = new PercentageValue(points, max);
 	}
 
 }

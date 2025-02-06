@@ -2,10 +2,12 @@ using Radzen;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
+using StockBrain.Domain.Models.EvaluationConfigs;
 using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Infra.Repositories.JSONFiles;
+using StockBrain.InvestidorDez;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
 
@@ -89,7 +91,49 @@ namespace StockBrain.WebApp
 							context.Account = sp.GetService<Authenticator>().GetAccount();
 						return context;
 					})
-					.AddScoped(sp => new DataJSONFilesConfig { BasePath = dataPath })
+					.AddScoped(sp => new DataJSONFilesConfig { BasePath = dataPath }).AddScoped(sp => new StockEvaluationConfig
+					{
+						BazinExpectedReturn = 0.06,
+						FastAvgSize = 13,
+						SlowAvgSize = 90,
+						AgeThreshold = 15,
+						GrahamConstant = 22.5,
+						BazinYearAmount = 5,
+						DailyLiquidityThreshold = 2000000,
+						ProfitableTimeInQuarters = 20,
+						ROEThreshold = 0.1,
+						IPOTimeThreshold = 10,
+						DividendYieldThreshold = 0.05,
+						DividendYieldTimeInYears = 5,
+						ProfitGrowthTimeInYears = 5,
+						RevenueGrowthTimeInYears = 5
+					})
+					.AddScoped(sp => new REITEvaluationConfig
+					{
+						BazinExpectedReturn = 0.007,
+						FastAvgSize = 13,
+						SlowAvgSize = 90,
+						IPOTimeThreshold = 5,
+						AssetValueThreshold = 2000000,
+						BazinYearAmount = 2,
+						DailyLiquidityThreshold = 2000000,
+						DividendYieldConsolidatedAmount = 24,
+						DividendYieldConsolidatedThreshold = 0.006,
+						DividendYieldRecentAmount = 12,
+						DividendYieldRecentThreshold = 0.006,
+						ManagementFeeThreshold = 0.01,
+						NominalROIThresholdConsolidated = 1,
+						NominalROIThresholdRecent = 0.15,
+						RealROIThresholdConsolidated = 0.5,
+						RealROIThresholdRecent = 0.05,
+						VacancyRateThreshold = 0.1,
+						PropertyThreshold = 15,
+						RegionsThreshold = 4,
+						RecentROIInYears = 5,
+						ConsolidatedROIInYears = 10,
+						PVPThreshold = 1
+
+					})
 					.AddScoped<IAccounts, Accounts>()
 					.AddScoped<IAssets, Assets>()
 					.AddScoped<ISectors, Sectors>()
@@ -109,6 +153,13 @@ namespace StockBrain.WebApp
 					.AddScoped<IPortfolioAssetBrokers, PortfolioAssetBrokers>()
 					.AddScoped<IPortfolioAssetManager, PortfolioAssetManager>()
 					.AddScoped<IInvestmentRecommenderConfigCalculator, InvestmentRecommenderConfigCalculator>()
+					.AddScoped<IStockInfos, StockInfos>()
+					.AddScoped<IBDRInfos, BDRInfos>()
+					.AddScoped<IREITInfos, REITInfos>()
+					.AddScoped<IDecisionFactors, DecisionFactors>()
+					.AddScoped<IAssetInfoUpdater, InvestidorDezAssetInfoUpdater>()
+					.AddScoped<IAssetInfos, AssetInfos>()
+					.AddScoped<IDecisionFactorAnswerSetter, DecisionFactorAnswerSetter>()
 					.AddScoped<Dialogs>()
 					.BuildServiceProvider();
 		}

@@ -1,4 +1,4 @@
-﻿@* @using StockBrain.Domain.Models
+﻿@using StockBrain.Domain.Models
 @using StockBrain.WebApp.Components.Pages.AssetPages
 
 
@@ -7,22 +7,21 @@
 	<RadzenStack Gap="0">
 		<RadzenStack JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
 			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" JustifyContent="JustifyContent.SpaceBetween">
-				<RadzenText TextStyle="TextStyle.H6">@Asset.Asset.Points() Points</RadzenText>
+				<RadzenText TextStyle="TextStyle.H6">@Asset.Asset.Score.Value / @Asset.Asset.Score.Total Points</RadzenText>
 				<RadzenText TextStyle="TextStyle.H6" class="rz-m-0">@PointPercentage.PercentageFormat()</RadzenText>
 			</RadzenStack>
 			<RadzenProgressBar Value=@PointPercentage.ToPercentage() ShowValue="false" Style="--rz-progressbar-height: 1rem;" />
 		</RadzenStack>
 	</RadzenStack>
-	@foreach (var answer in Asset.Asset.Asset.Factors)
+	@foreach (var answer in Asset.Asset.Answers)
 	{
-		var points = answer.Points(Asset.Asset);
 		<RadzenStack Gap="0">
 			<RadzenRow RowGap="0">
 				<RadzenColumn SizeSM="8">
 					<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name</RadzenText>
 				</RadzenColumn>
 				<RadzenColumn SizeSM="4">
-					<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="GetBadgeStyle(answer)" Text="@GetBadgeLabel(answer)" class="float-end" Style="width:30px" />
+					<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="GetBadgeStyle(answer.Answer)" Text="@GetBadgeLabel(answer.Answer)" class="float-end" Style="width:30px" />
 				</RadzenColumn>
 			</RadzenRow>
 		</RadzenStack>
@@ -32,29 +31,13 @@
 @code {
 	[Parameter]
 	public PortfolioAssetDetail Asset { get; set; }
-	public double PointPercentage => Asset.Asset.EvaluationPercentage(); 
-	BadgeStyle GetBadgeStyle(AssetDecisionFactor factor)
+	public double PointPercentage => Asset.Asset.Score.Proportion; 
+	BadgeStyle GetBadgeStyle(bool answer)
 	{
-		switch (factor.Points(Asset.Asset))
-		{
-			case 1:
-				return BadgeStyle.Primary;
-			case -1:
-				return BadgeStyle.Danger;
-			default:
-				return BadgeStyle.Dark;
-		}
+		return answer ? BadgeStyle.Primary : BadgeStyle.Danger;
 	}
-	string GetBadgeLabel(AssetDecisionFactor factor)
+	string GetBadgeLabel(bool answer)
 	{
-		switch (factor.Points(Asset.Asset))
-		{
-			case 1:
-				return "+1";
-			case -1:
-				return "-1";
-			default:
-				return "0";
-		}
+		return answer ? "+1" : "-1";
 	}
-} *@
+}

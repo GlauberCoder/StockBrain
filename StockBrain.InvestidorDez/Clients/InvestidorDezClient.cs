@@ -19,7 +19,7 @@ public class InvestidorDezClient : IDisposable
 	public async Task<InvestidorDezPage> GetPage(string ticker, AssetType type)
 	{
 		var requester = GetRequester(type);
-		var document = await requester.GetDocument(ticker);
+		var document = requester.GetDocument(ticker).Result;
 		var page = new InvestidorDezPage(document, ticker, type, requester);
 		return page;
 	}

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Radzen;
-using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Domain.Models;
 
 namespace StockBrain.WebApp.Components.Pages.PortfolioPages;
 

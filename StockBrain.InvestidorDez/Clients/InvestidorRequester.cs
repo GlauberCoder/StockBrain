@@ -33,13 +33,13 @@ public abstract class InvestidorRequester
 
 	async Task<string> GetResponse(string uri)
 	{
-		var response = await Client.GetAsync(uri);
-		return await response.Content.ReadAsStringAsync();
+		var response = Client.GetAsync(uri).Result;
+		return response.Content.ReadAsStringAsync().Result;
 	}
 	public async Task<HtmlDocument> GetDocument(string ticker)
 	{
 		var document = new HtmlDocument();
-		var html = await GetResponse(GetDocumentURI(ticker));
+		var html = GetResponse(GetDocumentURI(ticker)).Result;
 		document.LoadHtml(html);
 		return document;
 	}
