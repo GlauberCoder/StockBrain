@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.AssetInfos;
@@ -39,48 +40,25 @@ internal class Program
 		//PrintBDREvaluation("ROXO34");
 
 		//CreateStockInfo("FLRY3");
-		//PrintStockEvaluation("FLRY3");
+		PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
 
-		await CreateInfos();
+		
 	}
-	private static void PrintStockEvaluation(string ticker)
+	private static void PrintEvaluation(params string[] tickers)
 	{
-		var config = GetService<StockEvaluationConfig>();
-		var asset = GetService<IPortfolioAssets>().ByPortifolio(2).First(p => p.Asset.Ticker == ticker);
-		var info = GetService<IStockInfos>().ByTicker(ticker);
-		var stats = new StockStats(asset, info, config);
-		printInfo(stats.Info);
-		printStats(stats);
-		var factors = GetService<IDecisionFactors>().GetAnswers(stats);
-		foreach (var factor in factors)
-			Console.WriteLine($"{factor.Factor.Name} {factor.Answer}");
+		var assets = GetService<IPortfolioAssets>().ByPortifolio(2).Where(p => tickers.Contains(p.Asset.Ticker));
+		foreach (var asset in assets)
+		{
+			Console.WriteLine($"{asset.Asset.Ticker}");
+			if (asset.Score != null)
+			{
+				Console.WriteLine($"Score: {asset.Score.Proportion.PercentageFormat()} {asset.Score.Value}/{asset.Score.Total}");
 
-	}
-	private static void PrintBDREvaluation(string ticker)
-	{
-		var config = GetService<StockEvaluationConfig>();
-		var asset = GetService<IPortfolioAssets>().ByPortifolio(2).First(p => p.Asset.Ticker == ticker);
-		var info = GetService<IBDRInfos>().ByTicker(ticker);
-		var stats = new BDRStats(asset, info, config);
-		printInfo(stats.Info);
-		printStats(stats);
-		var factors = GetService<IDecisionFactors>().GetAnswers(stats);
-		foreach (var factor in factors)
-			Console.WriteLine($"{factor.Factor.Name}: {factor.Answer}");
-
-	}
-	private static void PrintREITEvaluation(string ticker)
-	{
-		var config = GetService<REITEvaluationConfig>();
-		var asset = GetService<IPortfolioAssets>().ByPortifolio(2).First(p => p.Asset.Ticker == ticker);
-		var info = GetService<IREITInfos>().ByTicker(ticker);
-		var stats = new REITStats(asset, info, config);
-		printInfo(stats.Info);
-		printStats(stats);
-		var factors = GetService<IDecisionFactors>().GetAnswers(stats);
-		foreach (var factor in factors)
-			Console.WriteLine($"{factor.Factor.Name}: {factor.Answer}");
-
+				foreach (var answer in asset.Answers)
+					Console.WriteLine($"{answer.Factor.Name} {answer.Answer}");
+			}
+			Console.WriteLine($"========================================================");
+		}
 	}
 	static async Task CreateInfos(params string[] tickers)
 	{
@@ -368,6 +346,8 @@ internal class Program
 					.AddScoped<IPriceUpdater, PriceUpdater>()
 					.AddScoped<IDecisionFactors, DecisionFactors>()
 					.AddScoped<IAssetInfoUpdater, InvestidorDezAssetInfoUpdater>()
+					.AddScoped<IAssetInfos, AssetInfos>()
+					.AddScoped<IDecisionFactorAnswerSetter, DecisionFactorAnswerSetter>()
 			.BuildServiceProvider();
 	}
 	private static string WriteYearAndMonths(TimeSpan span)

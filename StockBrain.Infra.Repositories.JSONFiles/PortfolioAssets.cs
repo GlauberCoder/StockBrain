@@ -1,4 +1,5 @@
-﻿using StockBrain.Domain.Models;
+﻿using StockBrain.Domain.Abstractions;
+using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
 
 namespace StockBrain.Infra.Repositories.JSONFiles;
@@ -8,13 +9,28 @@ public class PortfolioAssets : BaseJSONFIleRepository<PortfolioAsset, PortfolioA
 	IAssets Assets { get; }
 	IPortfolioAssetMovements PortfolioAssetMovements { get; }
 	IPortfolioAssetBrokers AssetBrokers { get; }
+	IDecisionFactorAnswerSetter DecisionFactorsSetter { get; }
+	IAssetInfos AssetInfos { get; }
+	IDecisionFactors DecisionFactors { get; }
 
-	public PortfolioAssets(Context context, DataJSONFilesConfig config, IAssets assets, IPortfolioAssetMovements portfolioAssetMovements, IPortfolioAssetBrokers assetBrokers)
+	public PortfolioAssets(
+		Context context, 
+		DataJSONFilesConfig config, 
+		IAssets assets, 
+		IPortfolioAssetMovements portfolioAssetMovements, 
+		IPortfolioAssetBrokers assetBrokers, 
+		IDecisionFactorAnswerSetter decisionFactorSetter,
+		IAssetInfos assetInfos,
+		IDecisionFactors decisionFactors
+		)
 		: base(context, config, "portfolioAssets")
 	{
 		Assets = assets;
 		PortfolioAssetMovements = portfolioAssetMovements;
 		AssetBrokers = assetBrokers;
+		DecisionFactorsSetter = decisionFactorSetter;
+		AssetInfos = assetInfos;
+		DecisionFactors = decisionFactors;
 	}
 
 
@@ -50,10 +66,10 @@ public class PortfolioAssets : BaseJSONFIleRepository<PortfolioAsset, PortfolioA
 			var assetMovements = new List<PortfolioAssetMovement>();
 			if (movements.TryGetValue(dto.PortifolioID, out var portfolioMovements))
 				portfolioMovements.TryGetValue(dto.Ticker, out assetMovements);
-
-			entities.Add(dto.ToEntity(assets[dto.Ticker], assetMovements, brokers[dto.PortifolioID][dto.Ticker], Context));
+			var entity = dto.ToEntity(assets[dto.Ticker], assetMovements, brokers[dto.PortifolioID][dto.Ticker], Context);
+			entities.Add(entity);
 		}
-
+		DecisionFactorsSetter.Set(entities,AssetInfos.All(), DecisionFactors.All());
 		return entities;
 	}
 

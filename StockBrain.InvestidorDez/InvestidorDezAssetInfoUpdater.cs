@@ -55,6 +55,7 @@ public class InvestidorDezAssetInfoUpdater : IAssetInfoUpdater
 					break;
 			}
 		}
+		Assets.Save(assets);
 	}
 	async Task UpdateInfos<TInfo>(IEnumerable<Asset> assets, InvestidorDezClient client, IBaseRepository<TInfo> repository, InvestidorDezAssetInfoGetter<TInfo> getter, Action<IDictionary<string, IAssetInfoUpdateStatus>> callback, IDictionary<string, IAssetInfoUpdateStatus> statuses)
 		where TInfo : AssetInfo, new()
@@ -75,6 +76,7 @@ public class InvestidorDezAssetInfoUpdater : IAssetInfoUpdater
 				throw;
 			}
 			status.Done = true;
+			asset.LastReview = new DateOnlySpan(Context.Today, Context.Today);
 			callback(statuses);
 		}
 		repository.Save(infos);

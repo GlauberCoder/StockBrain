@@ -1,8 +1,8 @@
-﻿using StockBrain.Domain.Abstractions;
-using StockBrain.Domain.Models;
+﻿using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Services.Abstrations;
 
-namespace StockBrain.Domain;
+namespace StockBrain.Services;
 
 public class PortfolioAssetManager : IPortfolioAssetManager
 {

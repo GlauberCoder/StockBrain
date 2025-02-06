@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\StockBrain.Domain.Abstractions\StockBrain.Domain.Abstractions.csproj" />
     <ProjectReference Include="..\StockBrain.Domain.Models\StockBrain.Domain.Models.csproj" />
-    <ProjectReference Include="..\StockBrain.Domain.Repositories.Abstractions\StockBrain.Infra.Repositories.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using StockBrain.Domain.Models;
 
-namespace StockBrain.Domain.Abstractions;
+namespace StockBrain.Services.Abstrations;
 
 public interface IPortfolioAssetManager
 {

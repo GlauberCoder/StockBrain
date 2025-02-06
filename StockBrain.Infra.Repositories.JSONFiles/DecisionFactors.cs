@@ -16,16 +16,7 @@ public class DecisionFactors : IDecisionFactors
 
 	public DataJSONFilesConfig Config { get; }
 
-	public IEnumerable<DecisionFactorAnswer> GetAnswers(REITStats stats) => GetAnswers(stats, AssetType.FII, REITDecisionFactors.DecisionFactors);
-	public IEnumerable<DecisionFactorAnswer> GetAnswers(StockStats stats) => GetAnswers(stats, AssetType.Acoes, StockDecisionFactors.DecisionFactors);
-	public IEnumerable<DecisionFactorAnswer> GetAnswers(BDRStats stats) => GetAnswers(stats, AssetType.BDR, BDRDecisionFactors.DecisionFactors);
-	public IEnumerable<DecisionFactorAnswer> GetAnswers<TStats>(TStats stats, AssetType type, IDictionary<string, DecisionFactorEvaluator<TStats>> evaluators)
-	{
-		var factors = GetFactors()[type];
-		return factors.Select(f => evaluators[f].Answer(stats));
-	}
-
-	protected virtual IDictionary<AssetType, IEnumerable<string>> GetFactors()
+	public IDictionary<AssetType, IEnumerable<string>> All()
 	{
 		var json = File.ReadAllText(GetPath());
 		return json.Deserialize<Dictionary<AssetType, IEnumerable<string>>>();

@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StockBrain.Domain.Repositories.Abstractions\StockBrain.Infra.Repositories.Abstractions.csproj" />
+    <ProjectReference Include="..\StockBrain.Domain\StockBrain.Domain.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.PriceGetters\StockBrain.Infra.PriceGetters.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.Repositories.JSONFiles\StockBrain.Infra.Repositories.JSONFiles.csproj" />
     <ProjectReference Include="..\StockBrain.Infra\StockBrain.Infra.csproj" />
