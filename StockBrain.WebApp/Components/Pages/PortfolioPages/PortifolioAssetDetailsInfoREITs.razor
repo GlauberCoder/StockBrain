@@ -1,0 +1,45 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.AssetInfos
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.Domain.Models.EvaluationConfigs
+@using StockBrain.Infra.Repositories.Abstractions
+@using StockBrain.WebApp.Components.Pages.AssetPages
+
+@if (Stats != null)
+{
+	<RadzenRow >
+		<SBLabelCol Size="2" Title="Bazin" Text="@Stats.BazinPrice.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="@($"Média lenta ({Stats.Config.SlowAvgSize} dias)")" Text="@Stats.SlowAvg.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="@($"Média rápida ({Stats.Config.SlowAvgSize} dias)")" Text="@Stats.FastAvg.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="Dividendo médio (ano)" Text="@Stats.DividendAVG.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="@($"Média DY ({Stats.Config.DividendYieldRecentAmount} meses)")" Text="@Stats.DYAvgRecent.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Média DY ({Stats.Config.DividendYieldConsolidatedAmount} meses)")" Text="@Stats.DYAvgConsolidated.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="Liquidez diária" Text="@Stats.Info.DailyLiquidity.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="P/VP" Text="@Stats.Info.PVP.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Nominal ROI ({Stats.Config.RecentROIInYears} anos)")" Text="@Stats.Info.NominalROIRecent.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Nominal ROI ({Stats.Config.ConsolidatedROIInYears} anos)")" Text="@Stats.Info.NominalROIConsolidated.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Real ROI ({Stats.Config.RecentROIInYears} anos)")" Text="@Stats.Info.RealROIRecent.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Real ROI ({Stats.Config.ConsolidatedROIInYears} anos)")" Text="@Stats.Info.RealROIConsolidated.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="Taxa de gestão" Text="@Stats.Info.ManagementFee.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="Vacância" Text="@Stats.Info.VacancyRate.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="QTD Regiões" Text="@Stats.Info.RegionCount.ToString()" />
+		<SBLabelCol Size="2" Title="QTD Imóveis" Text="@Stats.Info.PropertyCount.ToString()" />
+	</RadzenRow>
+}
+@code {
+	[Inject]
+	IREITInfos Repository { get; set; }
+	[Inject]
+	REITEvaluationConfig Config { get; set; }
+	[Parameter]
+	public PortfolioAssetDetail Asset { get; set; }
+	REITStats Stats { get; set; }
+
+	protected override void OnInitialized()
+	{
+		var info = Repository.ByTicker(Asset.Asset.Asset.Ticker);
+		if (info != null)
+			Stats = new REITStats(Asset.Asset, info, Config);
+		base.OnInitialized();
+	}
+}

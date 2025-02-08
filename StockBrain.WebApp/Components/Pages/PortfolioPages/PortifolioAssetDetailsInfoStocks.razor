@@ -1,0 +1,42 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.AssetInfos
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.Domain.Models.EvaluationConfigs
+@using StockBrain.Infra.Repositories.Abstractions
+@using StockBrain.WebApp.Components.Pages.AssetPages
+
+@if (Stats != null)
+{
+	<RadzenRow >
+		<SBLabelCol Size="2" Title="Bazin" Text="@Stats.BazinPrice.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="Graham" Text="@Stats.GrahamPrice.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="Dividendo médio (ano)" Text="@Stats.DividendAVG.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="@($"Média lenta ({Stats.Config.SlowAvgSize} dias)")" Text="@Stats.SlowAvg.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="@($"Média rápida ({Stats.Config.SlowAvgSize} dias)")" Text="@Stats.FastAvg.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="Dívida" Text="@Stats.Info.Debt.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="Patrimônio" Text="@Stats.Info.Equity.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="ROE" Text="@Stats.Info.ROE.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="LPA" Text="@Stats.Info.LPA.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="VPA" Text="@Stats.Info.VPA.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="@($"Revenue CAGR ({Stats.Config.RevenueGrowthTimeInYears} anos)")" Text="@Stats.Info.RevenueCAGR.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Profit CAGR ({Stats.Config.ProfitGrowthTimeInYears} anos)")" Text="@Stats.Info.ProfitCAGR.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="Liquidez diária" Text="@Stats.Info.DailyLiquidity.MonetaryFormat()" />
+	</RadzenRow>
+}
+@code {
+	[Inject]
+	IStockInfos Repository { get; set; }
+	[Inject]
+	StockEvaluationConfig Config { get; set; }
+	[Parameter]
+	public PortfolioAssetDetail Asset { get; set; }
+	StockStats Stats { get; set; }
+
+	protected override void OnInitialized()
+	{
+		var info = Repository.ByTicker(Asset.Asset.Asset.Ticker);
+		if (info != null)
+			Stats = new StockStats(Asset.Asset, info, Config);
+		base.OnInitialized();
+	}
+}

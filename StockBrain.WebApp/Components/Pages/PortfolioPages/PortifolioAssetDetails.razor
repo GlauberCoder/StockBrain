@@ -1,7 +1,7 @@
 ﻿@using StockBrain.Domain.Models
 @using StockBrain.WebApp.Components.Pages.AssetPages
 
-<RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
+<RadzenTabs SelectedIndex="0" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
 	<Tabs>
 		<RadzenTabsItem Text="Dados">
 			<AssetData Asset="@Asset.Asset.Asset" />
@@ -16,6 +16,9 @@
 			</RadzenTabsItem>
 			<RadzenTabsItem Text="Movimentos">
 				<PortifolioAssetDetailsMovements Asset="@Asset" />
+			</RadzenTabsItem>
+			<RadzenTabsItem Text="Info">
+				<PortifolioAssetDetailsInfo Asset="@Asset" />
 			</RadzenTabsItem>
 			
 		}

@@ -71,7 +71,7 @@ public class InvestidorDezPage
 	public HtmlNode FindNode(string selector, bool selectByID) => selectByID ? Document.GetElementbyId(selector) : Document.DocumentNode.SelectSingleNode(selector);
 	string CleanTextToNumber(string text)
 	{
-		Regex regex = new Regex(@"(?<!\d)(\d{1,3}(?:\.\d{3})*(?:,\d+)?)(?!\d)");
+		var regex = new Regex(@"(?<!\d)([+-]?\d{1,3}(?:\.\d{3})*(?:,\d+)?)(?!\d)");
 		var matches = regex.Matches(text.ToLower().Trim());
 		if (matches.Count > 0)
 			return matches[0].Value.Trim();

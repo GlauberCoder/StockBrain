@@ -1,0 +1,21 @@
+﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
+@using StockBrain.WebApp.Components.Pages.AssetPages
+
+@switch (Asset.Asset.Asset.Type)
+{
+	case AssetType.Acoes:
+		<PortifolioAssetDetailsInfoStocks Asset="Asset" />
+		break;
+	case AssetType.FII:
+		<PortifolioAssetDetailsInfoREITs Asset="Asset" />
+		break;
+	case AssetType.BDR:
+		<PortifolioAssetDetailsInfoBDRs Asset="Asset" />
+		break;
+}
+
+@code {
+	[Parameter]
+	public PortfolioAssetDetail Asset { get; set; }
+}

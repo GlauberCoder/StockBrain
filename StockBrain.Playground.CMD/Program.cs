@@ -41,7 +41,7 @@ internal class Program
 
 		//CreateStockInfo("FLRY3");
 		//PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
-		CreateInfos();
+		CreateInfos("XPML11");
 
 
 
@@ -64,7 +64,7 @@ internal class Program
 	}
 	static async Task CreateInfos(params string[] tickers)
 	{
-		await GetService<IAssetInfoUpdater>().UpdateAll(tickers);
+		await GetService<IAssetInfoUpdater>().UpdateAll(null, tickers);
 	}
 	private static T GetService<T>() => ServiceProvider.GetService<T>();
 	static void RunOption(string option)
