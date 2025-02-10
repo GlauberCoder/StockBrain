@@ -66,7 +66,8 @@ public class PortfolioAssets : BaseJSONFIleRepository<PortfolioAsset, PortfolioA
 			var assetMovements = new List<PortfolioAssetMovement>();
 			if (movements.TryGetValue(dto.PortifolioID, out var portfolioMovements))
 				portfolioMovements.TryGetValue(dto.Ticker, out assetMovements);
-			var entity = dto.ToEntity(assets[dto.Ticker], assetMovements, brokers[dto.PortifolioID][dto.Ticker], Context);
+			var assetBrokers = brokers.ContainsKey(dto.PortifolioID) && brokers[dto.PortifolioID].ContainsKey(dto.Ticker) ? brokers[dto.PortifolioID][dto.Ticker] : Enumerable.Empty<PortfolioAssetBroker>();
+			var entity = dto.ToEntity(assets[dto.Ticker], assetMovements, assetBrokers, Context);
 			entities.Add(entity);
 		}
 		DecisionFactorsSetter.Set(entities,AssetInfos.All(), DecisionFactors.All());
