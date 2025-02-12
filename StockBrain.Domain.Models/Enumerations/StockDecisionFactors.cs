@@ -10,7 +10,7 @@ public class StockDecisionFactors
 		Factor = new DecisionFactor
 		{
 			Key = "HasEnoughYearsInMarket",
-			Name = "Empresa com mais de {0} anos de Bolsa?",
+			Name = "Empresa com mais de {0} anos de fundação?",
 			Description = "Favorece empresas que estão há mais de {0} anos no mercado, indicando estabilidade e histórico sólido."
 		},
 		Evaluator = s => s.HasEnoughYearsInMarket,
@@ -66,7 +66,7 @@ public class StockDecisionFactors
 			Description = "Favorece empresas com bom retorno sobre o patrimônio, mostrando eficiência em gerar lucros."
 		},
 		Evaluator = s => s.HasAcceptableROE,
-		NameParts = c => new List<string> { c.Config.DividendYieldThreshold.PercentageFormat(2), c.Config.DividendYieldTimeInYears.ToString() },
+		NameParts = c => new List<string> { c.Config.ROEThreshold.PercentageFormat(2)},
 		DescriptionPartsParts = c => new List<string>()
 	};
 
@@ -167,11 +167,11 @@ public class StockDecisionFactors
 		{
 			Key = "BazinCeilingPriceBelowCurrent",
 			Name = "Preço teto (Bazin) é maior que o preço atual?",
-			Description = "Avalia se o preço atual está abaixo do teto recomendado pelo método Bazin. Para formula é usado um retono esperado de {0} e a média dos dividendos é calculada nos últimos {1} anos"
+			Description = "Avalia se o preço atual está abaixo do teto recomendado pelo método Bazin. Para formula é usado um retorno esperado de {0} e a média dos dividendos é calculada nos últimos {1} anos"
 		},
 		Evaluator = s => s.BazinCeilingPriceAboveCurrent,
 		NameParts = c => new List<string>(),
-		DescriptionPartsParts = c => new List<string>() { c.Config.BazinExpectedReturn.PercentageFormat(), c.Config.BazinYearAmount.ToString() }
+		DescriptionPartsParts = c => new List<string>() { c.Config.BazinExpectedReturn.PercentageFormat(4), c.Config.BazinYearAmount.ToString() }
 	};
 
 	public static DecisionFactorEvaluator<StockStats> GrahamFairPriceAboveCurrent = new DecisionFactorEvaluator<StockStats>

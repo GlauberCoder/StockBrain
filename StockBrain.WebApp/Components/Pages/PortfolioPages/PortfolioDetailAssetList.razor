@@ -68,7 +68,7 @@
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Evolução" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.DeltaTotal.Percentage.PercentageFormat()</RadzenText>
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.DeltaTotal.Percentage.PercentageFormat(4)</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Resultado" TextAlign="TextAlign.Center" Width="150px">
@@ -88,7 +88,7 @@
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Percentual" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				<RadzenText TextAlign="TextAlign.Right">@asset.Target.Proportion.PercentageFormat()</RadzenText>
+				<RadzenText TextAlign="TextAlign.Right">@asset.Target.Proportion.PercentageFormat(4)</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Investido" TextAlign="TextAlign.Center" Width="150px">

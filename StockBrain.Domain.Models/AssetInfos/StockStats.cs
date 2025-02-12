@@ -10,7 +10,7 @@ public class StockStats
 		Asset = asset;
 		Info = info;
 		Config = config;
-		DividendAVG = info.Dividends.Take(config.BazinYearAmount).Average(d => d.Value).ToPrecision(2);
+		DividendAVG = info.Dividends.Take(config.BazinYearAmount).Average(d => d.Value).ToPrecision(4);
 		BazinPrice = (DividendAVG / config.BazinExpectedReturn).ToPrecision(2);
 		GrahamPrice = Math.Sqrt(config.GrahamConstant * info.LPA * info.VPA).ToPrecision(2);
 		SlowAvg = info.Prices.Take(config.SlowAvgSize).Average(p => p.Value).ToPrecision(2);

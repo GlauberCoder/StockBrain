@@ -57,7 +57,7 @@ public class InvestidorDezAssetInfoUpdater : IAssetInfoUpdater
 					break;
 			}
 		}
-		//Assets.Save(assets);
+		Assets.Save(assets);
 		onUpdate?.Invoke(statuses, true);
 	}
 	async Task UpdateInfos<TInfo>(IEnumerable<Asset> assets, InvestidorDezClient client, Action<IDictionary<string, IAssetInfoUpdateStatus>, bool> onUpdate, IBaseRepository<TInfo> repository, InvestidorDezAssetInfoGetter<TInfo> getter, IDictionary<string, IAssetInfoUpdateStatus> statuses)

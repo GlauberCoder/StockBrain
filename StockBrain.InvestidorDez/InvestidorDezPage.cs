@@ -82,8 +82,8 @@ public class InvestidorDezPage
 	{
 		return text.ToLower() switch
 		{
-			string t when t.Contains("b") || t.Contains("bilhões") => 1000000000,
-			string t when t.Contains("m") || t.Contains("milhões") => 1000000,
+			string t when t.Contains("b ") || t.Contains("bilhões") => 1000000000,
+			string t when t.Contains("m ") || t.Contains("milhões") => 1000000,
 			_ => 1
 		};
 	}

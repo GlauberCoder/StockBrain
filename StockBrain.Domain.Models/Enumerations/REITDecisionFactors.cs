@@ -196,7 +196,7 @@ public class REITDecisionFactors
 		},
 		Evaluator = s => s.BazinCeilingPriceAboveCurrent,
 		NameParts = c => new List<string> {  },
-		DescriptionPartsParts = c => new List<string> { c.Config.BazinExpectedReturn.ToString(), c.Config.BazinYearAmount.ToString() }
+		DescriptionPartsParts = c => new List<string> { c.Config.BazinExpectedReturn.PercentageFormat(4), c.Config.BazinYearAmount.ToString() }
 	};
 
 	public static DecisionFactorEvaluator<REITStats> WellRated = new DecisionFactorEvaluator<REITStats>
