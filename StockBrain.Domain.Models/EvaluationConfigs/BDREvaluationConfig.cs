@@ -6,6 +6,8 @@ public class BDREvaluationConfig
 	public required int FastAvgSize { get; init; }
 	public required double BazinExpectedReturn { get; init; }
 	public required double AgeThreshold { get; init; }
+	public required double PLThreshold { get; init; }
+	public required double PVPThreshold { get; init; }
 	public required double IPOTimeThreshold { get; init; }
 	public required double DividendYieldThreshold { get; init; }
 	public required int DividendYieldTimeInYears { get; init; }

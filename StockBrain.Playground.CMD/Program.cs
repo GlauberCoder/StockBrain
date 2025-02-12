@@ -41,7 +41,7 @@ internal class Program
 
 		//CreateStockInfo("FLRY3");
 		//PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
-		CreateInfos("VISC11");
+		CreateInfos("ITSA3");
 
 
 

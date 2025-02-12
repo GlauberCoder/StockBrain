@@ -116,7 +116,9 @@ namespace StockBrain.WebApp
 						NominalROIThresholdLong = 0.8,
 						RealROIThresholdNear = 0.05,
 						RealROIThresholdMiddle = 0.15,
-						RealROIThresholdLong = 0.5
+						RealROIThresholdLong = 0.5,
+						PLThreshold = 15,
+						PVPThreshold = 2
 					})
 					.AddScoped(sp => new BDREvaluationConfig
 					{
@@ -142,7 +144,9 @@ namespace StockBrain.WebApp
 						NominalROIThresholdLong = 0,
 						RealROIThresholdNear = 0.05,
 						RealROIThresholdMiddle = 0.15,
-						RealROIThresholdLong = 0
+						RealROIThresholdLong = 0,
+						PLThreshold = 15,
+						PVPThreshold = 2
 					})
 					.AddScoped(sp => new REITEvaluationConfig
 					{

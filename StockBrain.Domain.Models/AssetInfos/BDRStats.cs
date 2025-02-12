@@ -28,6 +28,8 @@ public class BDRStats
 		NominalROIAboveThresholdNear = info.NominalROINear >= config.NominalROIThresholdNear;
 		NominalROIAboveThresholdMiddle = info.NominalROIMiddle >= config.NominalROIThresholdMiddle;
 		NominalROIAboveThresholdLong = info.NominalROILong >= config.NominalROIThresholdLong;
+		PLIsNotTooHigh = info.PL <= config.PLThreshold;
+		PVPIsNotTooHigh = info.PVP <= config.PVPThreshold;
 
 	}
 	public PortfolioAsset Asset { get; }
@@ -38,6 +40,8 @@ public class BDRStats
 	public double DividendAVG { get; }
 	public double SlowAvg { get; }
 	public double FastAvg { get; }
+	public bool PLIsNotTooHigh { get; }
+	public bool PVPIsNotTooHigh { get; }
 	public bool BazinCeilingPriceAboveCurrent { get; }
 	public bool GrahamFairPriceAboveCurrent { get; }
 	public bool CurrentPriceBelowPortfolioAverage { get; }

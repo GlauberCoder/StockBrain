@@ -8,6 +8,8 @@ public class StockInfoMap : AssetInfoMap<StockInfo>
 	public StockInfoMap()
 	{
 		Map(s => s.Price, "//section[@id='cards-ticker']/div[@class='_card cotacao']/div[@class='_card-body']/div/span", false);
+		Map(s => s.PL, "//section[@id='cards-ticker']/div[@class='_card val']/div[@class='_card-body']/span", false);
+		Map(s => s.PVP, "//section[@id='cards-ticker']/div[@class='_card vp']/div[@class='_card-body']/span", false);
 		Map(s => s.Debt, Company(7), false);
 		Map(s => s.Equity, Company(3), false);
 		Map(s => s.DailyLiquidity, Company(13), false);

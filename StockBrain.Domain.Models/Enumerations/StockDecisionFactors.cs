@@ -31,6 +31,30 @@ public class StockDecisionFactors
 		DescriptionPartsParts = c => new List<string> {}
 	};
 
+	public static DecisionFactorEvaluator<StockStats> PLIsNotTooHigh = new DecisionFactorEvaluator<StockStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "PLIsNotTooHigh",
+			Name = "P/L (preço sobre lucro) não é maior que {0}?",
+			Description = "Favorece empresas cujo preço não está exagerado quando comparado ao lucro."
+		},
+		Evaluator = s => s.PLIsNotTooHigh,
+		NameParts = c => new List<string> { c.Config.PLThreshold.ToString() },
+		DescriptionPartsParts = c => new List<string> { }
+	};
+	public static DecisionFactorEvaluator<StockStats> PVPIsNotTooHigh = new DecisionFactorEvaluator<StockStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "PVPIsNotTooHigh",
+			Name = "P/VP (preço sobre valor patrimônial) não é maior que {0}?",
+			Description = "Favorece empresas cujo preço não está exagerado quando comparado ao patrimônio."
+		},
+		Evaluator = s => s.PVPIsNotTooHigh,
+		NameParts = c => new List<string> { c.Config.PVPThreshold.ToString() },
+		DescriptionPartsParts = c => new List<string> { }
+	};
 	public static DecisionFactorEvaluator<StockStats> ProfitableLastQuarters = new DecisionFactorEvaluator<StockStats>
 	{
 		Factor = new DecisionFactor
@@ -300,6 +324,8 @@ public class StockDecisionFactors
 		{ RealROIAboveThresholdLong.Factor.Key, RealROIAboveThresholdLong },
 		{ NominalROIAboveThresholdNear.Factor.Key, NominalROIAboveThresholdNear },
 		{ NominalROIAboveThresholdMiddle.Factor.Key, NominalROIAboveThresholdMiddle },
-		{ NominalROIAboveThresholdLong.Factor.Key, NominalROIAboveThresholdLong }
+		{ NominalROIAboveThresholdLong.Factor.Key, NominalROIAboveThresholdLong },
+		{ PLIsNotTooHigh.Factor.Key, PLIsNotTooHigh },
+		{ PVPIsNotTooHigh.Factor.Key, PVPIsNotTooHigh },
 	};
 }

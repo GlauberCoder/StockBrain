@@ -18,6 +18,8 @@ public class BDRInfo : AssetInfo
 
 	}
 	public double Price { get; set; }
+	public double PL { get; set; }
+	public double PVP { get; set; }
 	public double Equity { get; set; }
 	public double ROE { get; set; }
 	public double LPA { get; set; }

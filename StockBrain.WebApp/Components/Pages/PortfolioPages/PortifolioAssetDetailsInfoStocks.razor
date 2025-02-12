@@ -18,6 +18,8 @@
 		<SBLabelCol Size="2" Title="ROE" Text="@Stats.Info.ROE.PercentageFormat(2)" />
 		<SBLabelCol Size="2" Title="LPA" Text="@Stats.Info.LPA.MonetaryFormat()" />
 		<SBLabelCol Size="2" Title="VPA" Text="@Stats.Info.VPA.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="P/L" Text="@Stats.Info.PL.ToString()" />
+		<SBLabelCol Size="2" Title="P/VP" Text="@Stats.Info.PVP.ToString()" />
 		<SBLabelCol Size="2" Title="@($"Revenue CAGR ({Stats.Config.RevenueGrowthTimeInYears} anos)")" Text="@Stats.Info.RevenueCAGR.PercentageFormat(2)" />
 		<SBLabelCol Size="2" Title="@($"Profit CAGR ({Stats.Config.ProfitGrowthTimeInYears} anos)")" Text="@Stats.Info.ProfitCAGR.PercentageFormat(2)" />
 		<SBLabelCol Size="2" Title="Liquidez diária" Text="@Stats.Info.DailyLiquidity.MonetaryFormat()" />

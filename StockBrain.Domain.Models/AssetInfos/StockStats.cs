@@ -32,6 +32,8 @@ public class StockStats
 		NominalROIAboveThresholdNear = info.NominalROINear >= config.NominalROIThresholdNear;
 		NominalROIAboveThresholdMiddle = info.NominalROIMiddle >= config.NominalROIThresholdMiddle;
 		NominalROIAboveThresholdLong = info.NominalROILong >= config.NominalROIThresholdLong;
+		PLIsNotTooHigh = info.PL <= config.PLThreshold;
+		PVPIsNotTooHigh = info.PVP <= config.PVPThreshold;
 
 	}
 	public PortfolioAsset Asset { get; }
@@ -52,6 +54,8 @@ public class StockStats
 	public bool PositiveRevenueCAGR { get; }
 	public bool PositiveProfitCAGR { get; }
 	public bool HasLiquidity { get; }
+	public bool PLIsNotTooHigh { get; }
+	public bool PVPIsNotTooHigh { get; }
 	public bool DownTrend { get; }
 	public bool RealROIAboveThresholdNear { get; set; }
 	public bool RealROIAboveThresholdMiddle { get; set; }
