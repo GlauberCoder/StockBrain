@@ -5,7 +5,7 @@ namespace StockBrain.Domain.Models.AssetInfos;
 
 public class BDRStats
 {
-	public BDRStats(PortfolioAsset asset, BDRInfo info, StockEvaluationConfig config)
+	public BDRStats(PortfolioAsset asset, BDRInfo info, BDREvaluationConfig config)
 	{
 		Asset = asset;
 		Info = info;
@@ -22,11 +22,17 @@ public class BDRStats
 		CurrentPriceBelowPortfolioAverage = asset.Asset.MarketPrice < asset.AveragePrice;
 		BazinCeilingPriceAboveCurrent = BazinPrice > asset.Asset.MarketPrice;
 		GrahamFairPriceAboveCurrent = GrahamPrice > asset.Asset.MarketPrice;
+		RealROIAboveThresholdNear = info.RealROINear >= config.RealROIThresholdNear;
+		RealROIAboveThresholdMiddle = info.RealROIMiddle >= config.RealROIThresholdMiddle;
+		RealROIAboveThresholdLong = info.RealROILong >= config.RealROIThresholdLong;
+		NominalROIAboveThresholdNear = info.NominalROINear >= config.NominalROIThresholdNear;
+		NominalROIAboveThresholdMiddle = info.NominalROIMiddle >= config.NominalROIThresholdMiddle;
+		NominalROIAboveThresholdLong = info.NominalROILong >= config.NominalROIThresholdLong;
 
 	}
 	public PortfolioAsset Asset { get; }
 	public BDRInfo Info { get; }
-	public StockEvaluationConfig Config { get; }
+	public BDREvaluationConfig Config { get; }
 	public double BazinPrice { get; }
 	public double GrahamPrice { get; }
 	public double DividendAVG { get; }
@@ -39,5 +45,11 @@ public class BDRStats
 	public bool HasEnoughYearsOfIPO { get; }
 	public bool HasAcceptableROE { get; }
 	public bool DownTrend { get; }
+	public bool RealROIAboveThresholdNear { get; set; }
+	public bool RealROIAboveThresholdMiddle { get; set; }
+	public bool RealROIAboveThresholdLong { get; set; }
+	public bool NominalROIAboveThresholdNear { get; set; }
+	public bool NominalROIAboveThresholdMiddle { get; set; }
+	public bool NominalROIAboveThresholdLong { get; set; }
 
 }

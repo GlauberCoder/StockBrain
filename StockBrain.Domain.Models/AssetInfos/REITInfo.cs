@@ -11,10 +11,12 @@ public class REITInfo : AssetInfo
 	public double Price { get; set; }
 	public double PVP { get; set; }
 	public double DailyLiquidity { get; set; }
-	public double RealROIRecent { get; set; }
-	public double RealROIConsolidated { get; set; }
-	public double NominalROIRecent { get; set; }
-	public double NominalROIConsolidated { get; set; }
+	public double RealROINear { get; set; }
+	public double RealROIMiddle { get; set; }
+	public double RealROILong { get; set; }
+	public double NominalROINear { get; set; }
+	public double NominalROIMiddle { get; set; }
+	public double NominalROILong { get; set; }
 	public double ManagementFee { get; set; }
 	public double VacancyRate { get; set; }
 	public double AssetValue { get; set; }

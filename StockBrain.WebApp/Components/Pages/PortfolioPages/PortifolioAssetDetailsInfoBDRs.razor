@@ -17,13 +17,19 @@
 		<SBLabelCol Size="2" Title="ROE" Text="@Stats.Info.ROE.PercentageFormat(2)" />
 		<SBLabelCol Size="2" Title="LPA" Text="@Stats.Info.LPA.MonetaryFormat()" />
 		<SBLabelCol Size="2" Title="VPA" Text="@Stats.Info.VPA.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="@($"Nominal ROI ({Stats.Config.NearROIInYears} anos)")" Text="@Stats.Info.NominalROINear.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Nominal ROI ({Stats.Config.MiddleROIInYears} anos)")" Text="@Stats.Info.NominalROIMiddle.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Nominal ROI ({Stats.Config.LongROIInYears} anos)")" Text="@Stats.Info.NominalROILong.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Real ROI ({Stats.Config.NearROIInYears} anos)")" Text="@Stats.Info.RealROINear.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Real ROI ({Stats.Config.MiddleROIInYears} anos)")" Text="@Stats.Info.RealROIMiddle.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Real ROI ({Stats.Config.LongROIInYears} anos)")" Text="@Stats.Info.RealROILong.PercentageFormat(2)" />
 	</RadzenRow>
 }
 @code {
 	[Inject]
 	IBDRInfos Repository { get; set; }
 	[Inject]
-	StockEvaluationConfig Config { get; set; }
+	BDREvaluationConfig Config { get; set; }
 	[Parameter]
 	public PortfolioAssetDetail Asset { get; set; }
 	BDRStats Stats { get; set; }

@@ -1,19 +1,21 @@
 ﻿namespace StockBrain.Domain.Models.EvaluationConfigs;
 
-public class REITEvaluationConfig
+public class BDREvaluationConfig
 {
 	public required int SlowAvgSize { get; init; }
 	public required int FastAvgSize { get; init; }
 	public required double BazinExpectedReturn { get; init; }
+	public required double AgeThreshold { get; init; }
 	public required double IPOTimeThreshold { get; init; }
-	public required double PVPThreshold { get; init; }
-	public required double ManagementFeeThreshold { get; init; }
-	public required double VacancyRateThreshold { get; init; }
-	public required double AssetValueThreshold { get; init; }
-	public required int RegionsThreshold { get; init; }
-	public required int PropertyThreshold { get; init; }
-	public required double DividendYieldRecentThreshold { get; init; }
-	public required double DividendYieldConsolidatedThreshold { get; init; }
+	public required double DividendYieldThreshold { get; init; }
+	public required int DividendYieldTimeInYears { get; init; }
+	public required int RevenueGrowthTimeInYears { get; init; }
+	public required int ProfitableTimeInQuarters { get; init; }
+	public required int ProfitGrowthTimeInYears { get; init; }
+	public required double GrahamConstant { get; init; }
+	public required int BazinYearAmount { get; init; }
+	public required double DailyLiquidityThreshold { get; init; }
+	public required double ROEThreshold { get; init; }
 	public required int NearROIInYears { get; init; }
 	public required int MiddleROIInYears { get; init; }
 	public required int LongROIInYears { get; init; }
@@ -23,8 +25,4 @@ public class REITEvaluationConfig
 	public required double NominalROIThresholdNear { get; init; }
 	public required double NominalROIThresholdMiddle { get; init; }
 	public required double NominalROIThresholdLong { get; init; }
-	public required int BazinYearAmount { get; init; }
-	public required double DailyLiquidityThreshold { get; init; }
-	public required int DividendYieldRecentAmount { get; init; }
-	public required int DividendYieldConsolidatedAmount { get; init; }
 }

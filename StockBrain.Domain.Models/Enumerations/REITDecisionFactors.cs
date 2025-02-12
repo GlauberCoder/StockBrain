@@ -14,8 +14,8 @@ public class REITDecisionFactors
 			Description = "Favorece FIIs que distribuíram consistentemente dividendos acima de {0} nos últimos {1} meses."
 		},
 		Evaluator = s => s.DYAboveThresholdRecent,
-		NameParts = c => new List<string> { c.Config.DividendYieldRecentThreshold.PercentageFormat(), c.Config.DividendYieldRecentAmount.ToString() },
-		DescriptionPartsParts = c => new List<string> { c.Config.DividendYieldRecentThreshold.PercentageFormat(), c.Config.DividendYieldRecentAmount.ToString() }
+		NameParts = c => new List<string> { c.Config.DividendYieldRecentThreshold.PercentageFormat(4), c.Config.DividendYieldRecentAmount.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.DividendYieldRecentThreshold.PercentageFormat(4), c.Config.DividendYieldRecentAmount.ToString() }
 	};
 
 	public static DecisionFactorEvaluator<REITStats> DYAboveThresholdConsolidated = new DecisionFactorEvaluator<REITStats>
@@ -27,8 +27,8 @@ public class REITDecisionFactors
 			Description = "Favorece FIIs que distribuíram consistentemente dividendos acima de {0} nos últimos {1} meses."
 		},
 		Evaluator = s => s.DYAboveThresholdRecent,
-		NameParts = c => new List<string> { c.Config.DividendYieldConsolidatedThreshold.PercentageFormat(), c.Config.DividendYieldConsolidatedAmount.ToString() },
-		DescriptionPartsParts = c => new List<string> { c.Config.DividendYieldConsolidatedThreshold.PercentageFormat(), c.Config.DividendYieldConsolidatedAmount.ToString() }
+		NameParts = c => new List<string> { c.Config.DividendYieldConsolidatedThreshold.PercentageFormat(4), c.Config.DividendYieldConsolidatedAmount.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.DividendYieldConsolidatedThreshold.PercentageFormat(4), c.Config.DividendYieldConsolidatedAmount.ToString() }
 	};
 
 	public static DecisionFactorEvaluator<REITStats> PVPBellowThreshold = new DecisionFactorEvaluator<REITStats>
@@ -40,8 +40,8 @@ public class REITDecisionFactors
 			Description = "Favorece FIIs cujo preço de mercado está abaixo de {0} do seu valor patrimonial."
 		},
 		Evaluator = s => s.PVPBellowThreshold,
-		NameParts = c => new List<string> { c.Config.PVPThreshold.PercentageFormat() },
-		DescriptionPartsParts = c => new List<string> { c.Config.PVPThreshold.PercentageFormat() }
+		NameParts = c => new List<string> { c.Config.PVPThreshold.PercentageFormat(4) },
+		DescriptionPartsParts = c => new List<string> { c.Config.PVPThreshold.PercentageFormat(4) }
 	};
 
 	public static DecisionFactorEvaluator<REITStats> DailyLiquidityAboveThreshold = new DecisionFactorEvaluator<REITStats>
@@ -57,56 +57,81 @@ public class REITDecisionFactors
 		DescriptionPartsParts = c => new List<string> { }
 	};
 
-	public static DecisionFactorEvaluator<REITStats> RealROIAboveThresholdRecent = new DecisionFactorEvaluator<REITStats>
+	public static DecisionFactorEvaluator<REITStats> RealROIAboveThresholdNear = new DecisionFactorEvaluator<REITStats>
 	{
 		Factor = new DecisionFactor
 		{
-			Key = "RealROIAboveThresholdRecent",
+			Key = "RealROIAboveThresholdNear",
 			Name = "Rentabilidade real maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs com rentabilidade acima da inflação nos considerando os últimos {0} anos."
 		},
-		Evaluator = s => s.RealROIAboveThresholdRecent,
-		NameParts = c => new List<string> { c.Config.RealROIThresholdRecent.PercentageFormat(), c.Config.RecentROIInYears.ToString() },
-		DescriptionPartsParts = c => new List<string> { c.Config.RecentROIInYears.ToString() }
+		Evaluator = s => s.RealROIAboveThresholdNear,
+		NameParts = c => new List<string> { c.Config.RealROIThresholdNear.PercentageFormat(4), c.Config.NearROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.NearROIInYears.ToString() }
 	};
-
-	public static DecisionFactorEvaluator<REITStats> RealROIAboveThresholdConsolidated = new DecisionFactorEvaluator<REITStats>
+	public static DecisionFactorEvaluator<REITStats> RealROIAboveThresholdMiddle = new DecisionFactorEvaluator<REITStats>
 	{
 		Factor = new DecisionFactor
 		{
-			Key = "RealROIAboveThresholdConsolidated",
+			Key = "RealROIAboveThresholdMiddle",
+			Name = "Rentabilidade real maior que {0} nos últimos {1} anos?",
+			Description = "Favorece FIIs com rentabilidade acima da inflação nos considerando os últimos {0} anos."
+		},
+		Evaluator = s => s.RealROIAboveThresholdMiddle,
+		NameParts = c => new List<string> { c.Config.RealROIThresholdMiddle.PercentageFormat(4), c.Config.MiddleROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.MiddleROIInYears.ToString() }
+	};
+
+	public static DecisionFactorEvaluator<REITStats> RealROIAboveThresholdLong = new DecisionFactorEvaluator<REITStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "RealROIAboveThresholdLong",
 			Name = "Rentabilidade Real maior que {0} nos últimos {1} anos?",
 			Description = "Favorece REITs com rentabilidade real acima do benchmark nos últimos {0} anos."
 		},
-		Evaluator = s => s.RealROIAboveThresholdConsolidated,
-		NameParts = c => new List<string> { c.Config.RealROIThresholdConsolidated.PercentageFormat(), c.Config.ConsolidatedROIInYears.ToString() },
-		DescriptionPartsParts = c => new List<string> { c.Config.ConsolidatedROIInYears.ToString() }
+		Evaluator = s => s.RealROIAboveThresholdLong,
+		NameParts = c => new List<string> { c.Config.RealROIThresholdLong.PercentageFormat(4), c.Config.LongROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.LongROIInYears.ToString() }
 	};
 
-	public static DecisionFactorEvaluator<REITStats> NominalROIAboveThresholdRecent = new DecisionFactorEvaluator<REITStats>
+	public static DecisionFactorEvaluator<REITStats> NominalROIAboveThresholdNear = new DecisionFactorEvaluator<REITStats>
 	{
 		Factor = new DecisionFactor
 		{
-			Key = "NominalROIAboveThresholdRecent",
+			Key = "NominalROIAboveThresholdNear",
 			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
 		},
-		Evaluator = s => s.NominalROIAboveThresholdRecent,
-		NameParts = c => new List<string> { c.Config.NominalROIThresholdRecent.PercentageFormat(), c.Config.RecentROIInYears.ToString() },
-		DescriptionPartsParts = c => new List<string> { c.Config.RecentROIInYears.ToString() }
+		Evaluator = s => s.NominalROIAboveThresholdNear,
+		NameParts = c => new List<string> { c.Config.NominalROIThresholdNear.PercentageFormat(4), c.Config.NearROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.NearROIInYears.ToString() }
 	};
 
-	public static DecisionFactorEvaluator<REITStats> NominalROIAboveThresholdConsolidated = new DecisionFactorEvaluator<REITStats>
+	public static DecisionFactorEvaluator<REITStats> NominalROIAboveThresholdMiddle = new DecisionFactorEvaluator<REITStats>
 	{
 		Factor = new DecisionFactor
 		{
-			Key = "NominalROIAboveThresholdConsolidated",
+			Key = "NominalROIAboveThresholdMiddle",
 			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
 		},
-		Evaluator = s => s.NominalROIAboveThresholdRecent,
-		NameParts = c => new List<string> { c.Config.NominalROIThresholdConsolidated.PercentageFormat(), c.Config.ConsolidatedROIInYears.ToString() },
-		DescriptionPartsParts = c => new List<string> { c.Config.ConsolidatedROIInYears.ToString() }
+		Evaluator = s => s.NominalROIAboveThresholdMiddle,
+		NameParts = c => new List<string> { c.Config.NominalROIThresholdMiddle.PercentageFormat(4), c.Config.MiddleROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.MiddleROIInYears.ToString() }
+	};
+
+	public static DecisionFactorEvaluator<REITStats> NominalROIAboveThresholdLong = new DecisionFactorEvaluator<REITStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "NominalROIAboveThresholdLong",
+			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
+			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
+		},
+		Evaluator = s => s.NominalROIAboveThresholdLong,
+		NameParts = c => new List<string> { c.Config.NominalROIThresholdLong.PercentageFormat(4), c.Config.LongROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.LongROIInYears.ToString() }
 	};
 
 	public static DecisionFactorEvaluator<REITStats> ManagementFeeBellowThreshold = new DecisionFactorEvaluator<REITStats>
@@ -118,7 +143,7 @@ public class REITDecisionFactors
 			Description = "Verifica se a taxa de administração do FII é competitiva."
 		},
 		Evaluator = s => s.ManagementFeeBellowThreshold,
-		NameParts = c => new List<string> { c.Config.ManagementFeeThreshold.PercentageFormat() },
+		NameParts = c => new List<string> { c.Config.ManagementFeeThreshold.PercentageFormat(4) },
 		DescriptionPartsParts = c => new List<string> { }
 	};
 
@@ -131,7 +156,7 @@ public class REITDecisionFactors
 			Description = "Favorece FIIs com baixos índices de vacância, garantindo ocupação estável."
 		},
 		Evaluator = s => s.VacancyBellowThreshold,
-		NameParts = c => new List<string> { c.Config.VacancyRateThreshold.PercentageFormat() },
+		NameParts = c => new List<string> { c.Config.VacancyRateThreshold.PercentageFormat(4) },
 		DescriptionPartsParts = c => new List<string> { }
 	};
 
@@ -219,10 +244,12 @@ public class REITDecisionFactors
 		{ DYAboveThresholdConsolidated.Factor.Key, DYAboveThresholdConsolidated },
 		{ PVPBellowThreshold.Factor.Key, PVPBellowThreshold },
 		{ DailyLiquidityAboveThreshold.Factor.Key, DailyLiquidityAboveThreshold },
-		{ RealROIAboveThresholdRecent.Factor.Key, RealROIAboveThresholdRecent },
-		{ RealROIAboveThresholdConsolidated.Factor.Key, RealROIAboveThresholdConsolidated },
-		{ NominalROIAboveThresholdRecent.Factor.Key, NominalROIAboveThresholdRecent },
-		{ NominalROIAboveThresholdConsolidated.Factor.Key, NominalROIAboveThresholdConsolidated },
+		{ RealROIAboveThresholdNear.Factor.Key, RealROIAboveThresholdNear },
+		{ RealROIAboveThresholdMiddle.Factor.Key, RealROIAboveThresholdMiddle },
+		{ RealROIAboveThresholdLong.Factor.Key, RealROIAboveThresholdLong },
+		{ NominalROIAboveThresholdNear.Factor.Key, NominalROIAboveThresholdNear },
+		{ NominalROIAboveThresholdMiddle.Factor.Key, NominalROIAboveThresholdMiddle },
+		{ NominalROIAboveThresholdLong.Factor.Key, NominalROIAboveThresholdLong },
 		{ ManagementFeeBellowThreshold.Factor.Key, ManagementFeeBellowThreshold },
 		{ VacancyBellowThreshold.Factor.Key, VacancyBellowThreshold },
 		{ AssetValueAboveThreshold.Factor.Key, AssetValueAboveThreshold },

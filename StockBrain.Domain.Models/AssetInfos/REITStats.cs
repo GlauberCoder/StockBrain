@@ -32,10 +32,12 @@ public class REITStats
 		DailyLiquidityAboveThreshold = info.DailyLiquidity >= config.DailyLiquidityThreshold;
 		DYAboveThresholdRecent = DYAvgRecent >= config.DividendYieldRecentThreshold;
 		DYAboveThresholdConsolidated = DYAvgConsolidated >= config.DividendYieldRecentThreshold;
-		RealROIAboveThresholdRecent = info.RealROIRecent >= config.RealROIThresholdRecent;
-		RealROIAboveThresholdConsolidated = info.RealROIConsolidated >= config.RealROIThresholdConsolidated;
-		NominalROIAboveThresholdRecent = info.NominalROIRecent >= config.NominalROIThresholdRecent;
-		NominalROIAboveThresholdConsolidated = info.NominalROIConsolidated >= config.NominalROIThresholdConsolidated;
+		RealROIAboveThresholdNear = info.RealROINear >= config.RealROIThresholdNear;
+		RealROIAboveThresholdMiddle = info.RealROIMiddle >= config.RealROIThresholdMiddle;
+		RealROIAboveThresholdLong = info.RealROILong >= config.RealROIThresholdLong;
+		NominalROIAboveThresholdNear = info.NominalROINear >= config.NominalROIThresholdNear;
+		NominalROIAboveThresholdMiddle = info.NominalROIMiddle >= config.NominalROIThresholdMiddle;
+		NominalROIAboveThresholdLong = info.NominalROILong >= config.NominalROIThresholdLong;
 
 	}
 	public PortfolioAsset Asset { get; }
@@ -60,8 +62,10 @@ public class REITStats
 	public bool DailyLiquidityAboveThreshold { get; set; }
 	public bool DYAboveThresholdRecent { get; set; }
 	public bool DYAboveThresholdConsolidated { get; set; }
-	public bool RealROIAboveThresholdRecent { get; set; }
-	public bool RealROIAboveThresholdConsolidated { get; set; }
-	public bool NominalROIAboveThresholdRecent { get; set; }
-	public bool NominalROIAboveThresholdConsolidated { get; set; }
+	public bool RealROIAboveThresholdNear { get; set; }
+	public bool RealROIAboveThresholdMiddle { get; set; }
+	public bool RealROIAboveThresholdLong { get; set; }
+	public bool NominalROIAboveThresholdNear { get; set; }
+	public bool NominalROIAboveThresholdMiddle { get; set; }
+	public bool NominalROIAboveThresholdLong { get; set; }
 }

@@ -25,5 +25,11 @@ public class BDRInfo : AssetInfo
 	public bool HasNeverPostedLosses { get; set; }
 	public bool ProfitableLastQuarters { get; set; }
 	public bool WellRated { get; set; }
+	public double RealROINear { get; set; }
+	public double RealROIMiddle { get; set; }
+	public double RealROILong { get; set; }
+	public double NominalROINear { get; set; }
+	public double NominalROIMiddle { get; set; }
+	public double NominalROILong { get; set; }
 
 }

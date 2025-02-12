@@ -135,6 +135,83 @@ public class BDRDecisionFactors
 		DescriptionPartsParts = c => new List<string> { }
 	};
 
+	public static DecisionFactorEvaluator<BDRStats> RealROIAboveThresholdNear = new DecisionFactorEvaluator<BDRStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "RealROIAboveThresholdNear",
+			Name = "Rentabilidade real maior que {0} nos últimos {1} anos?",
+			Description = "Favorece FIIs com rentabilidade acima da inflação nos considerando os últimos {0} anos."
+		},
+		Evaluator = s => s.RealROIAboveThresholdNear,
+		NameParts = c => new List<string> { c.Config.RealROIThresholdNear.PercentageFormat(4), c.Config.NearROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.NearROIInYears.ToString() }
+	};
+	public static DecisionFactorEvaluator<BDRStats> RealROIAboveThresholdMiddle = new DecisionFactorEvaluator<BDRStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "RealROIAboveThresholdMiddle",
+			Name = "Rentabilidade real maior que {0} nos últimos {1} anos?",
+			Description = "Favorece FIIs com rentabilidade acima da inflação nos considerando os últimos {0} anos."
+		},
+		Evaluator = s => s.RealROIAboveThresholdMiddle,
+		NameParts = c => new List<string> { c.Config.RealROIThresholdMiddle.PercentageFormat(4), c.Config.MiddleROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.MiddleROIInYears.ToString() }
+	};
+
+	public static DecisionFactorEvaluator<BDRStats> RealROIAboveThresholdLong = new DecisionFactorEvaluator<BDRStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "RealROIAboveThresholdLong",
+			Name = "Rentabilidade Real maior que {0} nos últimos {1} anos?",
+			Description = "Favorece REITs com rentabilidade real acima do benchmark nos últimos {0} anos."
+		},
+		Evaluator = s => s.RealROIAboveThresholdLong,
+		NameParts = c => new List<string> { c.Config.RealROIThresholdLong.PercentageFormat(4), c.Config.LongROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.LongROIInYears.ToString() }
+	};
+
+	public static DecisionFactorEvaluator<BDRStats> NominalROIAboveThresholdNear = new DecisionFactorEvaluator<BDRStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "NominalROIAboveThresholdNear",
+			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
+			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
+		},
+		Evaluator = s => s.NominalROIAboveThresholdNear,
+		NameParts = c => new List<string> { c.Config.NominalROIThresholdNear.PercentageFormat(4), c.Config.NearROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.NearROIInYears.ToString() }
+	};
+
+	public static DecisionFactorEvaluator<BDRStats> NominalROIAboveThresholdMiddle = new DecisionFactorEvaluator<BDRStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "NominalROIAboveThresholdMiddle",
+			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
+			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
+		},
+		Evaluator = s => s.NominalROIAboveThresholdMiddle,
+		NameParts = c => new List<string> { c.Config.NominalROIThresholdMiddle.PercentageFormat(4), c.Config.MiddleROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.MiddleROIInYears.ToString() }
+	};
+
+	public static DecisionFactorEvaluator<BDRStats> NominalROIAboveThresholdLong = new DecisionFactorEvaluator<BDRStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "NominalROIAboveThresholdLong",
+			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
+			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
+		},
+		Evaluator = s => s.NominalROIAboveThresholdLong,
+		NameParts = c => new List<string> { c.Config.NominalROIThresholdLong.PercentageFormat(4), c.Config.LongROIInYears.ToString() },
+		DescriptionPartsParts = c => new List<string> { c.Config.LongROIInYears.ToString() }
+	};
+
 	public static IDictionary<string, DecisionFactorEvaluator<BDRStats>> DecisionFactors = new Dictionary<string, DecisionFactorEvaluator<BDRStats>>
 	{
 		{ HasEnoughYearsInMarket.Factor.Key, HasEnoughYearsInMarket },
@@ -146,6 +223,12 @@ public class BDRDecisionFactors
 		{ HasEnoughYearsOfIPO.Factor.Key, HasEnoughYearsOfIPO },
 		{ BazinCeilingPriceBelowCurrent.Factor.Key, BazinCeilingPriceBelowCurrent },
 		{ GrahamFairPriceBelowCurrent.Factor.Key, GrahamFairPriceBelowCurrent },
-		{ DownTrend.Factor.Key, DownTrend }
+		{ DownTrend.Factor.Key, DownTrend },
+		{ RealROIAboveThresholdNear.Factor.Key, RealROIAboveThresholdNear },
+		{ RealROIAboveThresholdMiddle.Factor.Key, RealROIAboveThresholdMiddle },
+		{ RealROIAboveThresholdLong.Factor.Key, RealROIAboveThresholdLong },
+		{ NominalROIAboveThresholdNear.Factor.Key, NominalROIAboveThresholdNear },
+		{ NominalROIAboveThresholdMiddle.Factor.Key, NominalROIAboveThresholdMiddle },
+		{ NominalROIAboveThresholdLong.Factor.Key, NominalROIAboveThresholdLong }
 	};
 }

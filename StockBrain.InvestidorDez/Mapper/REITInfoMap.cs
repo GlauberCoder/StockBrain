@@ -12,10 +12,12 @@ public class REITInfoMap : AssetInfoMap<REITInfo>
 		Map(s => s.Price, $"{Cards("cotacao")}/div/span", false);
 		Map(s => s.PVP, $"{Cards("vp")}/span", false);
 		Map(s => s.DailyLiquidity, $"{Cards("val")}/span", false);
-		Map(s => s.NominalROIRecent, $"//div[@class='return-bar ticker']/div[6]/span", false);
-		Map(s => s.NominalROIConsolidated, $"//div[@class='return-bar ticker']/div[7]/span", false);
-		Map(s => s.RealROIRecent, $"//div[@class='return-bar ticker']/div[13]/span", false);
-		Map(s => s.RealROIConsolidated, $"//div[@class='return-bar ticker']/div[14]/span", false);
+		Map(s => s.NominalROINear, ReturnBar(5), false);
+		Map(s => s.NominalROIMiddle, ReturnBar(6), false);
+		Map(s => s.NominalROILong, ReturnBar(7), false);
+		Map(s => s.RealROINear, ReturnBar(12), false);
+		Map(s => s.RealROIMiddle, ReturnBar(13), false);
+		Map(s => s.RealROILong, ReturnBar(14), false);
 		Map(s => s.ManagementFee, Company(9), false);
 		Map(s => s.VacancyRate, Company(10), false);
 		Map(s => s.AssetValue, Company(14), false);
@@ -25,6 +27,7 @@ public class REITInfoMap : AssetInfoMap<REITInfo>
 	}
 	string Cards(string name) =>  $"//section[@id='cards-ticker']/div[@class='_card {name}']/div[@class='_card-body']";
 	string Company(int div) => $"//div[@id='table-indicators']/div[{div}]/div[@class='desc']/div[@class='value']/span";
+	string ReturnBar(int div) => $"//div[@class='return-bar ticker']/div[{div}]/span";
 	object GetRating(HtmlNode node) 
 	{
 		var value = node.Attributes["x-data"].Value;

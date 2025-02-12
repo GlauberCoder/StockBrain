@@ -91,7 +91,8 @@ namespace StockBrain.WebApp
 							context.Account = sp.GetService<Authenticator>().GetAccount();
 						return context;
 					})
-					.AddScoped(sp => new DataJSONFilesConfig { BasePath = dataPath }).AddScoped(sp => new StockEvaluationConfig
+					.AddScoped(sp => new DataJSONFilesConfig { BasePath = dataPath })
+					.AddScoped(sp => new StockEvaluationConfig
 					{
 						BazinExpectedReturn = 0.06,
 						FastAvgSize = 13,
@@ -106,7 +107,42 @@ namespace StockBrain.WebApp
 						DividendYieldThreshold = 0.05,
 						DividendYieldTimeInYears = 5,
 						ProfitGrowthTimeInYears = 5,
-						RevenueGrowthTimeInYears = 5
+						RevenueGrowthTimeInYears = 5,
+						NearROIInYears = 2,
+						MiddleROIInYears = 5,
+						LongROIInYears = 10,
+						NominalROIThresholdNear = 0.15,
+						NominalROIThresholdMiddle = 0.3,
+						NominalROIThresholdLong = 0.8,
+						RealROIThresholdNear = 0.05,
+						RealROIThresholdMiddle = 0.15,
+						RealROIThresholdLong = 0.5
+					})
+					.AddScoped(sp => new BDREvaluationConfig
+					{
+						BazinExpectedReturn = 0.06,
+						FastAvgSize = 13,
+						SlowAvgSize = 90,
+						AgeThreshold = 15,
+						GrahamConstant = 22.5,
+						BazinYearAmount = 5,
+						DailyLiquidityThreshold = 2000000,
+						ProfitableTimeInQuarters = 20,
+						ROEThreshold = 0.1,
+						IPOTimeThreshold = 10,
+						DividendYieldThreshold = 0.05,
+						DividendYieldTimeInYears = 5,
+						ProfitGrowthTimeInYears = 5,
+						RevenueGrowthTimeInYears = 5,
+						NearROIInYears = 2,
+						MiddleROIInYears = 5,
+						LongROIInYears = 10,
+						NominalROIThresholdNear = 0.15,
+						NominalROIThresholdMiddle = 0.3,
+						NominalROIThresholdLong = 0,
+						RealROIThresholdNear = 0.05,
+						RealROIThresholdMiddle = 0.15,
+						RealROIThresholdLong = 0
 					})
 					.AddScoped(sp => new REITEvaluationConfig
 					{
@@ -122,15 +158,18 @@ namespace StockBrain.WebApp
 						DividendYieldRecentAmount = 12,
 						DividendYieldRecentThreshold = 0.006,
 						ManagementFeeThreshold = 0.01,
-						NominalROIThresholdConsolidated = 1,
-						NominalROIThresholdRecent = 0.15,
-						RealROIThresholdConsolidated = 0.5,
-						RealROIThresholdRecent = 0.05,
+						NearROIInYears = 2,
+						MiddleROIInYears = 5,
+						LongROIInYears = 10,
+						NominalROIThresholdNear = 0.15,
+						NominalROIThresholdMiddle = 0.3,
+						NominalROIThresholdLong = 0,
+						RealROIThresholdNear = 0.02,
+						RealROIThresholdMiddle = 0.1,
+						RealROIThresholdLong = 0.0,
 						VacancyRateThreshold = 0.1,
 						PropertyThreshold = 15,
 						RegionsThreshold = 4,
-						RecentROIInYears = 5,
-						ConsolidatedROIInYears = 10,
 						PVPThreshold = 1
 
 					})

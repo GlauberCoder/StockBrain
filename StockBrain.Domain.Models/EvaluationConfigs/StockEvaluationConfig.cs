@@ -16,4 +16,13 @@ public class StockEvaluationConfig
 	public required int BazinYearAmount { get; init; }
 	public required double DailyLiquidityThreshold { get; init; }
 	public required double ROEThreshold { get; init; }
+	public required int NearROIInYears { get; init; }
+	public required int MiddleROIInYears { get; init; }
+	public required int LongROIInYears { get; init; }
+	public required double RealROIThresholdNear { get; init; }
+	public required double RealROIThresholdMiddle { get; init; }
+	public required double RealROIThresholdLong { get; init; }
+	public required double NominalROIThresholdNear { get; init; }
+	public required double NominalROIThresholdMiddle { get; init; }
+	public required double NominalROIThresholdLong { get; init; }
 }

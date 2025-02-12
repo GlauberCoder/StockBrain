@@ -26,6 +26,12 @@ public class StockStats
 		CurrentPriceBelowPortfolioAverage = asset.Asset.MarketPrice < asset.AveragePrice;
 		BazinCeilingPriceAboveCurrent = BazinPrice > asset.Asset.MarketPrice;
 		GrahamFairPriceAboveCurrent = GrahamPrice > asset.Asset.MarketPrice;
+		RealROIAboveThresholdNear = info.RealROINear >= config.RealROIThresholdNear;
+		RealROIAboveThresholdMiddle = info.RealROIMiddle >= config.RealROIThresholdMiddle;
+		RealROIAboveThresholdLong = info.RealROILong >= config.RealROIThresholdLong;
+		NominalROIAboveThresholdNear = info.NominalROINear >= config.NominalROIThresholdNear;
+		NominalROIAboveThresholdMiddle = info.NominalROIMiddle >= config.NominalROIThresholdMiddle;
+		NominalROIAboveThresholdLong = info.NominalROILong >= config.NominalROIThresholdLong;
 
 	}
 	public PortfolioAsset Asset { get; }
@@ -47,5 +53,11 @@ public class StockStats
 	public bool PositiveProfitCAGR { get; }
 	public bool HasLiquidity { get; }
 	public bool DownTrend { get; }
+	public bool RealROIAboveThresholdNear { get; set; }
+	public bool RealROIAboveThresholdMiddle { get; set; }
+	public bool RealROIAboveThresholdLong { get; set; }
+	public bool NominalROIAboveThresholdNear { get; set; }
+	public bool NominalROIAboveThresholdMiddle { get; set; }
+	public bool NominalROIAboveThresholdLong { get; set; }
 
 }

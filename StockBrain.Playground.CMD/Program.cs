@@ -41,7 +41,7 @@ internal class Program
 
 		//CreateStockInfo("FLRY3");
 		//PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
-		CreateInfos("XPML11");
+		CreateInfos("ITSA3");
 
 
 
@@ -140,10 +140,10 @@ internal class Program
 		Console.WriteLine($"Price: {asset.Price}");
 		Console.WriteLine($"P/VP: {asset.PVP}");
 		Console.WriteLine($"Liquidez Diária: {asset.DailyLiquidity}");
-		Console.WriteLine($"ROI 5y: {asset.NominalROIRecent}");
-		Console.WriteLine($"ROI 10y: {asset.NominalROIConsolidated}");
-		Console.WriteLine($"ROI Real 5y: {asset.RealROIRecent}");
-		Console.WriteLine($"ROI Real 10y: {asset.RealROIConsolidated}");
+		Console.WriteLine($"ROI 5y: {asset.NominalROINear}");
+		Console.WriteLine($"ROI 10y: {asset.NominalROILong}");
+		Console.WriteLine($"ROI Real 5y: {asset.RealROINear}");
+		Console.WriteLine($"ROI Real 10y: {asset.RealROILong}");
 		Console.WriteLine($"Taxa de gestão: {asset.ManagementFee}");
 		Console.WriteLine($"Taxa de vacância: {asset.VacancyRate}");
 		Console.WriteLine($"Patrimônio: {asset.AssetValue}");
@@ -212,10 +212,10 @@ internal class Program
 		Console.WriteLine($"DailyLiquidityThreshold: {asset.DailyLiquidityAboveThreshold}");
 		Console.WriteLine($"DYAboveThresholdRecent: {asset.DYAboveThresholdRecent}");
 		Console.WriteLine($"DYAboveThresholdConsolidated: {asset.DYAboveThresholdConsolidated}");
-		Console.WriteLine($"RealROIAboveThresholdRecent: {asset.RealROIAboveThresholdRecent}");
-		Console.WriteLine($"RealROIAboveThresholdConsolidated: {asset.RealROIAboveThresholdConsolidated}");
-		Console.WriteLine($"NominalROIAboveThresholdRecent: {asset.NominalROIAboveThresholdRecent}");
-		Console.WriteLine($"NominalROIAboveThresholdConsolidated: {asset.NominalROIAboveThresholdConsolidated}");
+		Console.WriteLine($"RealROIAboveThresholdRecent: {asset.RealROIAboveThresholdNear}");
+		Console.WriteLine($"RealROIAboveThresholdConsolidated: {asset.RealROIAboveThresholdLong}");
+		Console.WriteLine($"NominalROIAboveThresholdRecent: {asset.NominalROIAboveThresholdNear}");
+		Console.WriteLine($"NominalROIAboveThresholdConsolidated: {asset.NominalROIAboveThresholdLong}");
 		Console.WriteLine($"DividendAVG: {asset.DividendAVG}");
 	}
 	static string PrintOptions()
@@ -283,47 +283,87 @@ internal class Program
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
 			.AddScoped(sp => new Context { Account = new Account { GUID = Guid.NewGuid().ToString(), ID = 1, Name = "Glauber" } })
 			.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\DEV" })
-			.AddScoped(sp => new StockEvaluationConfig { 
-								BazinExpectedReturn = 0.06, 
-								FastAvgSize = 13, 
-								SlowAvgSize = 90, 
-								AgeThreshold = 15, 
-								GrahamConstant = 22.5, 
-								BazinYearAmount = 5, 
-								DailyLiquidityThreshold = 2000000,
-								ProfitableTimeInQuarters = 20,
-								ROEThreshold = 0.1, 
-								IPOTimeThreshold = 10,
-								DividendYieldThreshold = 0.05,
-								DividendYieldTimeInYears = 5,
-								ProfitGrowthTimeInYears = 5,
-								RevenueGrowthTimeInYears = 5
-			})
-			.AddScoped(sp => new REITEvaluationConfig { 
-								BazinExpectedReturn = 0.007,
-								FastAvgSize = 13,
-								SlowAvgSize = 90,
-								IPOTimeThreshold = 5,
-								AssetValueThreshold = 2000000,
-								BazinYearAmount = 2,
-								DailyLiquidityThreshold = 2000000,
-								DividendYieldConsolidatedAmount = 24,
-								DividendYieldConsolidatedThreshold = 0.006,
-								DividendYieldRecentAmount = 12,
-								DividendYieldRecentThreshold = 0.006,
-								ManagementFeeThreshold = 0.01,
-								NominalROIThresholdConsolidated = 1,
-								NominalROIThresholdRecent = 0.15,
-								RealROIThresholdConsolidated = 0.5,
-								RealROIThresholdRecent = 0.05,
-								VacancyRateThreshold = 0.1,
-								PropertyThreshold = 15,
-								RegionsThreshold = 4,
-								RecentROIInYears = 5,
-								ConsolidatedROIInYears = 10,
-								PVPThreshold = 1
-								
-			})
+					.AddScoped(sp => new StockEvaluationConfig
+					{
+						BazinExpectedReturn = 0.06,
+						FastAvgSize = 13,
+						SlowAvgSize = 90,
+						AgeThreshold = 15,
+						GrahamConstant = 22.5,
+						BazinYearAmount = 5,
+						DailyLiquidityThreshold = 2000000,
+						ProfitableTimeInQuarters = 20,
+						ROEThreshold = 0.1,
+						IPOTimeThreshold = 10,
+						DividendYieldThreshold = 0.05,
+						DividendYieldTimeInYears = 5,
+						ProfitGrowthTimeInYears = 5,
+						RevenueGrowthTimeInYears = 5,
+						NearROIInYears = 2,
+						MiddleROIInYears = 5,
+						LongROIInYears = 10,
+						NominalROIThresholdNear = 0.15,
+						NominalROIThresholdMiddle = 0.3,
+						NominalROIThresholdLong = 0.8,
+						RealROIThresholdNear = 0.05,
+						RealROIThresholdMiddle = 0.15,
+						RealROIThresholdLong = 0.5
+					})
+					.AddScoped(sp => new BDREvaluationConfig
+					{
+						BazinExpectedReturn = 0.06,
+						FastAvgSize = 13,
+						SlowAvgSize = 90,
+						AgeThreshold = 15,
+						GrahamConstant = 22.5,
+						BazinYearAmount = 5,
+						DailyLiquidityThreshold = 2000000,
+						ProfitableTimeInQuarters = 20,
+						ROEThreshold = 0.1,
+						IPOTimeThreshold = 10,
+						DividendYieldThreshold = 0.05,
+						DividendYieldTimeInYears = 5,
+						ProfitGrowthTimeInYears = 5,
+						RevenueGrowthTimeInYears = 5,
+						NearROIInYears = 2,
+						MiddleROIInYears = 5,
+						LongROIInYears = 10,
+						NominalROIThresholdNear = 0.15,
+						NominalROIThresholdMiddle = 0.3,
+						NominalROIThresholdLong = 0,
+						RealROIThresholdNear = 0.05,
+						RealROIThresholdMiddle = 0.15,
+						RealROIThresholdLong = 0
+					})
+					.AddScoped(sp => new REITEvaluationConfig
+					{
+						BazinExpectedReturn = 0.007,
+						FastAvgSize = 13,
+						SlowAvgSize = 90,
+						IPOTimeThreshold = 5,
+						AssetValueThreshold = 2000000,
+						BazinYearAmount = 2,
+						DailyLiquidityThreshold = 2000000,
+						DividendYieldConsolidatedAmount = 24,
+						DividendYieldConsolidatedThreshold = 0.006,
+						DividendYieldRecentAmount = 12,
+						DividendYieldRecentThreshold = 0.006,
+						ManagementFeeThreshold = 0.01,
+						NearROIInYears = 2,
+						MiddleROIInYears = 5,
+						LongROIInYears = 10,
+						NominalROIThresholdNear = 0.15,
+						NominalROIThresholdMiddle = 0.3,
+						NominalROIThresholdLong = 0,
+						RealROIThresholdNear = 0.02,
+						RealROIThresholdMiddle = 0.1,
+						RealROIThresholdLong = 0.0,
+						VacancyRateThreshold = 0.1,
+						PropertyThreshold = 15,
+						RegionsThreshold = 4,
+						PVPThreshold = 1
+
+					})
 					.AddScoped<IAccounts, Accounts>()
 					.AddScoped<IAssets, Assets>()
 					.AddScoped<ISectors, Sectors>()

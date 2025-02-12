@@ -11,14 +11,17 @@ public class DecisionFactorAnswerSetter : IDecisionFactorAnswerSetter
 {
 	StockEvaluationConfig StockConfig { get; }
 	REITEvaluationConfig REITConfig { get; }
+	BDREvaluationConfig BDRConfig { get; }
 
 	public DecisionFactorAnswerSetter(
 		StockEvaluationConfig stockConfig,
-		REITEvaluationConfig reitConfig
+		REITEvaluationConfig reitConfig,
+		BDREvaluationConfig bdrConfig
 	)
 	{
 		StockConfig = stockConfig;
 		REITConfig = reitConfig;
+		BDRConfig = bdrConfig;
 	}
 
 	public void Set(IEnumerable<PortfolioAsset> assets, IDictionary<string, AssetInfo> infos, IDictionary<AssetType, IEnumerable<string>> factors)
@@ -74,7 +77,7 @@ public class DecisionFactorAnswerSetter : IDecisionFactorAnswerSetter
 			var answers = Enumerable.Empty<DecisionFactorAnswer>();
 			if (infos.TryGetValue(asset.Asset.Ticker, out var info))
 			{
-				var stats = new BDRStats(asset, (BDRInfo)info, StockConfig);
+				var stats = new BDRStats(asset, (BDRInfo)info, BDRConfig);
 				answers = GetAnswers(stats, factors);
 			}
 			asset.SetScore(answers);

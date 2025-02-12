@@ -21,6 +21,12 @@
 		<SBLabelCol Size="2" Title="@($"Revenue CAGR ({Stats.Config.RevenueGrowthTimeInYears} anos)")" Text="@Stats.Info.RevenueCAGR.PercentageFormat(2)" />
 		<SBLabelCol Size="2" Title="@($"Profit CAGR ({Stats.Config.ProfitGrowthTimeInYears} anos)")" Text="@Stats.Info.ProfitCAGR.PercentageFormat(2)" />
 		<SBLabelCol Size="2" Title="Liquidez diária" Text="@Stats.Info.DailyLiquidity.MonetaryFormat()" />
+		<SBLabelCol Size="2" Title="@($"Nominal ROI ({Stats.Config.NearROIInYears} anos)")" Text="@Stats.Info.NominalROINear.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Nominal ROI ({Stats.Config.MiddleROIInYears} anos)")" Text="@Stats.Info.NominalROIMiddle.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Nominal ROI ({Stats.Config.LongROIInYears} anos)")" Text="@Stats.Info.NominalROILong.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Real ROI ({Stats.Config.NearROIInYears} anos)")" Text="@Stats.Info.RealROINear.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Real ROI ({Stats.Config.MiddleROIInYears} anos)")" Text="@Stats.Info.RealROIMiddle.PercentageFormat(2)" />
+		<SBLabelCol Size="2" Title="@($"Real ROI ({Stats.Config.LongROIInYears} anos)")" Text="@Stats.Info.RealROILong.PercentageFormat(2)" />
 	</RadzenRow>
 }
 @code {

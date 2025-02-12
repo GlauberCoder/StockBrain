@@ -16,6 +16,12 @@ public class StockInfoMap : AssetInfoMap<StockInfo>
 		Map(s => s.VPA, Indicator(17), false);
 		Map(s => s.RevenueCAGR, Indicator(30), false);
 		Map(s => s.ProfitCAGR, Indicator(31), false);
+		Map(s => s.NominalROINear, ReturnBar(5), false);
+		Map(s => s.NominalROIMiddle, ReturnBar(6), false);
+		Map(s => s.NominalROILong, ReturnBar(7), false);
+		Map(s => s.RealROINear, ReturnBar(12), false);
+		Map(s => s.RealROIMiddle, ReturnBar(13), false);
+		Map(s => s.RealROILong, ReturnBar(14), false);
 		MapCheckbox(s => s.HasNeverPostedLosses, "styled-checkbox-profitable", true);
 		MapCheckbox(s => s.ProfitableLastQuarters, "styled-checkbox-profitable5years", true);
 		MapCheckbox(s => s.PaidAcceptableDividends, "styled-checkbox-dy", true);
@@ -23,4 +29,5 @@ public class StockInfoMap : AssetInfoMap<StockInfo>
 	}
 	string Indicator(int div) =>  $"//div[@id='table-indicators']/div[{div}]/div[1]/span";
 	string Company(int div) => $"//div[@id='table-indicators-company']/div[{div}]/span[2]/div[@class='detail-value']";
+	string ReturnBar(int div) => $"//div[@class='return-bar ticker']/div[{div}]/span";
 }
