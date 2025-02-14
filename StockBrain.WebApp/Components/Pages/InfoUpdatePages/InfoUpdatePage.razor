@@ -5,7 +5,7 @@
 <RadzenCard Variant="@Variant.Filled">
 	<RadzenRow>
 		<RadzenColumn Size="6">
-			<RadzenTextBox Placeholder="Filtro seperado por vírgula ex: XPML11, HGLG11, RADL3, ROXO34" Style="width:800px;" @bind-Value=filter />
+			<RadzenTextBox Placeholder="Filtro separado por vírgula ex: XPML11, HGLG11, RADL3, ROXO34" Style="width:800px;" @bind-Value=filter />
 		</RadzenColumn>
 		<RadzenColumn Size="6">
 			<RadzenButton Variant="Variant.Outlined" Click=@Update Text="@(Updating ? "Carregando..." : "Atualizar")" Disabled="Updating" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" class="float-end rz-mr-2 rz-mt-2" />
