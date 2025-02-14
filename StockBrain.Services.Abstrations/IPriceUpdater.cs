@@ -4,6 +4,5 @@ namespace StockBrain.Services.Abstrations;
 
 public interface IPriceUpdater
 {
-	Task UpdateAll(Action<IEnumerable<Asset>> onFinish);
-	Task UpdateMissing(Action<IEnumerable<Asset>> onFinish);
+	Task Update(Action<IDictionary<string, IAssetInfoUpdateStatus>, bool> onUpdate = null, IEnumerable<string> tickersFilter = null);
 }

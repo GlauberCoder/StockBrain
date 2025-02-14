@@ -8,7 +8,8 @@
 			<RadzenTextBox Placeholder="Filtro separado por vírgula ex: XPML11, HGLG11, RADL3, ROXO34" Style="width:800px;" @bind-Value=filter />
 		</RadzenColumn>
 		<RadzenColumn Size="6">
-			<RadzenButton Variant="Variant.Outlined" Click=@Update IsBusy="Updating" Text="Atualizar" BusyText="Carregando..." ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" class="float-end rz-mr-2 rz-mt-2" />
+			<RadzenButton Variant="Variant.Outlined" Click=@UpdatInfos IsBusy="Updating" Text="Atualizarc Infos" BusyText="Carregando..." ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" class="float-end rz-mr-2 rz-mt-2" />
+			<RadzenButton Variant="Variant.Outlined" Click=@UpdatePrices IsBusy="Updating" Text="Atualizar Preços" BusyText="Carregando..." ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" class="float-end rz-mr-2 rz-mt-2" />
 		</RadzenColumn>
 	</RadzenRow>
 </RadzenCard>
@@ -43,23 +44,39 @@
 
 @code {
 	[Inject]
-	IAssetInfoUpdater Updater { get; set; }
+	IAssetInfoUpdater InfoUpdater { get; set; }
+	[Inject]
+	IPriceUpdater PriceUpdater { get; set; }
 	bool Updating = false;
 	string filter = "";
 	IDictionary<string, IAssetInfoUpdateStatus> Status = new Dictionary<string, IAssetInfoUpdateStatus>();
 
-	private void Update()
+	void UpdatInfos()
 	{
 		Updating = true;
 		InvokeAsync(StateHasChanged).ContinueWith(r =>
 		{
 			var filters = string.IsNullOrWhiteSpace(filter) ? null : filter.Split(',').Select(f => f.Trim());
-			Updater.UpdateAll((status, finished) =>
+			InfoUpdater.UpdateAll((status, finished) =>
 			{
 				Status = status;
 				Updating = !finished;
 				InvokeAsync(StateHasChanged);
 
+			}, filters);
+		});
+	}
+	void UpdatePrices()
+	{
+		Updating = true;
+		InvokeAsync(StateHasChanged).ContinueWith(r =>
+		{
+			var filters = string.IsNullOrWhiteSpace(filter) ? null : filter.Split(',').Select(f => f.Trim());
+			PriceUpdater.Update((status, finished) =>
+			{
+				Status = status;
+				Updating = !finished;
+				InvokeAsync(StateHasChanged);
 			}, filters);
 		});
 	}

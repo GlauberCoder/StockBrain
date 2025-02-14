@@ -2,6 +2,7 @@
 using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Services.Abstrations;
+using System.Diagnostics.Metrics;
 
 namespace StockBrain.Services;
 
@@ -18,21 +19,35 @@ public class PriceUpdater : IPriceUpdater
 		Context = context;
 	}
 
-	public async Task Update(IEnumerable<Asset> assets, Action<IEnumerable<Asset>> onFinish)
+	public async Task Update(Action<IDictionary<string, IAssetInfoUpdateStatus>, bool> onUpdate = null, IEnumerable<string> tickersFilter = null)
 	{
 		var updatedAssets = new List<Asset>();
+		var assets = Assets.All();
+		if(tickersFilter != null &&tickersFilter.Any())
+			assets = assets.Where(a => tickersFilter.Contains(a.Ticker));
+		var statuses = assets.ToDictionary(a => a.Ticker, a => (IAssetInfoUpdateStatus)new AssetInfoUpdateStatus(a.Ticker));
+		onUpdate?.Invoke(statuses, false);
 		foreach (var asset in assets)
 		{
-			var price = await PriceGetter.Get(asset.Ticker);
-			asset.MarketPrice = price;
-			asset.LastPriceUpdate = Context.Today;
-			updatedAssets.Add(asset);
+			var status = statuses[asset.Ticker];
+			try
+			{
+				var price = PriceGetter.Get(asset.Ticker).Result;
+				asset.MarketPrice = price;
+				asset.LastPriceUpdate = Context.Today;
+				updatedAssets.Add(asset);
+			}
+			catch (Exception ex)
+			{
+				status.HasError = true;
+				status.ErrorMessage = ex.Message;
+			}
+			status.Done = true;
+			onUpdate?.Invoke(statuses, false);
 		}
+		onUpdate?.Invoke(statuses, true);
 		Assets.Save(updatedAssets);
-		onFinish(updatedAssets);
 	}
 
-	public Task UpdateAll(Action<IEnumerable<Asset>> onFinish) => Update(Assets.All(), onFinish);
 
-	public Task UpdateMissing(Action<IEnumerable<Asset>> onFinish) => Update(Assets.All().Where(a => !a.MarketPrice.HasValue), onFinish);
 }

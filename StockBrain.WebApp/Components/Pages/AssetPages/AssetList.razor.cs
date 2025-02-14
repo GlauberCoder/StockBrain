@@ -15,12 +15,9 @@ namespace StockBrain.WebApp.Components.Pages.AssetPages
 		Context Context { get; set; }
 		[Inject]
 		IAssets Repository { get; set; }
-		[Inject]
-		IPriceUpdater PriceUpdater { get; set; }
 		IEnumerable<Asset> Assets { get; set; } = new List<Asset>();
 		Asset Asset { get; set; }
 		IDictionary<long, bool> PriceUpdated { get; set; }
-		bool PriceUpdating { get; set; } = false;
 		bool EvaluationUpdating { get; set; } = false;
 
 		protected override async Task OnInitializedAsync()
@@ -32,18 +29,7 @@ namespace StockBrain.WebApp.Components.Pages.AssetPages
 			Assets = assets;
 			PriceUpdated = Assets.ToDictionary(a => a.ID, a => a.LastPriceUpdate >= Context.Today);
 		}
-		void UpdatePrices() 
-		{
-			PriceUpdating = true;
-			StateHasChanged();
-			PriceUpdater.UpdateAll(UpdatePrices);
-		}
 
-		void UpdatePrices(IEnumerable<Asset> assets)
-		{
-			OnLoadAssets(assets);
-			PriceUpdating = false;
-			StateHasChanged();
-		}
+
 	}
 }
