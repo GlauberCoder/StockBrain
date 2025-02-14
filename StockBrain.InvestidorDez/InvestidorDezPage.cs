@@ -28,7 +28,7 @@ public class InvestidorDezPage
 	public string GetText(string selector, bool selectByID) => FindNode(selector, selectByID)?.InnerHtml.Trim() ?? string.Empty;
 	public bool GetChekbox(string selector, bool selectByID) => FindNode(selector, selectByID).Attributes.Contains("checked");
 	public double GetDouble(string selector, bool selectByID) {
-		var text = GetText(selector, selectByID);
+		var text = GetText(selector, selectByID).ToLower();
 		if (string.IsNullOrWhiteSpace(text))
 			return 0;
 		var multiplier = FindMultiplier(text);
@@ -82,8 +82,8 @@ public class InvestidorDezPage
 	{
 		return text.ToLower() switch
 		{
-			string t when t.Contains("b ") || t.Contains("bilhões") => 1000000000,
-			string t when t.Contains("m ") || t.Contains("milhões") => 1000000,
+			string t when t.Contains(" b") || t.Contains("bilhões") => 1000000000,
+			string t when t.Contains(" m") || t.Contains("milhões") => 1000000,
 			_ => 1
 		};
 	}

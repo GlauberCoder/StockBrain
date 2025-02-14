@@ -15,7 +15,7 @@ public class DecisionFactor
 		{
 			Key = Key,
 			Name = nameParts.Any() ? string.Format(Name, nameParts.ToArray()) : Name,
-			Description = descriptionParts.Any() ? string.Format(Description, descriptionParts.ToArray()) : Name,
+			Description = descriptionParts.Any() ? string.Format(Description, descriptionParts.ToArray()) : Description,
 		};
 	}
 }

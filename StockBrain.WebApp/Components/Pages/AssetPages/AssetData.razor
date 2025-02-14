@@ -1,8 +1,14 @@
 ﻿@using StockBrain.Domain.Models
+@using StockBrain.Domain.Models.Enums
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem">
 	<RadzenStack Gap="0">
 		<RadzenRow RowGap="0">
-			<SBLabelCol Size="12" Title="Empresa" Text="@Asset.Name"/>
+			<SBLabelCol Size="9" Title="Empresa" Text="@Asset.Name" />
+			<RadzenColumn Size="3">
+				<a href="@GetInvestidor10URL(Asset)" target="_blank" class="rz-mx-2 float-end rz-mt-5">
+					<RadzenButton Variant="Variant.Outlined" Text="Investidor10" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Dark" class="float-end" />
+				</a>
+			</RadzenColumn>
 		</RadzenRow>
 		<RadzenRow RowGap="0">
 			<SBLabelCol Size="4" Title="Ticker" Text="@Asset.Ticker"/>
@@ -40,4 +46,15 @@
 @code {
 	[Parameter]
 	public Asset Asset { get; set; }
+	string GetInvestidor10URL(Asset asset)
+	{
+		var urlType = asset.Type switch
+		{
+			AssetType.Acoes => "acoes",
+			AssetType.FII => "fiis",
+			AssetType.BDR => "bdrs",
+			_ => null
+		};
+		return $"https://investidor10.com.br/{urlType}/{asset.Ticker}";
+	}
 }

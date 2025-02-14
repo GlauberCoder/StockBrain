@@ -4,7 +4,10 @@
 @rendermode InteractiveServer
 <RadzenCard Variant="@Variant.Filled">
 	<RadzenRow>
-		<RadzenColumn Size="12">
+		<RadzenColumn Size="6">
+			<RadzenTextBox Placeholder="Filtro seperado por vírgula ex: XPML11, HGLG11, RADL3, ROXO34" Style="width:800px;" @bind-Value=filter />
+		</RadzenColumn>
+		<RadzenColumn Size="6">
 			<RadzenButton Variant="Variant.Outlined" Click=@Update Text="@(Updating ? "Carregando..." : "Atualizar")" Disabled="Updating" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" class="float-end rz-mr-2 rz-mt-2" />
 		</RadzenColumn>
 	</RadzenRow>
@@ -42,6 +45,7 @@
 	[Inject]
 	IAssetInfoUpdater Updater { get; set; }
 	bool Updating = false;
+	string filter = "";
 	IDictionary<string, IAssetInfoUpdateStatus> Status = new Dictionary<string, IAssetInfoUpdateStatus>();
 
 	private void Update()
@@ -49,13 +53,14 @@
 		Updating = true;
 		InvokeAsync(StateHasChanged).ContinueWith(r =>
 		{
+			var filters = string.IsNullOrWhiteSpace(filter) ? null : filter.Split(',').Select(f => f.Trim());
 			Updater.UpdateAll((status, finished) =>
 			{
 				Status = status;
 				Updating = !finished;
 				InvokeAsync(StateHasChanged);
 
-			});			
+			}, filters);
 		});
 	}
 }

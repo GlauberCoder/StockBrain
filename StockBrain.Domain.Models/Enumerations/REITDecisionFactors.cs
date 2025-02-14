@@ -199,6 +199,19 @@ public class REITDecisionFactors
 		DescriptionPartsParts = c => new List<string> { c.Config.BazinExpectedReturn.PercentageFormat(4), c.Config.BazinYearAmount.ToString() }
 	};
 
+	public static DecisionFactorEvaluator<REITStats> CurrentPriceBelowPortfolioAverage = new DecisionFactorEvaluator<REITStats>
+	{
+		Factor = new DecisionFactor
+		{
+			Key = "CurrentPriceBelowPortfolioAverage",
+			Name = "Preço atual é menor que o preço médio?",
+			Description = "Favorece empresas cujo preço atual está abaixo da média, possivelmente indicando uma oportunidade de compra."
+		},
+		Evaluator = s => s.CurrentPriceBelowPortfolioAverage,
+		NameParts = c => new List<string> { },
+		DescriptionPartsParts = c => new List<string> { }
+	};
+
 	public static DecisionFactorEvaluator<REITStats> WellRated = new DecisionFactorEvaluator<REITStats>
 	{
 		Factor = new DecisionFactor
@@ -257,6 +270,7 @@ public class REITDecisionFactors
 		{ BazinCeilingPriceAboveCurrent.Factor.Key, BazinCeilingPriceAboveCurrent },
 		{ WellRated.Factor.Key, WellRated },
 		{ RegionsAboveThreshold.Factor.Key, RegionsAboveThreshold },
+		{ CurrentPriceBelowPortfolioAverage.Factor.Key, CurrentPriceBelowPortfolioAverage },
 		{ PropertyAmountAboveThreshold.Factor.Key, PropertyAmountAboveThreshold }
 	};
 }
