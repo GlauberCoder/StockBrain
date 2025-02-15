@@ -40,11 +40,12 @@
 	public PortfolioAssetDetail Asset { get; set; }
 	StockStats Stats { get; set; }
 
-	protected override void OnInitialized()
+	protected override void OnParametersSet()
 	{
 		var info = Repository.ByTicker(Asset.Asset.Asset.Ticker);
 		if (info != null)
 			Stats = new StockStats(Asset.Asset, info, Config);
-		base.OnInitialized();
+		StateHasChanged();
+		base.OnParametersSet();
 	}
 }
