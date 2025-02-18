@@ -262,13 +262,13 @@ internal class Program
 	}
 	static void UpdateAllPrices()
 	{
-		Task.WaitAll(GetService<IPriceUpdater>().UpdateAll(a => { }));
+		Task.WaitAll(GetService<IPriceUpdater>().Update());
 		ListNullPriceTickers();
 		Console.WriteLine("Atualizado");
 	}
 	static void UpdateMissingPrices()
 	{
-		Task.WaitAll(GetService<IPriceUpdater>().UpdateMissing(a => { }));
+		Task.WaitAll(GetService<IPriceUpdater>().Update());
 		ListNullPriceTickers();
 		Console.WriteLine("Atualizado");
 	}
