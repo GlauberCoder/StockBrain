@@ -12,6 +12,6 @@ public partial class PortfolioList
 
 	protected override async Task OnInitializedAsync()
 	{
-		Portfolios = Repository.All().OrderBy(p => p.Name).OrderByDescending(p => p.Main);
+		Portfolios = Repository.FromCurrentAccount().OrderBy(p => p.Name).OrderByDescending(p => p.Main);
 	}
 }

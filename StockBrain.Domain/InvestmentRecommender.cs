@@ -4,7 +4,6 @@ using StockBrain.Domain.Models.Enums;
 using StockBrain.Domain.Models.Extensions;
 using StockBrain.Domain.Models.Model;
 using StockBrain.Utils;
-using System.Linq;
 
 namespace StockBrain.Domain;
 
