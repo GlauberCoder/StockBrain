@@ -10,7 +10,7 @@ public class BDRStats
 		Asset = asset;
 		Info = info;
 		Config = config;
-		DividendAVG = info.Dividends.Any() ? info.Dividends.Take(config.BazinYearAmount).Average(d => d.Value).ToPrecision(2) : 0;
+		DividendAVG = info.Dividends != null && info.Dividends.Any() ? info.Dividends.Take(config.BazinYearAmount).Average(d => d.Value).ToPrecision(2) : 0;
 		BazinPrice = (DividendAVG / config.BazinExpectedReturn).ToPrecision(2);
 		GrahamPrice = Math.Sqrt(config.GrahamConstant * info.LPA * info.VPA).ToPrecision(2);
 		SlowAvg = info.Prices.Take(config.SlowAvgSize).Average(p => p.Value).ToPrecision(2);

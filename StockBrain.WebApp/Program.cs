@@ -6,7 +6,8 @@ using StockBrain.Domain.Models.EvaluationConfigs;
 using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
-using StockBrain.Infra.Repositories.JSONFiles;
+using StockBrain.Infra.Repositories.Firebase;
+using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 using StockBrain.InvestidorDez;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
@@ -91,7 +92,12 @@ namespace StockBrain.WebApp
 							context.Account = sp.GetService<Authenticator>().GetAccount();
 						return context;
 					})
-					.AddScoped(sp => new DataJSONFilesConfig { BasePath = dataPath })
+					.AddSingleton(sp => new FirebaseConfigModel
+					{
+						Secret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
+						BasePath = "https://stock-brain-qa-default-rtdb.firebaseio.com"
+
+					})
 					.AddScoped(sp => new StockEvaluationConfig
 					{
 						BazinExpectedReturn = 0.06,

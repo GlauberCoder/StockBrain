@@ -6,7 +6,7 @@ public class PortfolioAssetDTO : BaseEntity
 	{
 
 	}
-	public PortfolioAssetDTO(PortfolioAsset asset, long accountID)
+	public PortfolioAssetDTO(PortfolioAsset asset)
 	{
 		PortifolioID = asset.PortfolioID;
 		ID = asset.ID;

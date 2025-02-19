@@ -29,6 +29,7 @@ public class AssetDTO : BaseEntity
 		MarketPrice = asset.MarketPrice;
 		LastPriceUpdate = asset.LastPriceUpdate;
 	}
+	public override string GUID { get => Ticker; set { } }
 	public string Ticker { get; set; }
 	public string Description { get; set; }
 	public bool Risk { get; set; }

@@ -9,9 +9,9 @@ public class PortfolioDTO : BaseEntity
 	{
 
 	}
-	public PortfolioDTO(Portfolio portifolio, Context context)
+	public PortfolioDTO(Portfolio portifolio)
 	{
-		AccountID = context.Account.ID;
+		AccountID = portifolio.AccountID;
 		Targets = portifolio.Types.ToDictionary(p => p.Key, p => p.Value.Target.Proportion);
 		Name = portifolio.Name;
 		Main = portifolio.Main;

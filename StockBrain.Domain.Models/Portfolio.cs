@@ -4,6 +4,7 @@ namespace StockBrain.Domain.Models;
 
 public class Portfolio : BaseEntity
 {
+	public required long AccountID { get; init; }
 	public required string Name { get; init; }
 	public required double Total { get; init; }
 	public required bool Main { get; init; }

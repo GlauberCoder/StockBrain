@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FireSharp" Version="2.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
@@ -16,6 +17,7 @@
     <ProjectReference Include="..\StockBrain.Domain.Repositories.Abstractions\StockBrain.Infra.Repositories.Abstractions.csproj" />
     <ProjectReference Include="..\StockBrain.Domain\StockBrain.Domain.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.PriceGetters\StockBrain.Infra.PriceGetters.csproj" />
+    <ProjectReference Include="..\StockBrain.Infra.Repositories.Firebase\StockBrain.Infra.Repositories.Firebase.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.Repositories.JSONFiles\StockBrain.Infra.Repositories.JSONFiles.csproj" />
     <ProjectReference Include="..\StockBrain.Infra\StockBrain.Infra.csproj" />
     <ProjectReference Include="..\StockBrain.InvestidorDez\StockBrain.InvestidorDez.csproj" />

@@ -1,15 +1,17 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FireSharp;
+using FireSharp.Config;
+using Microsoft.Extensions.DependencyInjection;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.AssetInfos;
 using StockBrain.Domain.Models.EvaluationConfigs;
+using StockBrain.DTOs;
 using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Infra.Repositories.JSONFiles;
 using StockBrain.InvestidorDez;
-using StockBrain.InvestidorDez.InfoGetters;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
 using StockBrain.Utils;
@@ -41,11 +43,61 @@ internal class Program
 
 		//CreateStockInfo("FLRY3");
 		//PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
-		CreateInfos("XPML11");
+		//CreateInfos("XPML11");
+
+		//ETLFirebase();
 
 
+		Console.WriteLine("Done");
 
 	}
+	static void ETLFirebase()
+	{
+		var client = new FirebaseClient(new FirebaseConfig
+		{
+			AuthSecret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
+			BasePath = $"https://stock-brain-qa-default-rtdb.firebaseio.com"
+		});
+
+		//Save<IAccounts, Account>("accounts", client);
+		Save<IAssets, Asset, AssetDTO>(a => new AssetDTO(a), "assets", client);
+		//Save<IBDRInfos, BDRInfo>("bdrInfos", client);
+		//Save<IBondIssuers, BondIssuer>("bondIssuers", client);
+		//Save<IBonds, Bond, BondDTO>(a => new BondDTO(a), "bonds", client, b => {
+		//	b.GUID = Guid.NewGuid().ToString();
+		//	return b;
+		//});
+		//Save<IBrokers, Broker>("brokers", client);
+		//Save<IPortfolioAssetBrokers, PortfolioAssetBroker, PortfolioAssetBrokerDTO>(a => new PortfolioAssetBrokerDTO(a), "portfolioAssetBrokers", client);
+		//Save<IPortfolioAssets, PortfolioAsset, PortfolioAssetDTO>(a => new PortfolioAssetDTO(a), "portfolioAssets", client);
+		//Save<IPortfolios, Portfolio, PortfolioDTO>(a => new PortfolioDTO(a), "portfolios", client);
+		//Save<IREITInfos, REITInfo>("reitInfos", client);
+		//Save<ISectors, Sector>("sectors", client);
+		//Save<ISegments, Segment>("segments", client);
+		//Save<IStockInfos, StockInfo>("stockInfos", client);
+
+
+		//client.Set($"decisionFactors", GetService<IDecisionFactors>().All());
+
+	}
+	static void Save<TRepository, TEntity, TDTO>(Func<TEntity, TDTO> transformer, string name, FirebaseClient client, Func<TEntity, TEntity> interceptor = null)
+		where TEntity : BaseEntity
+		where TRepository : IBaseRepository<TEntity>
+		where TDTO : BaseEntity
+	{
+		var itens = GetService<TRepository>().All();
+		if(interceptor != null)
+			foreach(var item in itens)
+				interceptor(item);
+		client.Set($"{name}", itens.ToDictionary(d => d.GUID, transformer));
+	}
+	static void Save<TRepository, TEntity>(string name, FirebaseClient client)
+		where TEntity : BaseEntity
+		where TRepository : IBaseRepository<TEntity>
+	{
+		Save<TRepository, TEntity, TEntity>(e => e, name, client);
+	}
+
 	private static void PrintEvaluation(params string[] tickers)
 	{
 		var assets = GetService<IPortfolioAssets>().ByPortifolio(2).Where(p => tickers.Contains(p.Asset.Ticker));
@@ -282,7 +334,12 @@ internal class Program
 		ServiceProvider = new ServiceCollection()
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
 			.AddScoped(sp => new Context { Account = new Account { GUID = Guid.NewGuid().ToString(), ID = 1, Name = "Glauber" } })
-			.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\DEV" })
+			.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\PROD" })
+			//.AddSingleton(sp => new FirebaseConfigModel { 
+			//	Secret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
+			//	BasePath = "https://stock-brain-qa-default-rtdb.firebaseio.com"
+			
+			//})
 					.AddScoped(sp => new StockEvaluationConfig
 					{
 						BazinExpectedReturn = 0.06,
@@ -375,15 +432,21 @@ internal class Program
 					.AddScoped<IBrokers, Brokers>()
 					.AddScoped<IBondIssuers, BondIssuers>()
 					.AddScoped<IBonds, Bonds>()
-					.AddScoped<IStockInfos, StockInfos>()
-					.AddScoped<IBDRInfos, BDRInfos>()
-					.AddScoped<IREITInfos, REITInfos>()
 					.AddScoped<IPortfolioAssets, PortfolioAssets>()
 					.AddScoped<IPortfolioAssetMovements, PortfolioAssetMovements>()
-					.AddScoped<IPortfolioAssetBrokers, PortfolioAssetBrokers>()
+					.AddScoped<IInvestmentRecommender, InvestmentRecommender>()
+					.AddScoped<IPortifolioCalculator, PortifolioCalculator>()
 					.AddScoped<IPortfolios, Portfolios>()
 					.AddScoped<IPriceGetter, BrAPIMarketPriceGetter>()
 					.AddScoped<IPriceUpdater, PriceUpdater>()
+					.AddScoped<IAssetMovements, AssetMovements>()
+					.AddScoped<IBondMovements, BondMovements>()
+					.AddScoped<IPortfolioAssetBrokers, PortfolioAssetBrokers>()
+					.AddScoped<IPortfolioAssetManager, PortfolioAssetManager>()
+					.AddScoped<IInvestmentRecommenderConfigCalculator, InvestmentRecommenderConfigCalculator>()
+					.AddScoped<IStockInfos, StockInfos>()
+					.AddScoped<IBDRInfos, BDRInfos>()
+					.AddScoped<IREITInfos, REITInfos>()
 					.AddScoped<IDecisionFactors, DecisionFactors>()
 					.AddScoped<IAssetInfoUpdater, InvestidorDezAssetInfoUpdater>()
 					.AddScoped<IAssetInfos, AssetInfos>()

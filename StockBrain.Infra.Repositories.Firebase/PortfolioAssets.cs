@@ -1,10 +1,11 @@
 ﻿using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 
-namespace StockBrain.Infra.Repositories.JSONFiles;
+namespace StockBrain.Infra.Repositories.Firebase;
 
-public class PortfolioAssets : BaseJSONFIleRepository<PortfolioAsset, PortfolioAssetDTO>, IPortfolioAssets
+public class PortfolioAssets : BaseFirebaseRepository<PortfolioAsset, PortfolioAssetDTO>, IPortfolioAssets
 {
 	IAssets Assets { get; }
 	IPortfolioAssetMovements PortfolioAssetMovements { get; }
@@ -14,8 +15,8 @@ public class PortfolioAssets : BaseJSONFIleRepository<PortfolioAsset, PortfolioA
 	IDecisionFactors DecisionFactors { get; }
 
 	public PortfolioAssets(
-		Context context, 
-		DataJSONFilesConfig config, 
+		Context context,
+		FirebaseConfigModel config, 
 		IAssets assets, 
 		IPortfolioAssetMovements portfolioAssetMovements, 
 		IPortfolioAssetBrokers assetBrokers, 
