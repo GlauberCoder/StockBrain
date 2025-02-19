@@ -45,7 +45,7 @@ internal class Program
 		//PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
 		//CreateInfos("XPML11");
 
-		//ETLFirebase();
+		ETLFirebase();
 
 
 		Console.WriteLine("Done");
@@ -60,9 +60,13 @@ internal class Program
 		});
 
 		//Save<IAccounts, Account>("accounts", client);
-		Save<IAssets, Asset, AssetDTO>(a => new AssetDTO(a), "assets", client);
+		//Save<IAssets, Asset, AssetDTO>(a => new AssetDTO(a), "assets", client);
 		//Save<IBDRInfos, BDRInfo>("bdrInfos", client);
-		//Save<IBondIssuers, BondIssuer>("bondIssuers", client);
+		Save<IBondIssuers, BondIssuer>("bondIssuers", client, b => {
+			b.GUID = Guid.NewGuid().ToString();
+			return b;
+		}
+		);
 		//Save<IBonds, Bond, BondDTO>(a => new BondDTO(a), "bonds", client, b => {
 		//	b.GUID = Guid.NewGuid().ToString();
 		//	return b;
@@ -91,11 +95,11 @@ internal class Program
 				interceptor(item);
 		client.Set($"{name}", itens.ToDictionary(d => d.GUID, transformer));
 	}
-	static void Save<TRepository, TEntity>(string name, FirebaseClient client)
+	static void Save<TRepository, TEntity>(string name, FirebaseClient client, Func<TEntity, TEntity> interceptor = null)
 		where TEntity : BaseEntity
 		where TRepository : IBaseRepository<TEntity>
 	{
-		Save<TRepository, TEntity, TEntity>(e => e, name, client);
+		Save<TRepository, TEntity, TEntity>(e => e, name, client, interceptor);
 	}
 
 	private static void PrintEvaluation(params string[] tickers)
