@@ -1,14 +1,14 @@
-﻿using StockBrain.Domain.Models;
+﻿using FireSharp.Interfaces;
+using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.AssetInfos;
 using StockBrain.Infra.Repositories.Abstractions;
-using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
 public class StockInfos : BaseFirebaseRepository<StockInfo, StockInfo>, IStockInfos
 {
-	public StockInfos(Context context, FirebaseConfigModel config)
-		: base(context, config, "stockInfos")
+	public StockInfos(Context context, IFirebaseClient client)
+		: base(context, client, "stockInfos")
 	{
 	}
 

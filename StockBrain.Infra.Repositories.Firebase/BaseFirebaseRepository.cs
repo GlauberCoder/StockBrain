@@ -1,9 +1,6 @@
-﻿using FireSharp;
-using FireSharp.Config;
+﻿using FireSharp.Interfaces;
 using StockBrain.Domain.Models;
-using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
-using StockBrain.Utils;
-using System.Xml.Linq;
+using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
@@ -13,17 +10,13 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO>
 {
 	protected Context Context { get; }
 	string Name { get; }
-	FirebaseClient Client { get; }
+	IFirebaseClient Client { get; }
 
-	public BaseFirebaseRepository(Context context, FirebaseConfigModel config, string name)
+	public BaseFirebaseRepository(Context context, IFirebaseClient client, string name)
 	{
 		Context = context;
 		Name = name;
-		Client = new FirebaseClient(new FirebaseConfig
-		{
-			AuthSecret = config.Secret,
-			BasePath = $"{config.BasePath}"
-		});
+		Client = client; 
 	}
 	protected abstract TEntity FromDTO(TDTO dto);
 	protected abstract TDTO FromEntity(TEntity entity);
@@ -31,19 +24,24 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO>
 	protected abstract IEnumerable<TDTO> FromEntity(IEnumerable<TEntity> entities);
 	protected virtual IEnumerable<TDTO> AllDTO()
 	{
-		var result = Client.Get(Name).ResultAs<IDictionary<string, TDTO>>();
-		return result?.Select(s => s.Value).ToList() ?? Enumerable.Empty<TDTO>();
+		var entities = MemoryCacheService.GetOrAdd(Name, () =>
+		{
+			var result = Client.Get(Name).ResultAs<IDictionary<string, TDTO>>();
+			return result?.Select(s => s.Value).ToList() ?? Enumerable.Empty<TDTO>();
+		});
+		return entities;
 	}
 	public IEnumerable<TEntity> All()
 	{
-		return FromDTO(AllDTO());
+		return FromDTO(AllDTO().ToList());
 	}
 	public TEntity ByID(long id)
 	{
-		return FromDTO(AllDTO().First(a => a.ID == id));
+		return FromDTO(AllDTO().ToList().First(a => a.ID == id));
 	}
 	public void Save(TEntity entity)
 	{
+
 		DeleteOldAndSave(UpdateEntities(All(), new List<TEntity> { entity }));
 	}
 	public virtual void Save(IEnumerable<TEntity> entities)

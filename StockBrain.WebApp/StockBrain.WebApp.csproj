@@ -17,6 +17,7 @@
     <ProjectReference Include="..\StockBrain.Infra.PriceGetters\StockBrain.Infra.PriceGetters.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.Repositories.Firebase\StockBrain.Infra.Repositories.Firebase.csproj" />
     <ProjectReference Include="..\StockBrain.Infra.Repositories.JSONFiles\StockBrain.Infra.Repositories.JSONFiles.csproj" />
+    <ProjectReference Include="..\StockBrain.Infra\StockBrain.Infra.csproj" />
     <ProjectReference Include="..\StockBrain.InvestidorDez\StockBrain.InvestidorDez.csproj" />
     <ProjectReference Include="..\StockBrain.Services\StockBrain.Services.csproj" />
   </ItemGroup>

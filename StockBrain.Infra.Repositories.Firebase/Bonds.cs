@@ -1,6 +1,6 @@
-﻿using StockBrain.Domain.Models;
+﻿using FireSharp.Interfaces;
+using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
-using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
@@ -8,8 +8,8 @@ public class Bonds : BaseFirebaseRepository<Bond, BondDTO>, IBonds
 {
 	IBrokers Brokers { get; }
 	IBondIssuers Issuers { get; }
-	public Bonds(Context context, FirebaseConfigModel config, IBrokers brokers, IBondIssuers issuers)
-		: base(context, config, "bonds")
+	public Bonds(Context context, IFirebaseClient client, IBrokers brokers, IBondIssuers issuers)
+		: base(context, client, "bonds")
 	{
 		Brokers = brokers;
 		Issuers = issuers;

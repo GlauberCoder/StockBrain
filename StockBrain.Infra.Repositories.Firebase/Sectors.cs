@@ -1,13 +1,13 @@
-﻿using StockBrain.Domain.Models;
+﻿using FireSharp.Interfaces;
+using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
-using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
 public class Sectors : BaseFirebaseRepository<Sector, Sector>, ISectors
 {
-	public Sectors(Context context, FirebaseConfigModel config)
-		: base(context, config, "sectors")
+	public Sectors(Context context, IFirebaseClient client)
+		: base(context, client, "sectors")
 	{
 	}
 

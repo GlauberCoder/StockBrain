@@ -1,3 +1,6 @@
+using FireSharp;
+using FireSharp.Config;
+using FireSharp.Interfaces;
 using Radzen;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
@@ -7,11 +10,9 @@ using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Infra.Repositories.Firebase;
-using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 using StockBrain.InvestidorDez;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
-
 using StockBrain.WebApp.Components;
 using StockBrain.WebApp.Services;
 
@@ -54,7 +55,7 @@ namespace StockBrain.WebApp
 
 
 
-			AddServices(builder.Services, builder.Configuration["DataPath"], builder.Configuration["BrAPIKey"]);
+			AddServices(builder.Services, builder.Configuration["FireBaseBasePath"], builder.Configuration["FireBaseAuthSecret"], builder.Configuration["BrAPIKey"]);
 
 			var app = builder.Build();
 
@@ -81,7 +82,7 @@ namespace StockBrain.WebApp
 			app.Run();
 		}
 
-		static void AddServices(IServiceCollection services, string dataPath, string brAPIKey)
+		static void AddServices(IServiceCollection services, string basePath, string authSecret, string brAPIKey)
 		{
 			services
 					.AddScoped(sp => new BrAPIConfig { ApiKey = brAPIKey })
@@ -92,11 +93,12 @@ namespace StockBrain.WebApp
 							context.Account = sp.GetService<Authenticator>().GetAccount();
 						return context;
 					})
-					.AddSingleton(sp => new FirebaseConfigModel
-					{
-						Secret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
-						BasePath = "https://stock-brain-qa-default-rtdb.firebaseio.com"
-
+					.AddScoped<IFirebaseClient>(sp => {
+						return new FirebaseClient(new FirebaseConfig
+						{
+							AuthSecret = authSecret,
+							BasePath = basePath
+						});
 					})
 					.AddScoped(sp => new StockEvaluationConfig
 					{

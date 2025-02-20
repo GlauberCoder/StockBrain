@@ -1,8 +1,8 @@
-﻿using StockBrain.Domain.Models;
+﻿using FireSharp.Interfaces;
+using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.Enums;
 using StockBrain.DTOs;
 using StockBrain.Infra.Repositories.Abstractions;
-using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
@@ -12,8 +12,8 @@ public class BondMovements : BaseFirebaseRepository<BondMovement, BondMovementDT
 	IBrokers Brokers { get; }
 	const long GovID = 1;
 
-	public BondMovements(Context context, FirebaseConfigModel config, IBondIssuers issuers, IBrokers brokers)
-		: base(context, config, "bondMovements")
+	public BondMovements(Context context, IFirebaseClient client,IBondIssuers issuers, IBrokers brokers)
+		: base(context, client, "bondMovements")
 	{
 		Issuers = issuers;
 		Brokers = brokers;

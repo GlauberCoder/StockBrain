@@ -1,8 +1,8 @@
-﻿using StockBrain.Domain.Abstractions;
+﻿using FireSharp.Interfaces;
+using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
 using StockBrain.DTOs;
 using StockBrain.Infra.Repositories.Abstractions;
-using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
@@ -12,8 +12,8 @@ public class Portfolios : BaseFirebaseRepository<Portfolio, PortfolioDTO>, IPort
 	IPortfolioAssets PortfolioAssets { get; }
 	IBonds Bonds { get; }
 
-	public Portfolios(Context context, FirebaseConfigModel config, IPortifolioCalculator calculator, IPortfolioAssets portfolioAssets, IBonds bonds)
-		: base(context, config, "portfolios")
+	public Portfolios(Context context, IFirebaseClient client, IPortifolioCalculator calculator, IPortfolioAssets portfolioAssets, IBonds bonds)
+		: base(context, client, "portfolios")
 	{
 		Calculator = calculator;
 		PortfolioAssets = portfolioAssets;

@@ -1,7 +1,7 @@
-﻿using StockBrain.Domain.Abstractions;
+﻿using FireSharp.Interfaces;
+using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
-using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
@@ -15,8 +15,8 @@ public class PortfolioAssets : BaseFirebaseRepository<PortfolioAsset, PortfolioA
 	IDecisionFactors DecisionFactors { get; }
 
 	public PortfolioAssets(
-		Context context,
-		FirebaseConfigModel config, 
+		Context context, 
+		IFirebaseClient client, 
 		IAssets assets, 
 		IPortfolioAssetMovements portfolioAssetMovements, 
 		IPortfolioAssetBrokers assetBrokers, 
@@ -24,7 +24,7 @@ public class PortfolioAssets : BaseFirebaseRepository<PortfolioAsset, PortfolioA
 		IAssetInfos assetInfos,
 		IDecisionFactors decisionFactors
 		)
-		: base(context, config, "portfolioAssets")
+		: base(context, client, "portfolioAssets")
 	{
 		Assets = assets;
 		PortfolioAssetMovements = portfolioAssetMovements;

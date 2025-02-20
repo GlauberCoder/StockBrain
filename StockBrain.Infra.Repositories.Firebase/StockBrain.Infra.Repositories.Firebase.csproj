@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="FireSharp" Version="2.0.4" />
+    <PackageReference Include="System.Runtime.Caching" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +16,7 @@
     <ProjectReference Include="..\StockBrain.Domain.Models\StockBrain.Domain.Models.csproj" />
     <ProjectReference Include="..\StockBrain.Domain.Repositories.Abstractions\StockBrain.Infra.Repositories.Abstractions.csproj" />
     <ProjectReference Include="..\StockBrain.DTOs\StockBrain.DTOs.csproj" />
+    <ProjectReference Include="..\StockBrain.Infra.Abstrations\StockBrain.Infra.Abstrations.csproj" />
   </ItemGroup>
 
 </Project>

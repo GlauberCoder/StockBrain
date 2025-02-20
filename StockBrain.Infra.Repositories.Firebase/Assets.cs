@@ -1,12 +1,12 @@
-﻿using StockBrain.Domain.Models;
+﻿using FireSharp.Interfaces;
+using StockBrain.Domain.Models;
 using StockBrain.DTOs;
 using StockBrain.Infra.Repositories.Abstractions;
-using StockBrain.Infra.Repositories.Firebase.FirebaseServices;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
-public class Assets(Context context, FirebaseConfigModel config, ISectors sectors, ISegments segments)
-		: BaseFirebaseRepository<Asset, AssetDTO>(context, config, "assets"), IAssets
+public class Assets(Context context, IFirebaseClient client, ISectors sectors, ISegments segments)
+		: BaseFirebaseRepository<Asset, AssetDTO>(context, client, "assets"), IAssets
 {
 	ISectors Sectors { get; } = sectors;
 	ISegments Segments { get; } = segments;
