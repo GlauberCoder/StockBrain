@@ -7,7 +7,7 @@
 		<RadzenSidebarToggle Click="@(() => ToggleSideBar())" />
 		<RadzenLabel Text="Stock Brain" class="rz-ml-3" />
 		<RadzenLabel Text="@Context.Name" class="rz-ml-3"  />
-		<RadzenLabel Text="@Context.Account.Name" class="rz-ml-12" />
+		<RadzenLabel Text="@Context.Account?.Name" class="rz-ml-12" />
 	</RadzenStack>
 </RadzenHeader>
 <AuthorizeView>

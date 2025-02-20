@@ -14,14 +14,14 @@
 	</RadzenRow>
 </RadzenCard>
 
-<RadzenDataGrid PagerHorizontalAlign="HorizontalAlign.Left"Data="@Status" ColumnWidth="300px">
+<RadzenDataGrid PagerHorizontalAlign="HorizontalAlign.Left" Data="@Status" ColumnWidth="300px">
 	<Columns>
 		<RadzenDataGridColumn Title="ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
 			<Template Context="status">
 				@status.Key
 			</Template>
 		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Title="Status" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
+		<RadzenDataGridColumn Title="Status" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
 			<Template Context="status">
 				@if (status.Value.Done)
 				{
@@ -29,7 +29,7 @@
 				}
 				else
 				{
-					<RadzenIcon Icon="pending" IconStyle="IconStyle.Info" />
+					<RadzenProgressBarCircular ProgressBarStyle="ProgressBarStyle.Primary" Value="100" Size="ProgressBarCircularSize.ExtraSmall" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
 				}
 			</Template>
 		</RadzenDataGridColumn>

@@ -26,7 +26,7 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO>
 	protected abstract IEnumerable<TDTO> FromEntity(IEnumerable<TEntity> entities);
 	protected virtual IEnumerable<TDTO> AllDTO()
 	{
-		return UseCache ? MemoryCacheService.GetOrAdd(Name, GetDTOs) : GetDTOs();
+		return  UseCache ? MemoryCacheService.GetOrAdd(Name, GetDTOs) : GetDTOs();
 	}
 	IEnumerable<TDTO> GetDTOs()
 	{
