@@ -54,8 +54,8 @@ namespace StockBrain.WebApp
 			builder.Services.AddRadzenComponents();
 
 
-
-			AddServices(builder.Services, builder.Configuration["FireBaseBasePath"], builder.Configuration["FireBaseAuthSecret"], builder.Configuration["BrAPIKey"]);
+			var environment = builder.Configuration["Environment"];
+			AddServices(builder.Services, environment, builder.Configuration[$"EnvironmentsConfigs:{environment}:FireBaseBasePath"], builder.Configuration[$"EnvironmentsConfigs:{environment}:FireBaseAuthSecret"], builder.Configuration["BrAPIKey"]);
 
 			var app = builder.Build();
 
@@ -82,7 +82,7 @@ namespace StockBrain.WebApp
 			app.Run();
 		}
 
-		static void AddServices(IServiceCollection services, string basePath, string authSecret, string brAPIKey)
+		static void AddServices(IServiceCollection services, string environment, string basePath, string authSecret, string brAPIKey)
 		{
 			services
 					.AddScoped(sp => new BrAPIConfig { ApiKey = brAPIKey })
@@ -91,6 +91,7 @@ namespace StockBrain.WebApp
 						var context = new Context();
 						if (sp.GetService<Authenticator>().IsAuthenticated())
 							context.Account = sp.GetService<Authenticator>().GetAccount();
+						context.Name = environment;
 						return context;
 					})
 					.AddScoped<IFirebaseClient>(sp => {

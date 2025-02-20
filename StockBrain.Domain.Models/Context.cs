@@ -11,4 +11,5 @@ public class Context
 	public DateOnly Today => DateOnly.FromDateTime(Now);
 	public DateTime Now => DateTime.Now;
 	public Account Account { get; set; }
+	public string Name { get; set; }
 }
