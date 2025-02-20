@@ -11,7 +11,7 @@ public class AssetMovements : BaseFirebaseRepository<AssetMovement, AssetMovemen
 	IBrokers Brokers { get; }
 
 	public AssetMovements(Context context, IFirebaseClient client, IAssets assets, IBrokers brokers)
-		: base(context, client, "assetMovements")
+		: base(context, client, "assetMovements", false)
 	{
 		Assets = assets;
 		Brokers = brokers;

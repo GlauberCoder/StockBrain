@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockBrain.Domain.Abstracti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockBrain.InvestidorDez", "StockBrain.InvestidorDez\StockBrain.InvestidorDez.csproj", "{AE6AC690-CEDF-49A3-91C1-E6A7C5A9534A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockBrain.Infra.Repositories.Firebase", "StockBrain.Infra.Repositories.Firebase\StockBrain.Infra.Repositories.Firebase.csproj", "{B94CBBDE-55A8-4A75-9BBF-079F5D181E6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockBrain.Infra.Repositories.Firebase", "StockBrain.Infra.Repositories.Firebase\StockBrain.Infra.Repositories.Firebase.csproj", "{B94CBBDE-55A8-4A75-9BBF-079F5D181E6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

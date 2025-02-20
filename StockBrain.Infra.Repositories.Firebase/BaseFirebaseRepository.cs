@@ -4,19 +4,21 @@ using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
-public abstract class BaseFirebaseRepository<TEntity, TDTO> 
+public abstract class BaseFirebaseRepository<TEntity, TDTO>
 	where TEntity : BaseEntity
 	where TDTO : BaseEntity
 {
 	protected Context Context { get; }
 	string Name { get; }
+	bool UseCache { get; }
 	IFirebaseClient Client { get; }
 
-	public BaseFirebaseRepository(Context context, IFirebaseClient client, string name)
+	public BaseFirebaseRepository(Context context, IFirebaseClient client, string name, bool useCache = true)
 	{
 		Context = context;
 		Name = name;
-		Client = client; 
+		UseCache = useCache;
+		Client = client;
 	}
 	protected abstract TEntity FromDTO(TDTO dto);
 	protected abstract TDTO FromEntity(TEntity entity);
@@ -24,12 +26,13 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO>
 	protected abstract IEnumerable<TDTO> FromEntity(IEnumerable<TEntity> entities);
 	protected virtual IEnumerable<TDTO> AllDTO()
 	{
-		var entities = MemoryCacheService.GetOrAdd(Name, () =>
-		{
-			var result = Client.Get(Name).ResultAs<IDictionary<string, TDTO>>();
-			return result?.Select(s => s.Value).ToList() ?? Enumerable.Empty<TDTO>();
-		});
-		return entities;
+		return UseCache ? MemoryCacheService.GetOrAdd(Name, GetDTOs) : GetDTOs();
+	}
+	IEnumerable<TDTO> GetDTOs()
+	{
+		var result = Client.Get(Name).ResultAs<IDictionary<string, TDTO>>();
+		return result?.Select(s => s.Value).ToList() ?? Enumerable.Empty<TDTO>();
+
 	}
 	public IEnumerable<TEntity> All()
 	{
@@ -65,7 +68,7 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO>
 	IEnumerable<TEntity> UpdateEntities(IEnumerable<TEntity> oldOnes, IEnumerable<TEntity> newOnes)
 	{
 		var updatedList = oldOnes.ToList();
-		var id = (oldOnes.Any() ? oldOnes.Max(o => o.ID) : 0)+1;
+		var id = (oldOnes.Any() ? oldOnes.Max(o => o.ID) : 0) + 1;
 		foreach (var entity in newOnes)
 		{
 			BeforeSave(entity);

@@ -7,19 +7,21 @@
 @using StockBrain.Domain.Models.Extensions;
 @rendermode InteractiveServer
 
-<RadzenRow AlignItems="AlignItems.End" Wrap="FlexWrap.Wrap" Gap="1rem">
-	<RadzenColumn Size="3">
-		<RadzenFormField Text="Aporte" Variant="Variant.Text" Style="width: 100%;">
-			<RadzenNumeric Format="c" @bind-Value="@Value" />
-		</RadzenFormField>
-	</RadzenColumn>
-	<RadzenColumn Size="4">
-		<RadzenButton Click=@OpenConfigs Icon="Settings" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" class="float-end" />
-		<RadzenButton Click=@Calculate Text="Calcular" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" class="float-end rz-mr-2" />
-	</RadzenColumn>
-</RadzenRow>
-<hr />
-<InvestmentRecommendationPage Recommendation="Recommendation" />
+<SBLoading IsLoading=@IsLoading>
+	<RadzenRow AlignItems="AlignItems.End" Wrap="FlexWrap.Wrap" Gap="1rem">
+		<RadzenColumn Size="3">
+			<RadzenFormField Text="Aporte" Variant="Variant.Text" Style="width: 100%;">
+				<RadzenNumeric Format="c" @bind-Value="@Value" />
+			</RadzenFormField>
+		</RadzenColumn>
+		<RadzenColumn Size="4">
+			<RadzenButton Click=@OpenConfigs Icon="Settings" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" class="float-end" />
+			<RadzenButton Click=@Calculate Text="Calcular" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" class="float-end rz-mr-2" />
+		</RadzenColumn>
+	</RadzenRow>
+	<hr />
+	<InvestmentRecommendationPage Recommendation="Recommendation" />
+</SBLoading>
 
 
 @code {
@@ -32,22 +34,33 @@
 	[Inject]
 	Dialogs Dialogs { get; set; }
 	Portfolio Portfolio { get; set; }
+	private bool IsLoading { get; set; }
 	InvestmentRecommendation Recommendation { get; set; }
 	double Value { get; set; } = 15000;
 	IDictionary<AssetType, InvestmentRecommendationTypeConfig> Configs { get; set; }
 
 	protected override void OnInitialized()
 	{
-		Portfolio = Portfolios.FromCurrentAccount().FirstOrDefault(p => p.Main);
-		Configs = ConfigCalculator.Calc(Portfolio);
-		Calculate();
-		OpenConfigs();
+		IsLoading = true;
+		InvokeAsync(StateHasChanged).ContinueWith(r =>
+		{
+			Portfolio = Portfolios.FromCurrentAccount().FirstOrDefault(p => p.Main);
+			Configs = ConfigCalculator.Calc(Portfolio);
+			Calculate();
+			IsLoading = false;
+			InvokeAsync(StateHasChanged);
+		});
 		base.OnInitialized();
 	}
 	void Calculate()
 	{
-		Recommendation = Recommender.Recommend(Portfolio, Value, Configs);
-		StateHasChanged();
+		IsLoading = true;
+		InvokeAsync(StateHasChanged).ContinueWith(r =>
+		{
+			Recommendation = Recommender.Recommend(Portfolio, Value, Configs);
+			IsLoading = false;
+			InvokeAsync(StateHasChanged);
+		});
 	}
 	void OpenConfigs()
 	{

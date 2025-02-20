@@ -13,7 +13,7 @@ public class BondMovements : BaseFirebaseRepository<BondMovement, BondMovementDT
 	const long GovID = 1;
 
 	public BondMovements(Context context, IFirebaseClient client,IBondIssuers issuers, IBrokers brokers)
-		: base(context, client, "bondMovements")
+		: base(context, client, "bondMovements", false)
 	{
 		Issuers = issuers;
 		Brokers = brokers;

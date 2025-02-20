@@ -6,7 +6,7 @@
 @using StockBrain.WebApp.Components.Pages.AssetPages
 @using StockBrain.WebApp.Models
 @rendermode InteractiveServer
-
+<SBLoading IsLoading="@IsLoading">
 <RadzenRow>
 	<RadzenColumn Size="12">
 		<RadzenButton Variant="Variant.Filled" Click=@Confirm Text="Confirmar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" Disabled="@ConfirmDisabled" class="float-end rz-mr-2" />
@@ -88,7 +88,7 @@
 		</RadzenDataGridColumn>
 	</Columns>
 </RadzenDataGrid>
-
+</SBLoading>
 @code {
 	[Parameter]
 	public IEnumerable<AssetMovement> Assets { get; set; }
@@ -100,13 +100,20 @@
 	IPortfolioAssetManager PortfolioManager { get; set; }
 	[Inject]
 	NavigationManager Navigation { get; set; }
+	private bool IsLoading { get; set; }
 
 	IEnumerable<SelectableItem<Portfolio>> Portfolios { get; set; }
 	bool ConfirmDisabled => !Portfolios.Any(p => p.Selected);
 
 	protected override async Task OnInitializedAsync()
 	{
-		Portfolios = PortfoliosRepository.FromCurrentAccount().Select(m => new SelectableItem<Portfolio>(m, true)).ToList();
+		IsLoading = true;
+		InvokeAsync(StateHasChanged).ContinueWith(r =>
+		{
+			Portfolios = PortfoliosRepository.FromCurrentAccount().Select(m => new SelectableItem<Portfolio>(m, true)).ToList();
+			IsLoading = false;
+			InvokeAsync(StateHasChanged);
+		});
 	}
 	void Confirm()
 	{

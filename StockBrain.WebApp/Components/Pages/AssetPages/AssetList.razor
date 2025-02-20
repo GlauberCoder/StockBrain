@@ -5,25 +5,26 @@
 @rendermode InteractiveServer
 
 <PageTitle>Assets</PageTitle>
+<SBLoading IsLoading="@IsLoading">
+	<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left"
+					Data="@Assets" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
+		<Columns>
+			<RadzenDataGridColumn Title="Ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="asset">
+					<RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.Asset(asset)) Text="@asset.Ticker" ButtonStyle="ButtonStyle.Primary" />
+				</Template>
+			</RadzenDataGridColumn>
+			<RadzenDataGridColumn Property="@nameof(Asset.Name)" Title="Empresa" Frozen="true" Width="160px" />
+			<RadzenDataGridColumn Property="@nameof(Asset.MarketPrice)" FormatString="{0:C}" Title="Preço" Frozen="true" Width="160px" />
+			<RadzenDataGridColumn Title="Atualização do preço" Frozen="true" Sortable="true" Filterable="true" Width="100px" TextAlign="TextAlign.Center">
+				<Template Context="asset">
+					@asset.LastPriceUpdate
+				</Template>
+			</RadzenDataGridColumn>
+			<RadzenDataGridColumn Property="@nameof(Asset.Type)" Title="Tipo" Frozen="true" Width="160px" />
+			<RadzenDataGridColumn Property="@nameof(Asset.Risk)" Title="Arriscada" Frozen="true" Width="160px" />
+			<RadzenDataGridColumn Property="@nameof(Asset.ReviewExpired)" Title="Expirada" Frozen="true" Width="160px" />
 
-<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left"
-				Data="@Assets" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
-	<Columns>
-		<RadzenDataGridColumn Title="Ticker" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Center">
-			<Template Context="asset">
-				<RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.Asset(asset)) Text="@asset.Ticker" ButtonStyle="ButtonStyle.Primary" />
-			</Template>
-		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Property="@nameof(Asset.Name)" Title="Empresa" Frozen="true" Width="160px" />
-		<RadzenDataGridColumn Property="@nameof(Asset.MarketPrice)" FormatString="{0:C}" Title="Preço" Frozen="true" Width="160px" />
-		<RadzenDataGridColumn Title="Atualização do preço" Frozen="true" Sortable="true" Filterable="true" Width="100px" TextAlign="TextAlign.Center">
-			<Template Context="asset">
-				@asset.LastPriceUpdate
-			</Template>
-		</RadzenDataGridColumn>
-		<RadzenDataGridColumn Property="@nameof(Asset.Type)" Title="Tipo" Frozen="true" Width="160px" />
-		<RadzenDataGridColumn Property="@nameof(Asset.Risk)" Title="Arriscada" Frozen="true" Width="160px" />
-		<RadzenDataGridColumn Property="@nameof(Asset.ReviewExpired)" Title="Expirada" Frozen="true" Width="160px" />
-
-	</Columns>
-</RadzenDataGrid>
+		</Columns>
+	</RadzenDataGrid>
+</SBLoading>

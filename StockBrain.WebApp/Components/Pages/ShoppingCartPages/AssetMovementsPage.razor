@@ -5,105 +5,105 @@
 @using StockBrain.WebApp.Components.Pages.AssetPages
 @using StockBrain.WebApp.Models
 @rendermode InteractiveServer
+<SBLoading IsLoading="@IsLoading">
+	<RadzenRow>
+		<RadzenColumn Size="12">
+			<RadzenCard Variant="@Variant.Filled">
+				<RadzenStack Gap="0">
+					<RadzenRow RowGap="0">
+						<RadzenColumn Size="6">Var</RadzenColumn>
+						<RadzenColumn Size="6">Fix</RadzenColumn>
+					</RadzenRow>
+				</RadzenStack>
+				<RadzenStack Gap="0">
+					<RadzenRow RowGap="0">
+						<SBLabelCol Size="2" Title="QTD" Text="@AssetMovements.Where(m => m.Selected).Sum(m => m.Model.Quantity).ToString()" />
+						<SBLabelCol Size="2" Title="Valor" Text="@AssetMovements.Where(m => m.Selected).Sum(m => m.Model.Investment).MonetaryFormat()" />
+						<SBLabelCol Size="2" Title="Selecionados" Text="@($"{AssetMovements.Where(m => m.Selected).Count()} / {AssetMovements.Count()}")" />
+						<SBLabelCol Size="4" Title="Valor" Text="@BondMovements.Where(m => m.Selected).Sum(m => m.Model.Value).MonetaryFormat()" />
+						<SBLabelCol Size="2" Title="Selecionados" Text="@($"{BondMovements.Where(m => m.Selected).Count()} / {BondMovements.Count()}")" />
+					</RadzenRow>
+				</RadzenStack>
+			</RadzenCard>
+		</RadzenColumn>
+		<RadzenColumn Size="12">
+			<RadzenCard Variant="@Variant.Filled">
+				<RadzenRow>
+					<RadzenColumn Size="8">
+						<SBSelectorBroker @bind-Entity="Broker" />
+						<RadzenButton Variant="Variant.Outlined" Click=@SetBrokerAndSave Text="Definir Corretora" Disabled="(Broker == null)" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" class="rz-mr-2 rz-mt-2 rz-ml-2" />
+					</RadzenColumn>
+					<RadzenColumn Size="4">
 
-<RadzenRow>
-	<RadzenColumn Size="12">
-		<RadzenCard Variant="@Variant.Filled">
-			<RadzenStack Gap="0">
-				<RadzenRow RowGap="0">
-					<RadzenColumn Size="6">Var</RadzenColumn>
-					<RadzenColumn Size="6">Fix</RadzenColumn>					
+						<RadzenButton Variant="Variant.Outlined" Click=@ConfirmSelected Text="Confirmar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" Disabled="@ConfirmDisabled" class="float-end rz-mr-2 rz-mt-2" />
+						<RadzenButton Variant="Variant.Outlined" Click=@RemoveSelected Text="Cancelar" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Medium" Disabled="@CancelDisabled" class="float-end rz-mr-2 rz-mt-2" />
+					</RadzenColumn>
 				</RadzenRow>
-			</RadzenStack>
-			<RadzenStack Gap="0">
-				<RadzenRow RowGap="0">
-					<SBLabelCol Size="2" Title="QTD" Text="@AssetMovements.Where(m => m.Selected).Sum(m => m.Model.Quantity).ToString()" />
-					<SBLabelCol Size="2" Title="Valor" Text="@AssetMovements.Where(m => m.Selected).Sum(m => m.Model.Investment).MonetaryFormat()" />
-					<SBLabelCol Size="2" Title="Selecionados" Text="@($"{AssetMovements.Where(m => m.Selected).Count()} / {AssetMovements.Count()}")" />
-					<SBLabelCol Size="4" Title="Valor" Text="@BondMovements.Where(m => m.Selected).Sum(m => m.Model.Value).MonetaryFormat()" />
-					<SBLabelCol Size="2" Title="Selecionados" Text="@($"{BondMovements.Where(m => m.Selected).Count()} / {BondMovements.Count()}")" />
-				</RadzenRow>
-			</RadzenStack>
-		</RadzenCard>
-	</RadzenColumn>
-	<RadzenColumn Size="12">
-		<RadzenCard Variant="@Variant.Filled">
-			<RadzenRow>
-				<RadzenColumn Size="8">
-					<SBSelectorBroker @bind-Entity="Broker" />
-					<RadzenButton Variant="Variant.Outlined" Click=@SetBrokerAndSave Text="Definir Corretora" Disabled="(Broker == null)" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" class="rz-mr-2 rz-mt-2 rz-ml-2" />
-				</RadzenColumn>
-				<RadzenColumn Size="4">
-					
-					<RadzenButton Variant="Variant.Outlined" Click=@ConfirmSelected Text="Confirmar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" Disabled="@ConfirmDisabled" class="float-end rz-mr-2 rz-mt-2" />
-					<RadzenButton Variant="Variant.Outlined" Click=@RemoveSelected Text="Cancelar" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Medium" Disabled="@CancelDisabled" class="float-end rz-mr-2 rz-mt-2" />
-				</RadzenColumn>
-			</RadzenRow>
-		</RadzenCard>
-	</RadzenColumn>
-	<RadzenColumn Size="4">
-		<RadzenCard Variant="@Variant.Filled">
-			<RadzenRow>
-				<RadzenColumn Size="12">
-					<RadzenButton Click=@AddVarItem Icon="add" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10 float-end" />
-					
-				</RadzenColumn>
-			</RadzenRow>
-			<RadzenRow AlignItems="AlignItems.Center">
-				<RadzenColumn Size="1"></RadzenColumn>
-				<RadzenColumn Size="3">Ticker</RadzenColumn>
-				<RadzenColumn Size="2">Corretora</RadzenColumn>
-				<RadzenColumn Size="2">QTD</RadzenColumn>
-				<RadzenColumn Size="3">Aporte</RadzenColumn>
-			</RadzenRow>
-			<hr />
-			@foreach (var item in AssetMovements)
-			{
-				<RadzenRow AlignItems="AlignItems.Center" class="rz-mt-1">
-					<RadzenColumn Size="1"><RadzenCheckBox @bind-Value=item.Selected /></RadzenColumn>
-					<RadzenColumn Size="3"><RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.Asset(item.Model.Asset)) Text="@item.Model.Asset.Ticker" ButtonStyle="ButtonStyle.Primary" /></RadzenColumn>
-					<RadzenColumn Size="2"><RadzenText TextStyle="TextStyle.Body1">@item.Model.Broker?.Name</RadzenText></RadzenColumn>
-					<RadzenColumn Size="2"><RadzenNumeric TextAlign="TextAlign.End" @bind-Value="@item.Model.Quantity" /></RadzenColumn>
-					<RadzenColumn Size="3"><RadzenNumeric TextAlign="TextAlign.End" Format="c" @bind-Value="@item.Model.Investment" /></RadzenColumn>
-				</RadzenRow>
-			}
-		</RadzenCard>
-	</RadzenColumn>
-	<RadzenColumn Size="8">
-		<RadzenCard Variant="@Variant.Filled">
-			<RadzenRow>
-				<RadzenColumn Size="12">
-					<RadzenButton Click=@AddFixItem Icon="add" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10 float-end" />
-				</RadzenColumn>
-			</RadzenRow>
-			<RadzenRow AlignItems="AlignItems.Center">
-				<RadzenColumn Size="1"></RadzenColumn>
-				<RadzenColumn Size="1">Tipo</RadzenColumn>
-				<RadzenColumn Size="1">Indice</RadzenColumn>
-				<RadzenColumn Size="1">Taxa</RadzenColumn>
-				<RadzenColumn Size="1">Corretora</RadzenColumn>
-				<RadzenColumn Size="3">Emissor</RadzenColumn>
-				<RadzenColumn Size="2">Vencimento</RadzenColumn>
-				<RadzenColumn Size="2">Valor</RadzenColumn>
-			</RadzenRow>
-			<hr />
-			@foreach (var item in BondMovements)
-			{
-				<RadzenRow AlignItems="AlignItems.Center" class="rz-mt-1">
-					<RadzenColumn Size="1"><RadzenCheckBox @bind-Value=item.Selected /></RadzenColumn>
-					<RadzenColumn Size="1">@item.Model.Type</RadzenColumn>
-					<RadzenColumn Size="1">@item.Model.Index</RadzenColumn>
-					<RadzenColumn Size="1">@item.Model.Tax.PercentageFormat(5)</RadzenColumn>
-					<RadzenColumn Size="1">@item.Model.Broker.Name</RadzenColumn>
-					<RadzenColumn Size="3">@item.Model.Issuer.Name</RadzenColumn>
-					<RadzenColumn Size="2">@item.Model.Expiration</RadzenColumn>
-					<RadzenColumn Size="2">@item.Model.Value.MonetaryFormat()</RadzenColumn>
-				</RadzenRow>
-			}
-		</RadzenCard>
-	</RadzenColumn>
-</RadzenRow>
+			</RadzenCard>
+		</RadzenColumn>
+		<RadzenColumn Size="4">
+			<RadzenCard Variant="@Variant.Filled">
+				<RadzenRow>
+					<RadzenColumn Size="12">
+						<RadzenButton Click=@AddVarItem Icon="add" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10 float-end" />
 
+					</RadzenColumn>
+				</RadzenRow>
+				<RadzenRow AlignItems="AlignItems.Center">
+					<RadzenColumn Size="1"></RadzenColumn>
+					<RadzenColumn Size="3">Ticker</RadzenColumn>
+					<RadzenColumn Size="2">Corretora</RadzenColumn>
+					<RadzenColumn Size="2">QTD</RadzenColumn>
+					<RadzenColumn Size="3">Aporte</RadzenColumn>
+				</RadzenRow>
+				<hr />
+				@foreach (var item in AssetMovements)
+				{
+					<RadzenRow AlignItems="AlignItems.Center" class="rz-mt-1">
+						<RadzenColumn Size="1"><RadzenCheckBox @bind-Value=item.Selected /></RadzenColumn>
+						<RadzenColumn Size="3"><RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.Asset(item.Model.Asset)) Text="@item.Model.Asset.Ticker" ButtonStyle="ButtonStyle.Primary" /></RadzenColumn>
+						<RadzenColumn Size="2"><RadzenText TextStyle="TextStyle.Body1">@item.Model.Broker?.Name</RadzenText></RadzenColumn>
+						<RadzenColumn Size="2"><RadzenNumeric TextAlign="TextAlign.End" @bind-Value="@item.Model.Quantity" /></RadzenColumn>
+						<RadzenColumn Size="3"><RadzenNumeric TextAlign="TextAlign.End" Format="c" @bind-Value="@item.Model.Investment" /></RadzenColumn>
+					</RadzenRow>
+				}
+			</RadzenCard>
+		</RadzenColumn>
+		<RadzenColumn Size="8">
+			<RadzenCard Variant="@Variant.Filled">
+				<RadzenRow>
+					<RadzenColumn Size="12">
+						<RadzenButton Click=@AddFixItem Icon="add" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10 float-end" />
+					</RadzenColumn>
+				</RadzenRow>
+				<RadzenRow AlignItems="AlignItems.Center">
+					<RadzenColumn Size="1"></RadzenColumn>
+					<RadzenColumn Size="1">Tipo</RadzenColumn>
+					<RadzenColumn Size="1">Indice</RadzenColumn>
+					<RadzenColumn Size="1">Taxa</RadzenColumn>
+					<RadzenColumn Size="1">Corretora</RadzenColumn>
+					<RadzenColumn Size="3">Emissor</RadzenColumn>
+					<RadzenColumn Size="2">Vencimento</RadzenColumn>
+					<RadzenColumn Size="2">Valor</RadzenColumn>
+				</RadzenRow>
+				<hr />
+				@foreach (var item in BondMovements)
+				{
+					<RadzenRow AlignItems="AlignItems.Center" class="rz-mt-1">
+						<RadzenColumn Size="1"><RadzenCheckBox @bind-Value=item.Selected /></RadzenColumn>
+						<RadzenColumn Size="1">@item.Model.Type</RadzenColumn>
+						<RadzenColumn Size="1">@item.Model.Index</RadzenColumn>
+						<RadzenColumn Size="1">@item.Model.Tax.PercentageFormat(5)</RadzenColumn>
+						<RadzenColumn Size="1">@item.Model.Broker.Name</RadzenColumn>
+						<RadzenColumn Size="3">@item.Model.Issuer.Name</RadzenColumn>
+						<RadzenColumn Size="2">@item.Model.Expiration</RadzenColumn>
+						<RadzenColumn Size="2">@item.Model.Value.MonetaryFormat()</RadzenColumn>
+					</RadzenRow>
+				}
+			</RadzenCard>
+		</RadzenColumn>
+	</RadzenRow>
+</SBLoading>
 
 
 @code {
@@ -124,6 +124,7 @@
 
 	bool ConfirmDisabled => CancelDisabled || AssetMovements.Any(m => m.Selected && m.Model.Broker == null);
 	bool CancelDisabled => (!SelectedAssets().Any() && !SelectedBonds().Any());
+	private bool IsLoading { get; set; }
 
 	void ConfirmSelected()
 	{
@@ -132,9 +133,14 @@
 	}
 	void RemoveSelected()
 	{
-		Assets.Delete(SelectedAssets());
-		Bonds.Delete(SelectedBonds());
-		ReloadData(false);
+		IsLoading = true;
+		InvokeAsync(StateHasChanged).ContinueWith(r =>
+		{
+			Assets.Delete(SelectedAssets());
+			Bonds.Delete(SelectedBonds());
+		}).ContinueWith(r =>{
+			ReloadData(false);
+		});
 	}
 	void AddVarItem()
 	{
@@ -166,8 +172,14 @@
 	}
 	void ReloadData(bool firstLoad)
 	{
-		AssetMovements = ReloadData(firstLoad, Assets.ByAccount(Context.Account.ID), SelectedAssets());
-		BondMovements = ReloadData(firstLoad, Bonds.ByAccount(Context.Account.ID), SelectedBonds());
+		IsLoading = true;
+		InvokeAsync(StateHasChanged).ContinueWith(r =>
+		{
+			AssetMovements = ReloadData(firstLoad, Assets.ByAccount(Context.Account.ID), SelectedAssets());
+			BondMovements = ReloadData(firstLoad, Bonds.ByAccount(Context.Account.ID), SelectedBonds());
+			IsLoading = false;
+			InvokeAsync(StateHasChanged);
+		});
 	}
 	IEnumerable<SelectableItem<T>> ReloadData<T>(bool firstLoad, IEnumerable<T> entities, IEnumerable<T> selectedItens) where T : BaseEntity
 	{

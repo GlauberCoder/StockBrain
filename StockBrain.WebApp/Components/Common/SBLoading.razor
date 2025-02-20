@@ -1,0 +1,17 @@
+﻿
+@if (IsLoading)
+{
+	<RadzenStack AlignItems="AlignItems.Center" class="rz-m-12" Gap="2rem">
+		<RadzenProgressBarCircular ProgressBarStyle="ProgressBarStyle.Primary" Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+	</RadzenStack>
+}
+else
+{
+	@ChildContent
+}
+@code {
+	[Parameter]
+	public bool IsLoading { get; set; }
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+}
