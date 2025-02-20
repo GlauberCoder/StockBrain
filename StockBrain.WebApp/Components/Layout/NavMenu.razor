@@ -5,7 +5,9 @@
 <RadzenHeader >
 	<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0" style="@(Context.Name == "QA" ? "background-color:green;" : "")">
 		<RadzenSidebarToggle Click="@(() => ToggleSideBar())" />
-		<RadzenLabel Text="@($"Stock Brain - {Context.Name}")" />
+		<RadzenLabel Text="Stock Brain" class="rz-ml-3" />
+		<RadzenLabel Text="@Context.Name" class="rz-ml-3"  />
+		<RadzenLabel Text="@Context.Account.Name" class="rz-ml-12" />
 	</RadzenStack>
 </RadzenHeader>
 <AuthorizeView>
