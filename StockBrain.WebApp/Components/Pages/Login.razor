@@ -48,7 +48,7 @@
 	NavigationManager Navigation { get; set; }
 
 	[SupplyParameterFromForm]
-	LoginVM Model { get; set; }
+	LoginVM Model { get; set; } = new LoginVM();
 
 
 	protected override async Task OnInitializedAsync()

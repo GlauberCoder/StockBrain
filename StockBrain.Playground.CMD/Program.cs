@@ -1,20 +1,23 @@
 ﻿using FireSharp;
 using FireSharp.Config;
+using FireSharp.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.AssetInfos;
+using StockBrain.Domain.Models.Enums;
 using StockBrain.Domain.Models.EvaluationConfigs;
 using StockBrain.DTOs;
 using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
-using StockBrain.Infra.Repositories.JSONFiles;
+using StockBrain.Infra.Repositories.Firebase;
 using StockBrain.InvestidorDez;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
 using StockBrain.Utils;
+using System.IO;
 
 namespace StockBrain.Playground.CMD;
 
@@ -45,11 +48,65 @@ internal class Program
 		//PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
 		//CreateInfos("XPML11");
 
-		ETLFirebase();
+		//ETLFirebase();
 
-
+		CreateAccount("Higor Fisher", "Fisher");
 		Console.WriteLine("Done");
 
+	}
+	static void CreateAccount(string accountName, string portifolioName) 
+	{
+		var client = new FirebaseClient(new FirebaseConfig
+		{
+			AuthSecret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
+			BasePath = "https://stock-brain-bd238-default-rtdb.firebaseio.com/"
+		});
+		var context = GetService<Context>();
+		var account = new Account { ID = GetNextID<Account>(client, "accounts"), Name = accountName, GUID = Guid.NewGuid().ToString() };
+
+		var portfolio = new PortfolioDTO
+		{ 
+			ID = GetNextID<PortfolioDTO>(client, "portfolios"),
+			GUID = Guid.NewGuid().ToString(),
+			AccountID = account.ID, 
+			Name = portifolioName, 
+			Main = true, 
+			Targets = new Dictionary<AssetType, double> {
+				{ AssetType.Acoes, 0.3 },
+				{ AssetType.BDR, 0.25 },
+				{ AssetType.FII, 0.2 },
+				{ AssetType.Gov, 0.1 },
+				{ AssetType.Priv, 0.15 },
+			}		
+		};
+		var assetID = GetNextID<Account>(client, "portfolioAssets");
+		var assets = GetService<IAssets>().All().Where(a => !a.Risk).Select(a => new PortfolioAssetDTO { 
+			FirstAquisition = context.Today,
+			LastAquisition = context.Today,
+			GUID = Guid.NewGuid().ToString(),
+			ID = assetID++,
+			PortifolioID = portfolio.ID,
+			Quantity = 0,
+			Value = 0,
+			Risk = false,
+			Ticker = a.Ticker
+		});
+
+		Save(client, "accounts", account);
+		Save(client, "portfolios", portfolio);
+		foreach(var asset in assets)
+			Save(client, "portfolioAssets", asset);
+
+	}
+	static long GetNextID<TEntity>(IFirebaseClient client, string path)
+		where TEntity : BaseEntity
+	{
+		return client.Get(path).ResultAs<IDictionary<string, TEntity>>().Max(d => d.Value.ID) + 1;
+	}
+	static void Save<TEntity>(IFirebaseClient client, string path, TEntity entity)
+		where TEntity : BaseEntity
+	{
+		client.Set($"{path}/{entity.GUID}", entity);
 	}
 	static void ETLFirebase()
 	{
@@ -338,12 +395,14 @@ internal class Program
 		ServiceProvider = new ServiceCollection()
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
 			.AddScoped(sp => new Context { Account = new Account { GUID = Guid.NewGuid().ToString(), ID = 1, Name = "Glauber" } })
-			.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\PROD" })
-			//.AddSingleton(sp => new FirebaseConfigModel { 
-			//	Secret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
-			//	BasePath = "https://stock-brain-qa-default-rtdb.firebaseio.com"
-			
-			//})
+			//.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\PROD" })
+			.AddScoped<IFirebaseClient>(sp => {
+				return new FirebaseClient(new FirebaseConfig
+				{
+					AuthSecret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
+					BasePath = "https://stock-brain-bd238-default-rtdb.firebaseio.com/"
+				});
+			})
 					.AddScoped(sp => new StockEvaluationConfig
 					{
 						BazinExpectedReturn = 0.06,
