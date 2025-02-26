@@ -3,12 +3,12 @@ name: Deploy Blazor WebAssembly to GitHub Pages
 on:
   push:
     branches:
-      - main  # Altere para a branch principal do seu projeto, se necessário
+      - main
 
-  workflow_dispatch:  # Permite executar manualmente via GitHub Actions
+  workflow_dispatch:
 
 permissions:
-  contents: write  # Permissão para escrever na branch gh-pages
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -26,15 +26,18 @@ jobs:
       - name: Restaurar dependências
         run: dotnet restore
 
-      - name: Build e Publicação do Blazor WebAssembly
-        run: dotnet publish -c Release -o release --nologo --p:StaticWebAssetBasePath=/StockBrain
+      - name: Compilar e Publicar Blazor WebAssembly
+        run: |
+          cd StockBrain.WebApp
+          dotnet publish -c Release -o release --nologo --p:StaticWebAssetBasePath=/StockBrain
+          ls -la release/wwwroot
 
-      - name: Criar arquivo `.nojekyll` (Evita problemas com arquivos `_framework`)
-        run: touch release/wwwroot/.nojekyll
+      - name: Criar `.nojekyll` para evitar problemas no GitHub Pages
+        run: touch StockBrain.WebApp/release/wwwroot/.nojekyll
 
       - name: Deploy para GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: release/wwwroot  # Define a pasta de saída do Blazor
-          clean: true  # Limpa a branch `gh-pages` antes do novo deploy
+          folder: StockBrain.WebApp/release/wwwroot  # Define a pasta correta do Blazor
+          clean: true
