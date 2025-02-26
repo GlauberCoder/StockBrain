@@ -21,6 +21,10 @@ jobs:
         dotnet-version: '8.0.x'
     - name: Publish with dotnet
       run: dotnet publish --configuration Release --output build
+    - name: Descobrir onde está o index.html
+      run: find build -name index.html
+    - name: Verificar estrutura de arquivos
+      run: ls -R build/wwwroot/      
     # changes the base-tag in index.html from '/' to 'BlazorAppSpendsRegister' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to StockBrain
       run: sed -i 's/<base href="\/" \/>/<base href="\/StockBrain\/" \/>/g' build/wwwroot/index.html
