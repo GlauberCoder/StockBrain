@@ -39,5 +39,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: StockBrain.WebApp/release/wwwroot  # Define a pasta correta do Blazor
+          folder: StockBrain.WebApp/release/wwwroot  # Define a pasta correta do Blazor --
           clean: true
