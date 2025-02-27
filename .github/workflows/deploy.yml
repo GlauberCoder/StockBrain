@@ -29,7 +29,8 @@ jobs:
       run: dotnet restore
 
     - name: Build and Publish Blazor WebAssembly
-      run: dotnet publish StockBrain.WebApp/StockBrain.WebApp.csproj -c Release -o release --nologo --property:PublishTrimmed=true
+      run: dotnet publish StockBrain.WebApp/StockBrain.WebApp.csproj -c Release -o release --nologo --property:PublishTrimmed=true -p:BlazorEnableCompression=true -p:PublishDir=release/wwwroot -p:NoWarn=CS8618;CS8603;CS8604;CS8625
+
 
     - name: Setup Pages
       uses: actions/configure-pages@v3
@@ -41,3 +42,6 @@ jobs:
 
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v2
+
+    - name: List files in output directory
+      run: ls -la release/wwwroot
