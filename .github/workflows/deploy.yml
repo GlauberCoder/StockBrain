@@ -3,41 +3,41 @@ name: Deploy Blazor WebAssembly to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - main  # Substitua pelo nome do seu branch principal se for diferente
 
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Instalar o .NET 8
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
 
-      - name: Restaurar dependências
-        run: dotnet restore
+    - name: Restore dependencies
+      run: dotnet restore
 
-      - name: Compilar e Publicar Blazor WebAssembly
-        run: |
-          cd StockBrain.WebApp
-          dotnet publish -c Release -o release --nologo --p:StaticWebAssetBasePath=/StockBrain
-          ls -la release/wwwroot
+    - name: Build and Publish Blazor WebAssembly
+      run: dotnet publish StockBrain.WebApp/StockBrain.WebApp.csproj -c Release -o release --nologo --property:PublishTrimmed=true
 
-      - name: Criar `.nojekyll` para evitar problemas no GitHub Pages
-        run: touch StockBrain.WebApp/release/wwwroot/.nojekyll
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
 
-      - name: Deploy para GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages
-          folder: StockBrain.WebApp/release/wwwroot  # Define a pasta correta do Blazor --
-          clean: true
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: release/wwwroot
+
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v2
