@@ -25,7 +25,7 @@ jobs:
       run: dotnet restore
         
     - name: Publish
-      run: dotnet publish StockBrain.WebApp/StockBrain.WebApp.csproj -c Release -o build
+      run: dotnet publish StockBrain.WebApp/StockBrain.WebApp.csproj -c Release -o build/wwwroot --nologo --property:PublishTrimmed=false -p:BlazorEnableCompression=true -p:PublishSingleFile=false
       
     - name: Commit
       uses: JamesIves/github-pages-deploy-action@3.7.1
