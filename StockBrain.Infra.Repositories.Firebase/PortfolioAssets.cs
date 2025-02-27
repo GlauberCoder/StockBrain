@@ -1,7 +1,7 @@
-﻿using FireSharp.Interfaces;
-using StockBrain.Domain.Abstractions;
+﻿using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
@@ -15,8 +15,8 @@ public class PortfolioAssets : BaseFirebaseRepository<PortfolioAsset, PortfolioA
 	IDecisionFactors DecisionFactors { get; }
 
 	public PortfolioAssets(
-		Context context, 
-		IFirebaseClient client, 
+		Context context,
+		DataBaseClient client, 
 		IAssets assets, 
 		IPortfolioAssetMovements portfolioAssetMovements, 
 		IPortfolioAssetBrokers assetBrokers, 

@@ -41,7 +41,7 @@
 				</RadzenRow>
 			</RadzenCard>
 		</RadzenColumn>
-		<RadzenColumn Size="4">
+		<RadzenColumn Size="6">
 			<RadzenCard Variant="@Variant.Filled">
 				<RadzenRow>
 					<RadzenColumn Size="12">
@@ -51,25 +51,30 @@
 				</RadzenRow>
 				<RadzenRow AlignItems="AlignItems.Center">
 					<RadzenColumn Size="1"></RadzenColumn>
-					<RadzenColumn Size="3">Ticker</RadzenColumn>
+					<RadzenColumn Size="2">Ticker</RadzenColumn>
 					<RadzenColumn Size="2">Corretora</RadzenColumn>
 					<RadzenColumn Size="2">QTD</RadzenColumn>
-					<RadzenColumn Size="3">Aporte</RadzenColumn>
+					<RadzenColumn Size="2">Aporte</RadzenColumn>
 				</RadzenRow>
 				<hr />
 				@foreach (var item in AssetMovements)
 				{
 					<RadzenRow AlignItems="AlignItems.Center" class="rz-mt-1">
 						<RadzenColumn Size="1"><RadzenCheckBox @bind-Value=item.Selected /></RadzenColumn>
-						<RadzenColumn Size="3"><RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.Asset(item.Model.Asset)) Text="@item.Model.Asset.Ticker" ButtonStyle="ButtonStyle.Primary" /></RadzenColumn>
+						<RadzenColumn Size="2"><RadzenButton Variant="Variant.Text" Click=@(args => Dialogs.Asset(item.Model.Asset)) Text="@item.Model.Asset.Ticker" ButtonStyle="ButtonStyle.Primary" /></RadzenColumn>
 						<RadzenColumn Size="2"><RadzenText TextStyle="TextStyle.Body1">@item.Model.Broker?.Name</RadzenText></RadzenColumn>
 						<RadzenColumn Size="2"><RadzenNumeric TextAlign="TextAlign.End" @bind-Value="@item.Model.Quantity" /></RadzenColumn>
-						<RadzenColumn Size="3"><RadzenNumeric TextAlign="TextAlign.End" Format="c" @bind-Value="@item.Model.Investment" /></RadzenColumn>
+						<RadzenColumn Size="2"><RadzenNumeric TextAlign="TextAlign.End" Format="c" @bind-Value="@item.Model.Investment" /></RadzenColumn>
+						<RadzenColumn Size="2">
+							<a href="@GetRicoURL(item.Model.Asset)" target="_blank" class="rz-mx-2 float-end rz-mt-5">
+								<RadzenButton Variant="Variant.Outlined" Text="Rico" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Dark" class="float-end" />
+							</a>
+						</RadzenColumn>
 					</RadzenRow>
 				}
 			</RadzenCard>
 		</RadzenColumn>
-		<RadzenColumn Size="8">
+		<RadzenColumn Size="6">
 			<RadzenCard Variant="@Variant.Filled">
 				<RadzenRow>
 					<RadzenColumn Size="12">
@@ -125,7 +130,8 @@
 	bool ConfirmDisabled => CancelDisabled || AssetMovements.Any(m => m.Selected && m.Model.Broker == null);
 	bool CancelDisabled => (!SelectedAssets().Any() && !SelectedBonds().Any());
 	private bool IsLoading { get; set; }
-
+	string GetRicoURL(Asset asset)
+		=> $"https://arealogada.rico.com.vc/renda-variavel/ordens/{asset.Ticker}/comprar";
 	void ConfirmSelected()
 	{
 		Dialogs.MovementConfirmation(SelectedAssets(), SelectedBonds());
@@ -138,7 +144,8 @@
 		{
 			Assets.Delete(SelectedAssets());
 			Bonds.Delete(SelectedBonds());
-		}).ContinueWith(r =>{
+		}).ContinueWith(r =>
+		{
 			ReloadData(false);
 		});
 	}

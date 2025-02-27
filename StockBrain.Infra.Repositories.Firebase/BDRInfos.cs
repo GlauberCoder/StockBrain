@@ -1,13 +1,13 @@
-﻿using FireSharp.Interfaces;
-using StockBrain.Domain.Models;
+﻿using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.AssetInfos;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
 public class BDRInfos : BaseFirebaseRepository<BDRInfo, BDRInfo>, IBDRInfos
 {
-	public BDRInfos(Context context, IFirebaseClient client)
+	public BDRInfos(Context context, DataBaseClient client)
 		: base(context, client, "bdrInfos")
 	{
 	}

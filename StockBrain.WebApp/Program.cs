@@ -1,6 +1,3 @@
-using FireSharp;
-using FireSharp.Config;
-using FireSharp.Interfaces;
 using Radzen;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
@@ -10,6 +7,7 @@ using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Infra.Repositories.Firebase;
+using StockBrain.Infra.Repositories.Firebase.Services;
 using StockBrain.InvestidorDez;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
@@ -94,13 +92,8 @@ namespace StockBrain.WebApp
 						context.Name = environment;
 						return context;
 					})
-					.AddScoped<IFirebaseClient>(sp => {
-						return new FirebaseClient(new FirebaseConfig
-						{
-							AuthSecret = authSecret,
-							BasePath = basePath
-						});
-					})
+					.AddSingleton(sp => new DataBaseConfig(basePath, authSecret))
+					.AddScoped<DataBaseClient>()
 					.AddScoped(sp => new StockEvaluationConfig
 					{
 						BazinExpectedReturn = 0.06,

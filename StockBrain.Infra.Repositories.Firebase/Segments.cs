@@ -1,12 +1,12 @@
-﻿using FireSharp.Interfaces;
-using StockBrain.Domain.Models;
+﻿using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
 public class Segments : BaseFirebaseRepository<Segment, Segment>, ISegments
 {
-	public Segments(Context context, IFirebaseClient client)
+	public Segments(Context context, DataBaseClient client)
 		: base(context, client, "segments")
 	{
 	}

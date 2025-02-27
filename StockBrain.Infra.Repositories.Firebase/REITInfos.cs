@@ -1,13 +1,13 @@
-﻿using FireSharp.Interfaces;
-using StockBrain.Domain.Models;
+﻿using StockBrain.Domain.Models;
 using StockBrain.Domain.Models.AssetInfos;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
 public class REITInfos : BaseFirebaseRepository<REITInfo, REITInfo>, IREITInfos
 {
-	public REITInfos(Context context, IFirebaseClient client)
+	public REITInfos(Context context, DataBaseClient client)
 		: base(context, client, "reitInfos")
 	{
 	}

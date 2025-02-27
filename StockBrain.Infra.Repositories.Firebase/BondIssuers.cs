@@ -1,12 +1,12 @@
-﻿using FireSharp.Interfaces;
-using StockBrain.Domain.Models;
+﻿using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
 public class BondIssuers : BaseFirebaseRepository<BondIssuer, BondIssuer>, IBondIssuers
 {
-	public BondIssuers(Context context, IFirebaseClient client)
+	public BondIssuers(Context context, DataBaseClient client)
 		: base(context, client, "bondIssuers")
 	{
 	}

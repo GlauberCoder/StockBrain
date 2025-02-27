@@ -1,12 +1,12 @@
-﻿using FireSharp.Interfaces;
-using StockBrain.Domain.Models;
+﻿using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
 public class Brokers : BaseFirebaseRepository<Broker, Broker>, IBrokers
 {
-	public Brokers(Context context, IFirebaseClient client)
+	public Brokers(Context context, DataBaseClient client)
 		: base(context, client, "brokers")
 	{
 	}

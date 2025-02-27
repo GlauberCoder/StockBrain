@@ -1,7 +1,4 @@
-﻿using FireSharp;
-using FireSharp.Config;
-using FireSharp.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
@@ -13,11 +10,11 @@ using StockBrain.Infra.PriceGetters.Abstractions;
 using StockBrain.Infra.PriceGetters.BrAPI;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Infra.Repositories.Firebase;
+using StockBrain.Infra.Repositories.Firebase.Services;
 using StockBrain.InvestidorDez;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
 using StockBrain.Utils;
-using System.IO;
 
 namespace StockBrain.Playground.CMD;
 
@@ -50,41 +47,34 @@ internal class Program
 
 		//ETLFirebase();
 
-		CreateAccount("Higor Fisher", "Fisher");
-		Console.WriteLine("Done");
-
+		CreateAccount("Higor", "Fisher");
 	}
-	static void CreateAccount(string accountName, string portifolioName) 
+
+	static DataBaseClient GetFirebaseClient() => GetService<DataBaseClient>();
+
+	static void CreateAccount(string accountName, string portifolioName)
 	{
-		var client = new FirebaseClient(new FirebaseConfig
-		{
-			AuthSecret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
-			BasePath = "https://stock-brain-bd238-default-rtdb.firebaseio.com/"
-		});
+		var client = GetFirebaseClient();
 		var context = GetService<Context>();
-		var account = new Account { ID = GetNextID<Account>(client, "accounts"), Name = accountName, GUID = Guid.NewGuid().ToString() };
+		var account = new Account { Name = accountName };
 
 		var portfolio = new PortfolioDTO
-		{ 
-			ID = GetNextID<PortfolioDTO>(client, "portfolios"),
-			GUID = Guid.NewGuid().ToString(),
-			AccountID = account.ID, 
-			Name = portifolioName, 
-			Main = true, 
+		{
+			AccountID = account.ID,
+			Name = portifolioName,
+			Main = true,
 			Targets = new Dictionary<AssetType, double> {
 				{ AssetType.Acoes, 0.3 },
 				{ AssetType.BDR, 0.25 },
 				{ AssetType.FII, 0.2 },
 				{ AssetType.Gov, 0.1 },
 				{ AssetType.Priv, 0.15 },
-			}		
+			}
 		};
-		var assetID = GetNextID<Account>(client, "portfolioAssets");
-		var assets = GetService<IAssets>().All().Where(a => !a.Risk).Select(a => new PortfolioAssetDTO { 
+		var assets = GetService<IAssets>().All().Where(a => !a.Risk).Select(a => new PortfolioAssetDTO
+		{
 			FirstAquisition = context.Today,
 			LastAquisition = context.Today,
-			GUID = Guid.NewGuid().ToString(),
-			ID = assetID++,
 			PortifolioID = portfolio.ID,
 			Quantity = 0,
 			Value = 0,
@@ -94,71 +84,15 @@ internal class Program
 
 		Save(client, "accounts", account);
 		Save(client, "portfolios", portfolio);
-		foreach(var asset in assets)
+		foreach (var asset in assets)
 			Save(client, "portfolioAssets", asset);
 
 	}
-	static long GetNextID<TEntity>(IFirebaseClient client, string path)
+	static void Save<TEntity>(DataBaseClient client, string path, TEntity entity)
 		where TEntity : BaseEntity
 	{
-		return client.Get(path).ResultAs<IDictionary<string, TEntity>>().Max(d => d.Value.ID) + 1;
+		client.Save(path, entity);
 	}
-	static void Save<TEntity>(IFirebaseClient client, string path, TEntity entity)
-		where TEntity : BaseEntity
-	{
-		client.Set($"{path}/{entity.GUID}", entity);
-	}
-	static void ETLFirebase()
-	{
-		var client = new FirebaseClient(new FirebaseConfig
-		{
-			AuthSecret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
-			BasePath = $"https://stock-brain-qa-default-rtdb.firebaseio.com"
-		});
-
-		//Save<IAccounts, Account>("accounts", client);
-		//Save<IAssets, Asset, AssetDTO>(a => new AssetDTO(a), "assets", client);
-		//Save<IBDRInfos, BDRInfo>("bdrInfos", client);
-		Save<IBondIssuers, BondIssuer>("bondIssuers", client, b => {
-			b.GUID = Guid.NewGuid().ToString();
-			return b;
-		}
-		);
-		//Save<IBonds, Bond, BondDTO>(a => new BondDTO(a), "bonds", client, b => {
-		//	b.GUID = Guid.NewGuid().ToString();
-		//	return b;
-		//});
-		//Save<IBrokers, Broker>("brokers", client);
-		//Save<IPortfolioAssetBrokers, PortfolioAssetBroker, PortfolioAssetBrokerDTO>(a => new PortfolioAssetBrokerDTO(a), "portfolioAssetBrokers", client);
-		//Save<IPortfolioAssets, PortfolioAsset, PortfolioAssetDTO>(a => new PortfolioAssetDTO(a), "portfolioAssets", client);
-		//Save<IPortfolios, Portfolio, PortfolioDTO>(a => new PortfolioDTO(a), "portfolios", client);
-		//Save<IREITInfos, REITInfo>("reitInfos", client);
-		//Save<ISectors, Sector>("sectors", client);
-		//Save<ISegments, Segment>("segments", client);
-		//Save<IStockInfos, StockInfo>("stockInfos", client);
-
-
-		//client.Set($"decisionFactors", GetService<IDecisionFactors>().All());
-
-	}
-	static void Save<TRepository, TEntity, TDTO>(Func<TEntity, TDTO> transformer, string name, FirebaseClient client, Func<TEntity, TEntity> interceptor = null)
-		where TEntity : BaseEntity
-		where TRepository : IBaseRepository<TEntity>
-		where TDTO : BaseEntity
-	{
-		var itens = GetService<TRepository>().All();
-		if(interceptor != null)
-			foreach(var item in itens)
-				interceptor(item);
-		client.Set($"{name}", itens.ToDictionary(d => d.GUID, transformer));
-	}
-	static void Save<TRepository, TEntity>(string name, FirebaseClient client, Func<TEntity, TEntity> interceptor = null)
-		where TEntity : BaseEntity
-		where TRepository : IBaseRepository<TEntity>
-	{
-		Save<TRepository, TEntity, TEntity>(e => e, name, client, interceptor);
-	}
-
 	private static void PrintEvaluation(params string[] tickers)
 	{
 		var assets = GetService<IPortfolioAssets>().ByPortifolio(2).Where(p => tickers.Contains(p.Asset.Ticker));
@@ -396,13 +330,8 @@ internal class Program
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
 			.AddScoped(sp => new Context { Account = new Account { GUID = Guid.NewGuid().ToString(), ID = 1, Name = "Glauber" } })
 			//.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\PROD" })
-			.AddScoped<IFirebaseClient>(sp => {
-				return new FirebaseClient(new FirebaseConfig
-				{
-					AuthSecret = "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p",
-					BasePath = "https://stock-brain-bd238-default-rtdb.firebaseio.com/"
-				});
-			})
+			.AddSingleton(sp => new DataBaseConfig("https://stock-brain-qa-default-rtdb.firebaseio.com", "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p"))
+			.AddScoped<DataBaseClient>()
 					.AddScoped(sp => new StockEvaluationConfig
 					{
 						BazinExpectedReturn = 0.06,

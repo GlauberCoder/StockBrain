@@ -1,5 +1,4 @@
-﻿using FireSharp.Interfaces;
-using StockBrain.Domain.Models;
+﻿using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
@@ -11,9 +10,9 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO>
 	protected Context Context { get; }
 	string Name { get; }
 	bool UseCache { get; }
-	IFirebaseClient Client { get; }
+	DataBaseClient Client { get; }
 
-	public BaseFirebaseRepository(Context context, IFirebaseClient client, string name, bool useCache = true)
+	public BaseFirebaseRepository(Context context, DataBaseClient client, string name, bool useCache = true)
 	{
 		Context = context;
 		Name = name;
@@ -28,12 +27,7 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO>
 	{
 		return  UseCache ? MemoryCacheService.GetOrAdd(Name, GetDTOs) : GetDTOs();
 	}
-	IEnumerable<TDTO> GetDTOs()
-	{
-		var result = Client.Get(Name).ResultAs<IDictionary<string, TDTO>>();
-		return result?.Select(s => s.Value).ToList() ?? Enumerable.Empty<TDTO>();
-
-	}
+	IEnumerable<TDTO> GetDTOs() => Client.Get<TDTO>(Name);
 	public IEnumerable<TEntity> All()
 	{
 		return FromDTO(AllDTO().ToList());
@@ -63,7 +57,7 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO>
 	}
 	void DeleteOldAndSave(IEnumerable<TEntity> entities)
 	{
-		Client.Set(Name, entities.Select(FromEntity).ToDictionary(e => e.GUID, e => e));
+		Client.Save(Name, entities.Select(FromEntity));
 	}
 	IEnumerable<TEntity> UpdateEntities(IEnumerable<TEntity> oldOnes, IEnumerable<TEntity> newOnes)
 	{
