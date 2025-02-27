@@ -29,7 +29,7 @@ jobs:
       run: dotnet restore
 
     - name: Build and Publish Blazor WebAssembly
-      run: dotnet publish StockBrain.WebApp/StockBrain.WebApp.csproj -c Release -o release --nologo --property:PublishTrimmed=true -p:BlazorEnableCompression=true -p:PublishDir=release/wwwroot -p:NoWarn=CS8618,CS8603,CS8604,CS8625
+      run: dotnet publish StockBrain.WebApp/StockBrain.WebApp.csproj -c Release -o release --nologo --property:PublishTrimmed=true -p:BlazorEnableCompression=true
 
 
     - name: Setup Pages
