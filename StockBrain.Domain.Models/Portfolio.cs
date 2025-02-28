@@ -4,6 +4,7 @@ namespace StockBrain.Domain.Models;
 
 public class Portfolio : BaseEntity
 {
+	//TODO:Vai
 	public required string Name { get; init; }
 	public required double Total { get; init; }
 	public required IEnumerable<PortfolioAssetDetail> Assets { get; set; }
