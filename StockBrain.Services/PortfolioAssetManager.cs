@@ -99,6 +99,7 @@ public class PortfolioAssetManager : IPortfolioAssetManager
 	{
 		var portfolioAsset = new PortfolioAsset
 		{
+			GUID = asset.GUID,
 			Asset = asset,
 			Quantity = 0,
 			InvestedValue = 0,

@@ -73,5 +73,5 @@ public class Portfolios : AccountFirebaseRepository<Portfolio, PortfolioDTO>, IP
 	protected override IEnumerable<PortfolioDTO> FromEntity(IEnumerable<Portfolio> entities) => entities.Select(FromEntity);
 
 	public Portfolio Main() => ByID(Context.Account.MainPortfolio);
-	public IEnumerable<EntityReference> References() => Client.GetShallow().Select(r => new EntityReference(r.GUID, r.Name));
+	public IEnumerable<EntityReference> References() => AllDTO().Select(r => new EntityReference(r.GUID, r.Name));
 }

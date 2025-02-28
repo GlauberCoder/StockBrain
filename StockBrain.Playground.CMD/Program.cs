@@ -28,7 +28,16 @@ internal class Program
 	{
 		BuildServices();
 		//CreateAccount("Higor", "Fisher");
-		NewFormatETL();
+		//NewFormatETL();
+
+		var destiny = new FirebaseClient("https://stock-brain-qa-default-rtdb.firebaseio.com", new FirebaseOptions
+		{
+			AuthTokenAsyncFactory = () => Task.FromResult("gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p")
+		});
+		var result = destiny.Child("users/35557e43-e295-4321-bc63-652b1c7870bc/portfolios/123e4567-e89b-12d3-a456-426614174000").Shallow().OnceAsJsonAsync().Result;
+
+		Console.WriteLine(result);
+
 		Console.ReadKey();
 	}
 

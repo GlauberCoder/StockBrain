@@ -17,6 +17,7 @@ public class BondMovement : BaseEntity
 	{
 		return new Bond
 		{
+			GUID = GUID,
 			Broker = Broker,
 			Issuer = Issuer,
 			Type = Type,

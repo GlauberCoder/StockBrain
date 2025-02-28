@@ -87,7 +87,7 @@
 			</Template>
 		</RadzenDataGridColumn>
 	</Columns>
-</RadzenDataGrid>
+	</RadzenDataGrid>
 </SBLoading>
 @code {
 	[Parameter]
@@ -117,7 +117,13 @@
 	}
 	void Confirm()
 	{
-		PortfolioManager.ConfirmMovements(Portfolios.Where(p => p.Selected).Select(p => p.Model), Assets, Bonds);
-		Navigation.NavigateTo("");
+		IsLoading = true;
+		InvokeAsync(StateHasChanged).ContinueWith(r =>
+		{
+			PortfolioManager.ConfirmMovements(Portfolios.Where(p => p.Selected).Select(p => p.Model), Assets, Bonds);
+			Navigation.NavigateTo("");
+			IsLoading = false;
+			InvokeAsync(StateHasChanged);
+		});
 	}
 }

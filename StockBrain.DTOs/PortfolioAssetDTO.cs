@@ -17,8 +17,8 @@ public class PortfolioAssetDTO : BaseEntity
 		Risk = asset.Risk;
 		FirstAquisition = asset.FirstAquisition;
 		LastAquisition = asset.LastAquisition;
-		Movements = asset.Movements.ToDictionary(m => m.GUID, m => new PortfolioAssetMovementDTO(m));
-		Brokers = asset.Brokers.ToDictionary(m => m.GUID, m => new PortfolioAssetBrokerDTO(m));
+		Movements = asset.Movements?.ToDictionary(m => m.GUID, m => new PortfolioAssetMovementDTO(m)) ?? new Dictionary<string, PortfolioAssetMovementDTO>();
+		Brokers = asset.Brokers?.ToDictionary(m => m.GUID, m => new PortfolioAssetBrokerDTO(m)) ?? new Dictionary<string, PortfolioAssetBrokerDTO>();
 	}
 	public override string GUID { get { return Ticker; } set { } }
 	public string Ticker { get; set; }

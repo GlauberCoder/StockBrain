@@ -8,6 +8,7 @@ public class PortfolioAssetMovement : BaseEntity
 	}
 	public PortfolioAssetMovement(AssetMovement movement, PortfolioAsset asset, Context context)
 	{
+		GUID = movement.GUID;
 		Ticker = movement.Asset.Ticker;
 		StartQuantity = asset.Quantity;
 		StartInvestment = asset.InvestedValue;
