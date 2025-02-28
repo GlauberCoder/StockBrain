@@ -15,7 +15,6 @@
           "StockBrain.Infra": "1.0.0",
           "StockBrain.Infra.PriceGetters": "1.0.0",
           "StockBrain.Infra.Repositories.Firebase": "1.0.0",
-          "StockBrain.Infra.Repositories.JSONFiles": "1.0.0",
           "StockBrain.InvestidorDez": "1.0.0",
           "StockBrain.Services": "1.0.0"
         },
@@ -395,22 +394,6 @@
           }
         }
       },
-      "StockBrain.Infra.Repositories.JSONFiles/1.0.0": {
-        "dependencies": {
-          "StockBrain.DTOs": "1.0.0",
-          "StockBrain.Domain.Abstractions": "1.0.0",
-          "StockBrain.Domain.Models": "1.0.0",
-          "StockBrain.Infra.Abstrations": "1.0.0",
-          "StockBrain.Infra.Repositories.Abstractions": "1.0.0",
-          "StockBrain.Utils": "1.0.0"
-        },
-        "runtime": {
-          "StockBrain.Infra.Repositories.JSONFiles.dll": {
-            "assemblyVersion": "1.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
       "StockBrain.InvestidorDez/1.0.0": {
         "dependencies": {
           "HtmlAgilityPack": "1.11.72",
@@ -762,11 +745,6 @@
       "sha512": ""
     },
     "StockBrain.Infra.Repositories.Firebase/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "StockBrain.Infra.Repositories.JSONFiles/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
