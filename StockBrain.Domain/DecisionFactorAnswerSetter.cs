@@ -24,7 +24,7 @@ public class DecisionFactorAnswerSetter : IDecisionFactorAnswerSetter
 		BDRConfig = bdrConfig;
 	}
 
-	public void Set(IEnumerable<PortfolioAsset> assets, IDictionary<string, AssetInfo> infos, IDictionary<AssetType, IEnumerable<string>> factors)
+	public IEnumerable<PortfolioAsset> Set(IEnumerable<PortfolioAsset> assets, IDictionary<string, AssetInfo> infos, IDictionary<AssetType, IEnumerable<string>> factors)
 	{
 		foreach (var typeGroup in assets.GroupBy(a => a.Asset.Type))
 		{
@@ -43,6 +43,7 @@ public class DecisionFactorAnswerSetter : IDecisionFactorAnswerSetter
 					break;
 			}
 		}
+		return assets;
 	}
 	void SetStocks(IEnumerable<PortfolioAsset> assets, IDictionary<string, AssetInfo> infos, IEnumerable<string> factors)
 	{
