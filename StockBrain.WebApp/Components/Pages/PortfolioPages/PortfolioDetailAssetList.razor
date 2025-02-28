@@ -3,6 +3,7 @@
 @using StockBrain.WebApp.Components.Pages.AssetPages
 
 
+
 <RadzenStack Gap="0">
 	<RadzenRow RowGap="0">
 		<SBLabelCol Size="2" Title="Atual" Text="@Group.DeltaInvested.Final.MonetaryFormat()" />
@@ -12,7 +13,7 @@
 		<SBLabelCol Size="2" Title="Alvo" Text="@Group.Target.Value.MonetaryFormat()" />
 	</RadzenRow>
 </RadzenStack>
-<div class="rz-mt-4">
+ <div class="rz-mt-4">
 	<RadzenArcGauge Style="width: 100%; height: 250px;">
 		<RadzenArcGaugeScale Step="20" Min="-50" Max="250" MinorStep="2" Radius="1.5" TickPosition=@GaugeTickPosition.Outside Y="0.9" Margin="0">
 			<RadzenArcGaugeScaleValue Fill="#6966db" Value=@Group.DeltaInvested.Percentage.ToPercentage(0) ShowValue="true">
@@ -78,7 +79,7 @@
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Nota" TextAlign="TextAlign.Center">
 			<Template Context="asset">
-				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.Score.Value</RadzenText>
+				<RadzenText TextAlign="TextAlign.Right">@asset.Asset.Score?.Value</RadzenText>
 			</Template>
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Alvo" TextAlign="TextAlign.Center" Width="150px">
@@ -110,9 +111,9 @@
 			<Template Context="asset">
 				<RadzenText TextAlign="TextAlign.Right">@asset.DeltaTarget.Difference.MonetaryFormat()</RadzenText>
 			</Template>
-		</RadzenDataGridColumn>
+		</RadzenDataGridColumn> 
 	</Columns>
-</RadzenDataGrid>
+</RadzenDataGrid> 
 
 
 @code {
