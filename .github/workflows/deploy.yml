@@ -1,43 +1,38 @@
-name: Deploy Blazor WebAssembly to GitHub Pages
+name: gh-pages
 
 on:
   push:
     branches:
-      - main
+      - master
 
-  workflow_dispatch:
-
-permissions:
+permissions: 
   contents: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Instalar o .NET 8
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
+    - name: Setup
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
 
-      - name: Restaurar dependências
-        run: dotnet restore
-
-      - name: Compilar e Publicar Blazor WebAssembly
-        run: |
-          cd StockBrain.WebApp
-          dotnet publish -c Release -o release --nologo --p:StaticWebAssetBasePath=/StockBrain
-          ls -la release/wwwroot
-
-      - name: Criar `.nojekyll` para evitar problemas no GitHub Pages
-        run: touch StockBrain.WebApp/release/wwwroot/.nojekyll
-
-      - name: Deploy para GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages
-          folder: StockBrain.WebApp/release/wwwroot  # Define a pasta correta do Blazor --
-          clean: true
+    - name: Restore
+      run: dotnet restore
+        
+    - name: Publish
+      run: dotnet publish StockBrain.WebApp/StockBrain.WebApp.csproj -c Release -o build/wwwroot --nologo --property:PublishTrimmed=false -p:BlazorEnableCompression=true -p:PublishSingleFile=false
+      
+    - name: Commit
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      with:
+        GITHUB_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: build/wwwroot
+        
+        
+        
