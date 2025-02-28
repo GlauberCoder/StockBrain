@@ -44,7 +44,7 @@
 		IsLoading = true;
 		InvokeAsync(StateHasChanged).ContinueWith(r =>
 		{
-			Portfolio = Portfolios.FromCurrentAccount().FirstOrDefault(p => p.Main);
+			Portfolio = Portfolios.Main();
 			Configs = ConfigCalculator.Calc(Portfolio);
 			Calculate();
 			IsLoading = false;

@@ -10,19 +10,16 @@ public class AssetMovementDTO : BaseEntity
 	}
 	public AssetMovementDTO(AssetMovement movement)
 	{
-		ID = movement.ID;
 		GUID = movement.GUID;
-		AccountID = movement.AccountID;
-		AssetID = movement.Asset.ID;
+		AssetGUID = movement.Asset.GUID;
 		Quantity = movement.Quantity;
 		Investment = movement.Investment;
 		Date = movement.Date;
-		BrokerID = movement.Broker?.ID;
+		BrokerGUID = movement.Broker?.GUID;
 
 	}
-	public long AccountID { get; set; }
-	public long AssetID { get; set; }
-	public long? BrokerID { get; set; }
+	public string AssetGUID { get; set; }
+	public string? BrokerGUID { get; set; }
 	public int Quantity { get; set; }
 	public bool Confirmed { get; set; }
 	public double Investment { get; set; }
@@ -32,9 +29,7 @@ public class AssetMovementDTO : BaseEntity
 	{
 		return new AssetMovement
 		{
-			ID = ID,
 			GUID = GUID,
-			AccountID = context.Account.ID,
 			Asset = asset,
 			Quantity = Quantity,
 			Investment = Investment,

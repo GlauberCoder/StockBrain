@@ -6,7 +6,7 @@ namespace StockBrain.Infra.Repositories.Firebase;
 
 public class Accounts : BaseFirebaseRepository<Account, Account>, IAccounts
 {
-	public Accounts(DataBaseClient client)
+	public Accounts(DBClient client)
 		: base(new Context(), client, "accounts")
 	{
 	}

@@ -5,7 +5,7 @@ using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
-public class Assets(Context context, DataBaseClient client, ISectors sectors, ISegments segments)
+public class Assets(Context context, DBClient client, ISectors sectors, ISegments segments)
 		: BaseFirebaseRepository<Asset, AssetDTO>(context, client, "assets"), IAssets
 {
 	ISectors Sectors { get; } = sectors;
@@ -13,8 +13,8 @@ public class Assets(Context context, DataBaseClient client, ISectors sectors, IS
 
 	protected override Asset FromDTO(AssetDTO dto)
 	{
-		var sector = Sectors.All().First(s => s.ID == dto.SectorID);
-		var segment = Segments.All().First(s => s.ID == dto.SegmentID);
+		var sector = Sectors.ByID(dto.SectorGUID);
+		var segment = Segments.ByID(dto.SegmentGUID);
 
 		return dto.ToAsset(sector, segment, Context);
 	}
@@ -23,12 +23,12 @@ public class Assets(Context context, DataBaseClient client, ISectors sectors, IS
 
 	protected override IEnumerable<Asset> FromDTO(IEnumerable<AssetDTO> dtos)
 	{
-		var sectors = Sectors.All().ToDictionary(s => s.ID, s => s);
-		var segments = Segments.All().ToDictionary(s => s.ID, s => s);
+		var sectors = Sectors.All().ToDictionary(s => s.GUID, s => s);
+		var segments = Segments.All().ToDictionary(s => s.GUID, s => s);
 ;		var assets = new List<Asset>();
 		foreach (var dto in dtos)
 		{
-			assets.Add(dto.ToAsset(sectors[dto.SectorID], segments[dto.SegmentID], Context));
+			assets.Add(dto.ToAsset(sectors[dto.SectorGUID], segments[dto.SegmentGUID], Context));
 		}
 		return assets;
 	}

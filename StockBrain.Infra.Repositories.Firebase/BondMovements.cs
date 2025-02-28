@@ -6,13 +6,13 @@ using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
-public class BondMovements : BaseFirebaseRepository<BondMovement, BondMovementDTO>, IBondMovements
+public class BondMovements : AccountFirebaseRepository<BondMovement, BondMovementDTO>, IBondMovements
 {
 	IBondIssuers Issuers { get; }
 	IBrokers Brokers { get; }
-	const long GovID = 1;
+	const string GovUUID = "GOV";
 
-	public BondMovements(Context context, DataBaseClient client,IBondIssuers issuers, IBrokers brokers)
+	public BondMovements(Context context, DBClient client,IBondIssuers issuers, IBrokers brokers)
 		: base(context, client, "bondMovements", false)
 	{
 		Issuers = issuers;
@@ -22,8 +22,8 @@ public class BondMovements : BaseFirebaseRepository<BondMovement, BondMovementDT
 
 	protected override BondMovement FromDTO(BondMovementDTO dto)
 	{
-		var issuer = Issuers.ByID(dto.IssuerID);
-		var broker = Brokers.ByID(dto.BrokerID);
+		var issuer = Issuers.ByID(dto.IssuerGUID);
+		var broker = Brokers.ByID(dto.BrokerGUID);
 		return dto.ToEntity(issuer, broker, Context);
 	}
 
@@ -31,28 +31,24 @@ public class BondMovements : BaseFirebaseRepository<BondMovement, BondMovementDT
 
 	protected override IEnumerable<BondMovement> FromDTO(IEnumerable<BondMovementDTO> dtos)
 	{
-		var issuers = Issuers.All().ToDictionary(s => s.ID, s => s);
-		var brokers = Brokers.All().ToDictionary(s => s.ID, s => s);
+		var issuers = Issuers.All().ToDictionary(s => s.GUID, s => s);
+		var brokers = Brokers.All().ToDictionary(s => s.GUID, s => s);
 
-		return dtos.Select(d => d.ToEntity(issuers[d.Type == BondType.Gov ? GovID : d.IssuerID], brokers[d.BrokerID], Context));
+		return dtos.Select(d => d.ToEntity(issuers[d.Type == BondType.Gov ? GovUUID : d.IssuerGUID], brokers[d.BrokerGUID], Context));
 	}
 
 	protected override IEnumerable<BondMovementDTO> FromEntity(IEnumerable<BondMovement> entities) => entities.Select(FromEntity);
-
-	public IEnumerable<BondMovement> ByAccount(long accountID) => FromDTO(AllDTO().Where(a => a.AccountID == accountID));
 	protected override BondMovement BeforeCreate(BondMovement entity)
 	{
-		entity.AccountID = Context.Account.ID;
 		entity.Date = Context.Today;
 		return base.BeforeCreate(entity);
 	}
 	protected override BondMovement BeforeSave(BondMovement entity)
 	{
 		if (entity.Type == BondType.Gov)
-			entity.Issuer = Issuers.ByID(GovID);
-
-		if (entity.Issuer.ID == 0)
-			Issuers.Save(entity.Issuer);
+			entity.Issuer = Issuers.ByID(GovUUID);
+		else if (entity.Issuer.IsNew())
+			entity.Issuer = Issuers.Save(entity.Issuer);
 
 		return base.BeforeSave(entity);
 	}

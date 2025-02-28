@@ -6,7 +6,7 @@ namespace StockBrain.Infra.Repositories.Firebase;
 
 public class Brokers : BaseFirebaseRepository<Broker, Broker>, IBrokers
 {
-	public Brokers(Context context, DataBaseClient client)
+	public Brokers(Context context, DBClient client)
 		: base(context, client, "brokers")
 	{
 	}

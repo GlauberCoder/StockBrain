@@ -7,7 +7,7 @@ namespace StockBrain.Infra.Repositories.Firebase;
 
 public class REITInfos : BaseFirebaseRepository<REITInfo, REITInfo>, IREITInfos
 {
-	public REITInfos(Context context, DataBaseClient client)
+	public REITInfos(Context context, DBClient client)
 		: base(context, client, "reitInfos")
 	{
 	}

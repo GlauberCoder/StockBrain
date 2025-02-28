@@ -11,21 +11,19 @@ public class BondDTO : BaseEntity
 	}
 	public BondDTO(Bond bond)
 	{
-		ID = bond.ID;
 		GUID = bond.GUID;
 		Value = bond.Value;
-		BrokerID = bond.Broker.ID;
-		IssuerID = bond.Issuer.ID;
+		BrokerGUID = bond.Broker.GUID;
+		IssuerGUID = bond.Issuer.GUID;
 		Type = bond.Type;
 		Index = bond.Index;
 		Tax = bond.Tax;
 		Date = bond.Date;
 		Expiration = bond.Expiration;
 		Redeem = bond.Redeem;
-		PortifolioID = bond.PortfolioID;
 	}
-	public long BrokerID { get; set; }
-	public long IssuerID { get; set; }
+	public string BrokerGUID { get; set; }
+	public string IssuerGUID { get; set; }
 	public BondType Type { get; set; }
 	public BondIndex Index { get; set; }
 	public double Tax { get; set; }
@@ -33,15 +31,12 @@ public class BondDTO : BaseEntity
 	public DateOnly? Redeem { get; set; }
 	public DateOnly Date { get; set; }
 	public DateOnly Expiration { get; set; }
-	public long PortifolioID { get; set; }
 
 	public Bond ToBond(Broker broker, BondIssuer issuer, Context context)
 	{
 		var bond = new Bond
 		{
-			ID = ID,
 			GUID = GUID,
-			PortfolioID = PortifolioID,
 			Value = Value,
 			Broker = broker,
 			Issuer = issuer,

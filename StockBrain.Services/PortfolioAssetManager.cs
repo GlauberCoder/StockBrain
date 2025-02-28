@@ -7,98 +7,120 @@ namespace StockBrain.Services;
 public class PortfolioAssetManager : IPortfolioAssetManager
 {
 	Context Context { get; }
-	IPortfolioAssets PortfolioAssets { get; }
-	IPortfolioAssetBrokers AssetBrokers { get; }
+	IPortfolios Portfolios { get; }
 	IAssetMovements Movements { get; }
-	IPortfolioAssetMovements PortfolioAssetMovements { get; }
-	IBonds Bonds { get; }
 	IBondMovements BondMovements { get; }
 
 	public PortfolioAssetManager(
-		Context context, 
-		IPortfolioAssets portfolioAssets, 
-		IPortfolioAssetBrokers assetBrokers, 
+		Context context,
+		IPortfolios portfolios,
 		IAssetMovements movements, 
-		IPortfolioAssetMovements portfolioAssetMovements,
-		IBonds bonds,
 		IBondMovements bondMovements
 		)
 	{
 		Context = context;
-		PortfolioAssets = portfolioAssets;
-		AssetBrokers = assetBrokers;
+		Portfolios = portfolios;
 		Movements = movements;
-		PortfolioAssetMovements = portfolioAssetMovements;
-		Bonds = bonds;
 		BondMovements = bondMovements;
 	}
-	public void ConfirmMovements(IEnumerable<Portfolio> portfolios, IEnumerable<AssetMovement> assets, IEnumerable<BondMovement> bonds)
+	public void ConfirmMovements(IEnumerable<EntityReference> portfolioReferences, IEnumerable<AssetMovement> assets, IEnumerable<BondMovement> bonds)
 	{
-		var changedAssets = new List<PortfolioAsset>();
-		var brokers = new List<PortfolioAssetBroker>();
-		var assetMovements = new List<PortfolioAssetMovement>();
-		var addedBonds = new List<Bond>();
-		foreach (var portfolio in portfolios)
+		var portifolios = new List<Portfolio>();
+		foreach (var portfolioReference in portfolioReferences)
 		{
-			foreach (var movement in assets)
+			var portfolio = Portfolios.ByID(portfolioReference.GUID);
+			UpdateAssets(portfolio, assets);
+			UpdateBonds(portfolio, bonds);
+			portifolios.Add(portfolio);
+		}
+		Flush(portifolios, assets, bonds);
+
+	}
+	void UpdateBonds(Portfolio portfolio, IEnumerable<BondMovement> bonds)
+	{
+		var portfolioBonds = portfolio.Bonds.ToList();
+		foreach (var bond in bonds)
+			portfolioBonds.Add(bond.ToBond());
+
+		portfolio.Bonds = portfolioBonds;
+	}
+	void UpdateAssets(Portfolio portfolio, IEnumerable<AssetMovement> assets)
+	{
+		var portfolioAssets = portfolio.Assets.ToList();
+		foreach (var movement in assets)
+		{
+			var portfolioAssetDetail = portfolio.Assets.FirstOrDefault(a => a.Asset.Asset.Ticker == movement.Asset.Ticker);
+			if (portfolioAssetDetail == null)
 			{
-				var asset = GetAsset(portfolio, movement.Asset);
-				changedAssets.Add(asset);
-				brokers.Add(GetAssetBroker(portfolio, movement, asset));
-				assetMovements.Add(GetPortfolioAssetMovement(portfolio, movement, asset));
+				portfolioAssetDetail = BuildNewAsset(movement.Asset);
+				portfolioAssets.Add(portfolioAssetDetail);
 			}
-			addedBonds.AddRange(bonds.Select(b => b.ToBond(portfolio.ID)));
+			ApplyMovement(portfolioAssetDetail, movement);
 		}
-		Flush(assets, changedAssets, brokers, assetMovements, bonds, addedBonds);
+
+		portfolio.Assets = portfolioAssets;
+	}
+	void ApplyMovement(PortfolioAssetDetail asset, AssetMovement movement) 
+	{
+		var assetMovement = ApplyAssetMovement(asset, movement);
+		ApplyMovementOnAsset(asset, assetMovement);
+		ApplyBrokerMovement(asset, movement);
 
 	}
-
-	void Flush(IEnumerable<AssetMovement> assets, IEnumerable<PortfolioAsset> changedAssets, IEnumerable<PortfolioAssetBroker> brokers, IEnumerable<PortfolioAssetMovement> assetMovements, IEnumerable<BondMovement> bondMovements, IEnumerable<Bond> bonds)
+	PortfolioAssetMovement ApplyAssetMovement(PortfolioAssetDetail asset, AssetMovement movement) 
 	{
-		PortfolioAssets.Save(changedAssets);
-		AssetBrokers.Save(brokers);
-		Movements.Delete(assets);
-		PortfolioAssetMovements.Save(assetMovements);
-		Bonds.Save(bonds);
-		BondMovements.Delete(bondMovements);
-	}
-
-	PortfolioAsset GetAsset(Portfolio portfolio, Asset asset)
-	{
-
-		var portfolioAsset = portfolio.Assets.FirstOrDefault(a => a.Asset.Asset.Ticker == asset.Ticker)?.Asset;
-		if (portfolioAsset == null)
-		{
-			portfolioAsset = new PortfolioAsset
-			{
-				PortfolioID = portfolio.ID,
-				Asset = asset,
-				Quantity = 0,
-				InvestedValue = 0,
-				Risk = false,
-				FirstAquisition = Context.Today,
-				LastAquisition = Context.Today,
-				Movements = new List<PortfolioAssetMovement>(),
-				Brokers = new List<PortfolioAssetBroker>(),
-			};
-		}
-		return portfolioAsset;
-	}
-	PortfolioAssetMovement GetPortfolioAssetMovement(Portfolio portfolio, AssetMovement movement, PortfolioAsset asset)
-	{
-		var assetMovement = new PortfolioAssetMovement(movement, asset, Context);
-		asset.Quantity = assetMovement.EndQuantity;
-		asset.InvestedValue = assetMovement.EndInvestment;
-		asset.LastAquisition = Context.Today;
+		var assetMovement = new PortfolioAssetMovement(movement, asset.Asset, Context);
+		var movements = asset.Asset.Movements.ToList();
+		movements.Add(assetMovement);
+		asset.Asset.Movements = movements;
 		return assetMovement;
 	}
-	PortfolioAssetBroker GetAssetBroker(Portfolio portfolio, AssetMovement movement, PortfolioAsset asset)
+	void ApplyMovementOnAsset(PortfolioAssetDetail asset, PortfolioAssetMovement assetMovement)
 	{
-		var broker = asset.Brokers.FirstOrDefault(b => b.PortfolioID == portfolio.ID && b.Broker.ID == movement.Broker.ID);
-		if (broker == null)
-			broker = new PortfolioAssetBroker { Broker = movement.Broker, PortfolioID = portfolio.ID, Quantity = 0, Ticker = asset.Asset.Ticker };
-		broker.Quantity += movement.Quantity;
-		return broker;
+		asset.Asset.Quantity = assetMovement.EndQuantity;
+		asset.Asset.InvestedValue = assetMovement.EndInvestment;
+		asset.Asset.LastAquisition = Context.Today;
+	}
+	void ApplyBrokerMovement(PortfolioAssetDetail asset, AssetMovement movement)
+	{
+		var brokers = asset.Asset.Brokers.ToList();
 
+		var broker = brokers.FirstOrDefault(a => a.Broker.GUID == movement.Broker.GUID);
+		if (broker == null)
+		{
+			broker = new PortfolioAssetBroker { Broker = movement.Broker, Quantity = 0, Ticker = asset.Asset.Asset.Ticker };
+			brokers.Add(broker);
+		}
+
+		broker.Quantity += movement.Quantity;
+		asset.Asset.Brokers = brokers;
+	}
+	PortfolioAssetDetail BuildNewAsset(Asset asset) 
+	{
+		var portfolioAsset = new PortfolioAsset
+		{
+			Asset = asset,
+			Quantity = 0,
+			InvestedValue = 0,
+			Risk = false,
+			FirstAquisition = Context.Today,
+			LastAquisition = Context.Today,
+			Movements = new List<PortfolioAssetMovement>(),
+			Brokers = new List<PortfolioAssetBroker>(),
+		};
+		return new PortfolioAssetDetail
+		{
+			Asset = portfolioAsset,
+			InvestedOnTotal = null,
+			InvestedType = null,
+			Target = null,
+			DeltaTarget = null,
+		};
+	}
+	void Flush(IEnumerable<Portfolio> porfolios, IEnumerable<AssetMovement> assets, IEnumerable<BondMovement> bondMovements)
+	{
+		Portfolios.Save(porfolios);
+		Movements.Delete(assets);
+		BondMovements.Delete(bondMovements);
 	}
 }

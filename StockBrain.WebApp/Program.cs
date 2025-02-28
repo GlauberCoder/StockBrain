@@ -93,7 +93,7 @@ namespace StockBrain.WebApp
 						return context;
 					})
 					.AddSingleton(sp => new DataBaseConfig(basePath, authSecret))
-					.AddScoped<DataBaseClient>()
+					.AddScoped<DBClient>()
 					.AddScoped(sp => new StockEvaluationConfig
 					{
 						BazinExpectedReturn = 0.06,
@@ -185,9 +185,6 @@ namespace StockBrain.WebApp
 					.AddScoped<ISegments, Segments>()
 					.AddScoped<IBrokers, Brokers>()
 					.AddScoped<IBondIssuers, BondIssuers>()
-					.AddScoped<IBonds, Bonds>()
-					.AddScoped<IPortfolioAssets, PortfolioAssets>()
-					.AddScoped<IPortfolioAssetMovements, PortfolioAssetMovements>()
 					.AddScoped<IInvestmentRecommender, InvestmentRecommender>()
 					.AddScoped<IPortifolioCalculator, PortifolioCalculator>()
 					.AddScoped<IPortfolios, Portfolios>()
@@ -195,7 +192,6 @@ namespace StockBrain.WebApp
 					.AddScoped<IPriceUpdater, PriceUpdater>()
 					.AddScoped<IAssetMovements, AssetMovements>()
 					.AddScoped<IBondMovements, BondMovements>()
-					.AddScoped<IPortfolioAssetBrokers, PortfolioAssetBrokers>()
 					.AddScoped<IPortfolioAssetManager, PortfolioAssetManager>()
 					.AddScoped<IInvestmentRecommenderConfigCalculator, InvestmentRecommenderConfigCalculator>()
 					.AddScoped<IStockInfos, StockInfos>()

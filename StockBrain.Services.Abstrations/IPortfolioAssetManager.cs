@@ -4,5 +4,5 @@ namespace StockBrain.Services.Abstrations;
 
 public interface IPortfolioAssetManager
 {
-	void ConfirmMovements(IEnumerable<Portfolio> portfolios, IEnumerable<AssetMovement> movements, IEnumerable<BondMovement> bonds);
+	void ConfirmMovements(IEnumerable<EntityReference> portfolioReferences, IEnumerable<AssetMovement> movements, IEnumerable<BondMovement> bonds);
 }

@@ -1,10 +1,10 @@
 ﻿using StockBrain.Domain.Models.Enums;
-using StockBrain.Utils;
 
 namespace StockBrain.Domain.Models;
 
 public class Asset : BaseEntity
 {
+	public override string GUID { get { return Ticker; } set {} }
 	public required string Name { get; init; }
 	public required string Ticker { get; init; }
 	public required string Description { get; init; }

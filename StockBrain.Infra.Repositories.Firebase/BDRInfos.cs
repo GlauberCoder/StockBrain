@@ -7,7 +7,7 @@ namespace StockBrain.Infra.Repositories.Firebase;
 
 public class BDRInfos : BaseFirebaseRepository<BDRInfo, BDRInfo>, IBDRInfos
 {
-	public BDRInfos(Context context, DataBaseClient client)
+	public BDRInfos(Context context, DBClient client)
 		: base(context, client, "bdrInfos")
 	{
 	}

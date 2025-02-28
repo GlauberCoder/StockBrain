@@ -102,7 +102,7 @@
 	NavigationManager Navigation { get; set; }
 	private bool IsLoading { get; set; }
 
-	IEnumerable<SelectableItem<Portfolio>> Portfolios { get; set; }
+	IEnumerable<SelectableItem<EntityReference>> Portfolios { get; set; }
 	bool ConfirmDisabled => !Portfolios.Any(p => p.Selected);
 
 	protected override async Task OnInitializedAsync()
@@ -110,7 +110,7 @@
 		IsLoading = true;
 		InvokeAsync(StateHasChanged).ContinueWith(r =>
 		{
-			Portfolios = PortfoliosRepository.FromCurrentAccount().Select(m => new SelectableItem<Portfolio>(m, true)).ToList();
+			Portfolios = PortfoliosRepository.References().Select(m => new SelectableItem<EntityReference>(m, true)).ToList();
 			IsLoading = false;
 			InvokeAsync(StateHasChanged);
 		});

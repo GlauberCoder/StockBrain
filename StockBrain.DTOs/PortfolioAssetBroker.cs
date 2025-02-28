@@ -9,17 +9,14 @@ public class PortfolioAssetBrokerDTO : BaseEntity
 	}
 	public PortfolioAssetBrokerDTO(PortfolioAssetBroker asset)
 	{
-		ID = asset.ID;
-		GUID = asset.GUID;
+		GUID = asset.Broker.GUID;
 		Quantity = asset.Quantity;
-		PortfolioID = asset.PortfolioID;
 		Ticker = asset.Ticker;
-		BrokerID = asset.Broker.ID;
+		BrokerGUID = asset.Broker.GUID;
 
 	}
 
-	public long PortfolioID { get; init; }
-	public long BrokerID { get; init; }
+	public string BrokerGUID { get; init; }
 	public string Ticker { get; init; }
 	public int Quantity { get; init; }
 
@@ -27,11 +24,9 @@ public class PortfolioAssetBrokerDTO : BaseEntity
 	{ 
 		return new PortfolioAssetBroker
 		{
-			ID = ID,
-			GUID = GUID,
+			GUID = BrokerGUID,
 			Quantity = Quantity,
 			Ticker = Ticker,
-			PortfolioID = PortfolioID,
 			Broker = broker
 		};
 

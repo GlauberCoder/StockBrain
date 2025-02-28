@@ -21,8 +21,8 @@ public class BondMovements : BaseJSONFIleRepository<BondMovement, BondMovementDT
 
 	protected override BondMovement FromDTO(BondMovementDTO dto)
 	{
-		var issuer = Issuers.ByID(dto.IssuerID);
-		var broker = Brokers.ByID(dto.BrokerID);
+		var issuer = Issuers.ByID(dto.IssuerGUID);
+		var broker = Brokers.ByID(dto.BrokerGUID);
 		return dto.ToEntity(issuer, broker, Context);
 	}
 
@@ -33,7 +33,7 @@ public class BondMovements : BaseJSONFIleRepository<BondMovement, BondMovementDT
 		var issuers = Issuers.All().ToDictionary(s => s.ID, s => s);
 		var brokers = Brokers.All().ToDictionary(s => s.ID, s => s);
 
-		return dtos.Select(d => d.ToEntity(issuers[d.Type == BondType.Gov ? GovID : d.IssuerID], brokers[d.BrokerID], Context));
+		return dtos.Select(d => d.ToEntity(issuers[d.Type == BondType.Gov ? GovID : d.IssuerGUID], brokers[d.BrokerGUID], Context));
 	}
 
 	protected override IEnumerable<BondMovementDTO> FromEntity(IEnumerable<BondMovement> entities) => entities.Select(FromEntity);

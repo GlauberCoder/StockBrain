@@ -8,15 +8,11 @@ namespace StockBrain.Infra.Repositories.JSONFiles;
 public class Portfolios : BaseJSONFIleRepository<Portfolio, PortfolioDTO>, IPortfolios
 {
 	IPortifolioCalculator Calculator { get; }
-	IPortfolioAssets PortfolioAssets { get; }
-	IBonds Bonds { get; }
 
-	public Portfolios(Context context, DataJSONFilesConfig config, IPortifolioCalculator calculator, IPortfolioAssets portfolioAssets, IBonds bonds)
+	public Portfolios(Context context, DataJSONFilesConfig config, IPortifolioCalculator calculator)
 		: base(context, config, "portfolios")
 	{
 		Calculator = calculator;
-		PortfolioAssets = portfolioAssets;
-		Bonds = bonds;
 	}
 
 	protected override Portfolio FromDTO(PortfolioDTO dto)

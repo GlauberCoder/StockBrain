@@ -17,7 +17,7 @@ public partial class PortfolioList
 		IsLoading = true;
 		InvokeAsync(StateHasChanged).ContinueWith(r =>
 		{
-			Portfolios = Repository.FromCurrentAccount().OrderBy(p => p.Name).OrderByDescending(p => p.Main);
+			Portfolios = Repository.All().OrderBy(p => p.Name);
 			IsLoading = false;
 			InvokeAsync(StateHasChanged);
 		});

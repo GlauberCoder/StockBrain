@@ -8,7 +8,7 @@ namespace StockBrain.Domain;
 
 public class PortifolioCalculator : IPortifolioCalculator
 {
-	public Portfolio Calc(BaseEntity portifolio, long accountID, Dictionary<AssetType, double> targets, string name, bool main, IEnumerable<PortfolioAsset> assets, IEnumerable<Bond> bonds)
+	public Portfolio Calc(BaseEntity portifolio, Dictionary<AssetType, double> targets, string name, IEnumerable<PortfolioAsset> assets, IEnumerable<Bond> bonds)
 	{
 		var variableTotal = assets.Sum(a => a.CurrentValue).ToPrecision(2);
 		var fixedTotal = bonds.Sum(a => a.Value).ToPrecision(2);
@@ -18,11 +18,8 @@ public class PortifolioCalculator : IPortifolioCalculator
 		var portifolioAssets = GetAssets(assets, types, total);
 		return new Portfolio
 		{
-			ID = portifolio.ID,
 			GUID = portifolio.GUID,
-			AccountID = accountID,
 			Name = name,
-			Main = main,
 			Total = total,
 			Bonds = bonds,
 			Types = types,

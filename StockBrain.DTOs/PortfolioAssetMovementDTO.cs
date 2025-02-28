@@ -10,10 +10,8 @@ public class PortfolioAssetMovementDTO : BaseEntity
 	}
 	public PortfolioAssetMovementDTO(PortfolioAssetMovement movement)
 	{
-		ID = movement.ID;
 		GUID = movement.GUID;
-		PortfolioID = movement.PortfolioID;
-		BrokerID = movement.Broker.ID;
+		BrokerGUID = movement.Broker.GUID;
 		Quantity = movement.Quantity;
 		Investment = movement.Investment;
 		Date = movement.Date;
@@ -22,8 +20,7 @@ public class PortfolioAssetMovementDTO : BaseEntity
 		StartInvestment = movement.StartInvestment;
 
 	}
-	public long PortfolioID { get; set; }
-	public long BrokerID { get; set; }
+	public string BrokerGUID { get; set; }
 	public string Ticker { get; set; }
 	public int StartQuantity { get; set; }
 	public double StartInvestment { get; set; }
@@ -35,9 +32,7 @@ public class PortfolioAssetMovementDTO : BaseEntity
 	{
 		return new PortfolioAssetMovement
 		{
-			ID = ID,
 			GUID = GUID,
-			PortfolioID = PortfolioID,
 			Broker = broker,
 			Quantity = Quantity,
 			Investment = Investment,

@@ -6,38 +6,44 @@ using StockBrain.Infra.Repositories.Firebase.Services;
 
 namespace StockBrain.Infra.Repositories.Firebase;
 
-public class Portfolios : BaseFirebaseRepository<Portfolio, PortfolioDTO>, IPortfolios
+public class Portfolios : AccountFirebaseRepository<Portfolio, PortfolioDTO>, IPortfolios
 {
 	IPortifolioCalculator Calculator { get; }
-	IPortfolioAssets PortfolioAssets { get; }
-	IBonds Bonds { get; }
+	IAssets Assets { get; }
+	IBrokers Brokers { get; }
+	IBondIssuers BondIssuers { get; }
 
-	public Portfolios(Context context, DataBaseClient client, IPortifolioCalculator calculator, IPortfolioAssets portfolioAssets, IBonds bonds)
+	public Portfolios(Context context, DBClient client, IPortifolioCalculator calculator, IAssets assets, IBrokers brokers, IBondIssuers bondIssuers)
 		: base(context, client, "portfolios")
 	{
 		Calculator = calculator;
-		PortfolioAssets = portfolioAssets;
-		Bonds = bonds;
+		Assets = assets;
+		Brokers = brokers;
+		BondIssuers = bondIssuers;
 	}
 
 	protected override Portfolio FromDTO(PortfolioDTO dto)
 	{
-		var assets = PortfolioAssets.ByPortifolio(dto.ID);
-		var bonds = Bonds.ByPortifolio(dto.ID);
-		return Calculator.Calc(dto, dto.AccountID, dto.Targets, dto.Name, dto.Main, assets, bonds);
+		var assets = Assets.AllAsDictionary();
+		var brokers = Brokers.AllAsDictionary();
+		var issuers = BondIssuers.AllAsDictionary();
+		var portfolioAssets = dto.Assets?.Select(a => a.Value.ToEntity(assets[a.Value.Ticker], brokers)) ?? Enumerable.Empty<PortfolioAsset>();
+		var portfolioBonds = dto.Bonds?.Select(b => b.Value.ToBond(brokers[b.Value.BrokerGUID], issuers[b.Value.IssuerGUID], Context)) ?? Enumerable.Empty<Bond>();
+		return Calculator.Calc(dto, dto.Targets, dto.Name, portfolioAssets, portfolioBonds);
 	}
 
 	protected override PortfolioDTO FromEntity(Portfolio entity) => new PortfolioDTO(entity);
 
 	protected override IEnumerable<Portfolio> FromDTO(IEnumerable<PortfolioDTO> dtos)
 	{
-		var portifolios = new List<Portfolio>();
-		var assets = PortfolioAssets.All().GroupBy(p => p.PortfolioID).ToDictionary(g => g.Key, g => g);
-		var bonds = Bonds.All().Where(b => b.Active).GroupBy(p => p.PortfolioID).ToDictionary(g => g.Key, g => g);
-		return dtos.Select(d => Calculator.Calc(d, d.AccountID, d.Targets, d.Name, d.Main, assets.ContainsKey(d.ID) ? assets[d.ID] : Enumerable.Empty<PortfolioAsset>(), bonds.ContainsKey(d.ID) ? bonds[d.ID] : Enumerable.Empty<Bond>())).ToList();
+		var assets = Assets.AllAsDictionary();
+		var brokers = Brokers.AllAsDictionary();
+		var issuers = BondIssuers.AllAsDictionary();
+		return dtos.Select(d => Calculator.Calc(d, d.Targets, d.Name, d.Assets?.Select(a => a.Value.ToEntity(assets[a.Value.Ticker], brokers)) ?? Enumerable.Empty<PortfolioAsset>(), d.Bonds?.Select(b => b.Value.ToBond(brokers[b.Value.BrokerGUID], issuers[b.Value.IssuerGUID], Context)) ?? Enumerable.Empty<Bond>())).ToList();
 	}
 
 	protected override IEnumerable<PortfolioDTO> FromEntity(IEnumerable<Portfolio> entities) => entities.Select(FromEntity);
 
-	public IEnumerable<Portfolio> FromCurrentAccount() => FromDTO(AllDTO().Where(a => a.AccountID == Context.Account.ID));
+	public Portfolio Main() => ByID(Context.Account.MainPortfolio);
+	public IEnumerable<EntityReference> References() => Client.GetShallow().Select(r => new EntityReference(r.GUID, r.Name));
 }

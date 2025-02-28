@@ -10,11 +10,9 @@ public class BondMovementDTO : BaseEntity
 	}
 	public BondMovementDTO(BondMovement movement, Context context)
 	{
-		ID = movement.ID;
 		GUID = movement.GUID;
-		AccountID = movement.AccountID;
-		BrokerID = movement.Broker.ID;
-		IssuerID = movement.Issuer.ID;
+		BrokerGUID = movement.Broker.GUID;
+		IssuerGUID = movement.Issuer.GUID;
 		Index = movement.Index;
 		Tax = movement.Tax;
 		Value = movement.Value;
@@ -22,9 +20,8 @@ public class BondMovementDTO : BaseEntity
 		Date = movement.Date;
 
 	}
-	public long AccountID { get; set; }
-	public long BrokerID { get; set; }
-	public long IssuerID { get; set; }
+	public string BrokerGUID { get; set; }
+	public string IssuerGUID { get; set; }
 	public BondType Type { get; set; } = BondType.CDB;
 	public BondIndex Index { get; set; } = BondIndex.IPCA;
 	public double Tax { get; set; }
@@ -35,9 +32,7 @@ public class BondMovementDTO : BaseEntity
 	{
 		return new BondMovement
 		{
-			ID = ID,
 			GUID = GUID,
-			AccountID = context.Account.ID,
 			Broker = broker,
 			Issuer = issuer,
 			Type = Type,

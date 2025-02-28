@@ -11,15 +11,15 @@ public class PortfolioDTO : BaseEntity
 	}
 	public PortfolioDTO(Portfolio portifolio)
 	{
-		AccountID = portifolio.AccountID;
 		Targets = portifolio.Types.ToDictionary(p => p.Key, p => p.Value.Target.Proportion);
 		Name = portifolio.Name;
-		Main = portifolio.Main;
+		Assets = portifolio.Assets.ToDictionary(a => a.Asset.Asset.Ticker, a => new PortfolioAssetDTO(a.Asset));
+		Bonds = portifolio.Bonds.ToDictionary(a => a.GUID, a => new BondDTO(a));
 
 	}
-	public long AccountID { get; set; }
 	public Dictionary<AssetType, double> Targets { get; set; }
 	public string Name { get; set; }
-	public bool Main { get; set; }
+	public IDictionary<string, PortfolioAssetDTO> Assets { get; set; }
+	public IDictionary<string, BondDTO> Bonds { get; set; }
 
 }

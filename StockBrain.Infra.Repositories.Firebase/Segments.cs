@@ -6,7 +6,7 @@ namespace StockBrain.Infra.Repositories.Firebase;
 
 public class Segments : BaseFirebaseRepository<Segment, Segment>, ISegments
 {
-	public Segments(Context context, DataBaseClient client)
+	public Segments(Context context, DBClient client)
 		: base(context, client, "segments")
 	{
 	}

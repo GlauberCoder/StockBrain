@@ -4,5 +4,4 @@ namespace StockBrain.Infra.Repositories.Abstractions;
 
 public interface IAccounts : IBaseRepository<Account>
 {
-	Account Get(string uuid);
 }

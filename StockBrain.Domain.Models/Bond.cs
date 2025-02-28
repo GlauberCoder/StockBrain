@@ -4,7 +4,6 @@ namespace StockBrain.Domain.Models;
 
 public class Bond : BaseEntity
 {
-	public long PortfolioID { get; init; }
 	public Broker Broker { get; init; }
 	public BondIssuer Issuer { get; init; }
 	public BondType Type { get; init; }

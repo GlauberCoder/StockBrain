@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Firebase.Database;
+using Firebase.Database.Query;
+using Microsoft.Extensions.DependencyInjection;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
-using StockBrain.Domain.Models.AssetInfos;
 using StockBrain.Domain.Models.Enums;
 using StockBrain.Domain.Models.EvaluationConfigs;
 using StockBrain.DTOs;
@@ -15,6 +16,7 @@ using StockBrain.InvestidorDez;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
 using StockBrain.Utils;
+using System.IO;
 
 namespace StockBrain.Playground.CMD;
 
@@ -25,313 +27,211 @@ internal class Program
 	static async Task Main(string[] args)
 	{
 		BuildServices();
-		//string option = string.Empty;
-
-		//while (option != "E")
-		//{
-		//	option = PrintOptions();
-		//	RunOption(option);
-		//}
-		//	printInfo(GetStockInfo("FLRY3"));
-		//	printInfo(GetBDRInfo("ROXO34"));
-
-		//CreateREITInfo("HGLG11");
-		//PrintREITEvaluation("HGLG11");
-
-		//CreateBDRInfo("ROXO34");
-		//PrintBDREvaluation("ROXO34");
-
-		//CreateStockInfo("FLRY3");
-		//PrintEvaluation("FLRY3", "ROXO34", "HGLG11");
-		//CreateInfos("XPML11");
-
-		//ETLFirebase();
-
-		CreateAccount("Higor", "Fisher");
+		//CreateAccount("Higor", "Fisher");
+		NewFormatETL();
+		Console.ReadKey();
 	}
 
-	static DataBaseClient GetFirebaseClient() => GetService<DataBaseClient>();
-
-	static void CreateAccount(string accountName, string portifolioName)
+	static void NewFormatETL()
 	{
-		var client = GetFirebaseClient();
-		var context = GetService<Context>();
-		var account = new Account { Name = accountName };
-
-		var portfolio = new PortfolioDTO
+		var source = new FirebaseClient("https://stock-brain-bd238-default-rtdb.firebaseio.com", new FirebaseOptions
 		{
-			AccountID = account.ID,
-			Name = portifolioName,
-			Main = true,
+			AuthTokenAsyncFactory = () => Task.FromResult("gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p")
+		});
+		var destiny = new FirebaseClient("https://stock-brain-qa-default-rtdb.firebaseio.com", new FirebaseOptions
+		{
+			AuthTokenAsyncFactory = () => Task.FromResult("gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p")
+		});
+
+		var translations = new Dictionary<string, Dictionary<long, string>>();
+
+		destiny.Child("decisionFactors").PutAsync(source.Child("decisionFactors").OnceSingleAsync<Dictionary<AssetType, IEnumerable<string>>>().Result);
+		Copy(source, destiny, "accounts", ToAccount, translations);
+		Copy(source, destiny, "bondIssuers", ToBondIssuer, translations);
+		Copy(source, destiny, "brokers", ToBroker, translations);
+		Copy(source, destiny, "segments", ToSegment, translations);
+		Copy(source, destiny, "sectors", ToSector, translations);
+		Copy(source, destiny, "assets", ToAsset, translations);
+
+		var bonds = source
+			.Child("bonds")
+			.OnceAsync<dynamic>()
+			.Result
+			.GroupBy(v => (long)v.Object.PortifolioID)
+			.ToDictionary(v => v.Key, v => v.Select(b => (BondDTO)ToBond(b.Object, translations)));
+
+		var assets = source
+			.Child("portfolioAssets")
+			.OnceAsync<dynamic>()
+			.Result
+			.GroupBy(v => (long)v.Object.PortifolioID)
+			.ToDictionary(v => v.Key, v => v.Select(b => (PortfolioAssetDTO)ToPortfolioAsset(b.Object)));
+
+		var portfolios = source
+			.Child("portfolios")
+			.OnceAsync<dynamic>()
+			.Result
+			.ToDictionary(v => v.Key, v => ToPortfolio(v.Object, bonds, assets));
+
+		destiny.Child("users/35557e43-e295-4321-bc63-652b1c7870bc/portfolios").PutAsync(portfolios);
+
+		Console.ReadKey();
+
+
+
+	}
+
+	static void Copy<TEntity>(FirebaseClient source, FirebaseClient destiny, string path, Func<dynamic, Dictionary<string, Dictionary<long, string>>, TEntity> transformer, Dictionary<string, Dictionary<long, string>> translations)
+	{
+		var results = source.Child(path).OnceAsync<dynamic>().Result;
+		var entities = results.ToDictionary(d => d.Key, d => transformer(d.Object, translations));
+		destiny.Child(path).PutAsync(entities);
+		translations.Add(path, results.ToDictionary(r => (long)r.Object.ID, r => r.Key));
+	}
+	static AssetDTO ToAsset(dynamic value, Dictionary<string, Dictionary<long, string>> translations)
+	{
+		return new AssetDTO 
+		{ 
+			GUID = value.GUID, 
+			Name = value.Name, 
+			Description = value.Description,
+			Foundation = value.Foundation,
+			IPO = value.IPO,
+			LastPriceUpdate = value.LastPriceUpdate,
+			LastReview = value.LastReview,
+			MarketPrice = value.MarketPrice,
+			NegativeNotes = value.NegativeNotes,
+			PositiveNotes = value.PositiveNotes,
+			Risk = value.Risk,
+			SectorGUID = translations["sectors"][(long)value.SectorID],
+			SegmentGUID = translations["segments"][(long)value.SegmentID],
+			Ticker = value.Ticker,
+			Type = value.Type
+		};
+	}
+	static PortfolioAssetDTO ToPortfolioAsset(dynamic value)
+	{
+		return new PortfolioAssetDTO
+		{
+			GUID = value.GUID,
+			FirstAquisition = value.FirstAquisition,
+			LastAquisition = value.LastAquisition,
+			Quantity = value.Quantity,
+			Risk = value.Risk,
+			Ticker = value.Ticker,
+			Value = value.Value,
+			Brokers = new Dictionary<string, PortfolioAssetBrokerDTO> 
+			{
+				{ "524d107a-a4c1-4afc-a610-a6c837baaf1f", new PortfolioAssetBrokerDTO { Quantity = value.Quantity, Ticker = value.Ticker, BrokerGUID = "524d107a-a4c1-4afc-a610-a6c837baaf1f", GUID = "524d107a-a4c1-4afc-a610-a6c837baaf1f" } }
+			}
+		};
+	}
+	static BondDTO ToBond(dynamic value, Dictionary<string, Dictionary<long, string>> translations)
+	{
+		return new BondDTO { 
+			GUID = value.GUID, 
+			BrokerGUID = translations["brokers"][(long)value.BrokerID],
+			Date = value.Date,
+			Expiration = value.Expiration,
+			Index = value.Index,
+			IssuerGUID = translations["bondIssuers"][(long)value.IssuerID],
+			Redeem = value.Redeem,
+			Tax = value.Tax,
+			Type = value.Type,
+			Value = value.Value			
+		};
+	}
+	static PortfolioDTO ToPortfolio(dynamic value, IDictionary<long, IEnumerable<BondDTO>> bonds, IDictionary<long, IEnumerable<PortfolioAssetDTO>> assets
+		) 
+	{
+		return new PortfolioDTO { 
+			Name = value.Name,
+			GUID = value.GUID,
 			Targets = new Dictionary<AssetType, double> {
 				{ AssetType.Acoes, 0.3 },
 				{ AssetType.BDR, 0.25 },
 				{ AssetType.FII, 0.2 },
 				{ AssetType.Gov, 0.1 },
 				{ AssetType.Priv, 0.15 },
-			}
+			},
+			Assets = assets[(long)value.ID].ToDictionary(a => a.GUID, a => a),
+			Bonds = bonds[(long)value.ID].ToDictionary(a => a.GUID, a => a),
 		};
+	}
+	static BondIssuer ToBondIssuer(dynamic value, Dictionary<string, Dictionary<long, string>> translations)
+	{
+		return new BondIssuer { GUID = value.GUID, Name = value.Name, };
+	}
+	static Broker ToBroker(dynamic value, Dictionary<string, Dictionary<long, string>> translations)
+	{
+		return new Broker { GUID = value.GUID, Name = value.Name };
+	}
+	static Sector ToSector(dynamic value, Dictionary<string, Dictionary<long, string>> translations)
+	{
+		return new Sector { GUID = value.GUID, Name = value.Name };
+	}
+	static Segment ToSegment(dynamic value, Dictionary<string, Dictionary<long, string>> translations)
+	{
+		return new Segment { GUID = value.GUID, Name = value.Name };
+	}
+	static Account ToAccount(dynamic value, Dictionary<string, Dictionary<long, string>> translations) {
+		return new Account { GUID = value.GUID, Name = value.Name, MainPortfolio = value.MainPortfolio };
+	}
+	static DBClient GetFirebaseClient() => GetService<DBClient>();
+
+	static void CreateAccount(string accountName, string portifolioName)
+	{
+		var client = GetFirebaseClient();
+		var context = GetService<Context>();
+		var portfolioGUID = Guid.NewGuid().ToString();
+		var account = new Account { Name = accountName, GUID = Guid.NewGuid().ToString(), MainPortfolio = portfolioGUID };
+
+
 		var assets = GetService<IAssets>().All().Where(a => !a.Risk).Select(a => new PortfolioAssetDTO
 		{
+			GUID = a.Ticker,
 			FirstAquisition = context.Today,
 			LastAquisition = context.Today,
-			PortifolioID = portfolio.ID,
 			Quantity = 0,
 			Value = 0,
 			Risk = false,
 			Ticker = a.Ticker
 		});
 
+		var portfolio = new PortfolioDTO
+		{
+			Name = portifolioName,
+			Targets = new Dictionary<AssetType, double> {
+				{ AssetType.Acoes, 0.3 },
+				{ AssetType.BDR, 0.25 },
+				{ AssetType.FII, 0.2 },
+				{ AssetType.Gov, 0.1 },
+				{ AssetType.Priv, 0.15 },
+			},
+			Assets = assets.ToDictionary(a => a.GUID, a => a)
+		};
+
 		Save(client, "accounts", account);
-		Save(client, "portfolios", portfolio);
-		foreach (var asset in assets)
-			Save(client, "portfolioAssets", asset);
+		Save(client, $"users/{account.GUID}/portfolios", portfolio);
 
 	}
-	static void Save<TEntity>(DataBaseClient client, string path, TEntity entity)
+	static void Save<TEntity>(DBClient client, string path, TEntity entity)
 		where TEntity : BaseEntity
 	{
-		client.Save(path, entity);
-	}
-	private static void PrintEvaluation(params string[] tickers)
-	{
-		var assets = GetService<IPortfolioAssets>().ByPortifolio(2).Where(p => tickers.Contains(p.Asset.Ticker));
-		foreach (var asset in assets)
-		{
-			Console.WriteLine($"{asset.Asset.Ticker}");
-			if (asset.Score != null)
-			{
-				Console.WriteLine($"Score: {asset.Score.Proportion.PercentageFormat()} {asset.Score.Value}/{asset.Score.Total}");
-
-				foreach (var answer in asset.Answers)
-					Console.WriteLine($"{answer.Factor.Name} {answer.Answer}");
-			}
-			Console.WriteLine($"========================================================");
-		}
+		client.GetContext<TEntity>(path).Save(entity);
 	}
 	static async Task CreateInfos(params string[] tickers)
 	{
 		await GetService<IAssetInfoUpdater>().UpdateAll(null, tickers);
 	}
 	private static T GetService<T>() => ServiceProvider.GetService<T>();
-	static void RunOption(string option)
-	{
-		Console.Clear();
-		switch (option)
-		{
-			case "1":
-				ListAssets();
-				break;
-			case "2":
-				UpdateAllPrices();
-				break;
-			case "3":
-				ListNullPriceTickers();
-				break;
-			case "4":
-				UpdateMissingPrices();
-				break;
-			case "5":
-				ListBonds();
-				break;
-			case "6":
-				ListPortifolioAssets();
-				break;
-			case "7":
-				ChangePortifolio();
-				break;
-		}
-		Console.ReadKey();
-	}
-	static void printStats(StockStats asset)
-	{
-		Console.WriteLine($"DY AVG: {asset.DividendAVG}");
-		Console.WriteLine($"Bazin: {asset.BazinPrice}");
-		Console.WriteLine($"Graham: {asset.GrahamPrice}");
-		Console.WriteLine($"Fast AVG: {asset.FastAvg}");
-		Console.WriteLine($"Slow AVG: {asset.SlowAvg}");
-		Console.WriteLine($"Down Trend: {asset.DownTrend}");
-		Console.WriteLine($"Has Liquidity: {asset.HasLiquidity}");
-		Console.WriteLine($"Low Debt To Equity: {asset.LowDebtToEquity}");
-		Console.WriteLine($"HasAcceptable ROE: {asset.HasAcceptableROE}");
-		Console.WriteLine($"Positive Revenue CAGR: {asset.PositiveRevenueCAGR}");
-		Console.WriteLine($"Positive Profit CAGR: {asset.PositiveProfitCAGR}");
-	}
-	static void printInfo(StockInfo asset)
-	{
-		Console.WriteLine($"Ticker: {asset.Ticker}");
-		Console.WriteLine($"HasNeverPostedLosses: {asset.HasNeverPostedLosses}");
-		Console.WriteLine($"ProfitableLastQuarters: {asset.ProfitableLastQuarters}");
-		Console.WriteLine($"PaidAcceptableDividends: {asset.PaidAcceptableDividends}");
-		Console.WriteLine($"WellRated: {asset.WellRated}");
-		Console.WriteLine($"Price: {asset.Price}");
-		Console.WriteLine($"Divida: {asset.Debt}");
-		Console.WriteLine($"ROE: {asset.ROE}");
-		Console.WriteLine($"LPA: {asset.LPA}");
-		Console.WriteLine($"VPA: {asset.VPA}");
-		Console.WriteLine($"Revenue CAGR: {asset.RevenueCAGR}");
-		Console.WriteLine($"Profit CAGR: {asset.ProfitCAGR}");
-		Console.WriteLine($"Daily Liquidity: {asset.DailyLiquidity}");
-		Console.WriteLine($"Patrimonio: {asset.Equity}");
-
-		foreach (var dividend in asset.Dividends)
-			Console.WriteLine($"{dividend.Key}: {dividend.Value}");
-
-
-		foreach (var price in asset.Prices.Take(10))
-			Console.WriteLine($"{price.Key}: {price.Value}");
-	}
-	static void printInfo(REITInfo asset)
-	{
-		Console.WriteLine($"Ticker: {asset.Ticker}");
-		Console.WriteLine($"Price: {asset.Price}");
-		Console.WriteLine($"P/VP: {asset.PVP}");
-		Console.WriteLine($"Liquidez Diária: {asset.DailyLiquidity}");
-		Console.WriteLine($"ROI 5y: {asset.NominalROINear}");
-		Console.WriteLine($"ROI 10y: {asset.NominalROILong}");
-		Console.WriteLine($"ROI Real 5y: {asset.RealROINear}");
-		Console.WriteLine($"ROI Real 10y: {asset.RealROILong}");
-		Console.WriteLine($"Taxa de gestão: {asset.ManagementFee}");
-		Console.WriteLine($"Taxa de vacância: {asset.VacancyRate}");
-		Console.WriteLine($"Patrimônio: {asset.AssetValue}");
-		Console.WriteLine($"Well Rated: {asset.WellRated}");
-		Console.WriteLine($"Regions: {asset.RegionCount}");
-		Console.WriteLine($"Properties: {asset.PropertyCount}");
-
-		//foreach (var dividend in asset.Dividends)
-		//	Console.WriteLine($"{dividend.Key}: {dividend.Value}");
-
-
-		//foreach (var price in asset.Prices.Take(10))
-		//	Console.WriteLine($"{price.Key}: {price.Value}");
-
-		//if(asset.DividendYields != null)
-		//	foreach (var price in asset.DividendYields.Take(10))
-		//		Console.WriteLine($"{price.Key}: {price.Value}");
-	}
-	static void printInfo(BDRInfo asset)
-	{
-		Console.WriteLine($"Ticker: {asset.Ticker}");
-		Console.WriteLine($"HasNeverPostedLosses: {asset.HasNeverPostedLosses}");
-		Console.WriteLine($"ProfitableLastQuarters: {asset.ProfitableLastQuarters}");
-		Console.WriteLine($"WellRated: {asset.WellRated}");
-		Console.WriteLine($"Price: {asset.Price}");
-		Console.WriteLine($"ROE: {asset.ROE}");
-		Console.WriteLine($"LPA: {asset.LPA}");
-		Console.WriteLine($"VPA: {asset.VPA}");
-		Console.WriteLine($"Patrimonio: {asset.Equity}");
-
-		foreach (var dividend in asset.Dividends)
-			Console.WriteLine($"{dividend.Key}: {dividend.Value}");
-
-
-		foreach (var price in asset.Prices.Take(10))
-			Console.WriteLine($"{price.Key}: {price.Value}");
-	}
-	static void printStats(BDRStats asset)
-	{
-		Console.WriteLine($"DY AVG: {asset.DividendAVG}");
-		Console.WriteLine($"Bazin: {asset.BazinPrice}");
-		Console.WriteLine($"Graham: {asset.GrahamPrice}");
-		Console.WriteLine($"Fast AVG: {asset.FastAvg}");
-		Console.WriteLine($"Slow AVG: {asset.SlowAvg}");
-		Console.WriteLine($"Down Trend: {asset.DownTrend}");
-		Console.WriteLine($"HasAcceptable ROE: {asset.HasAcceptableROE}");
-	}
-	static void printStats(REITStats asset)
-	{
-		Console.WriteLine($"BazinPrice: {asset.BazinPrice}");
-		Console.WriteLine($"DividendAVG: {asset.DividendAVG}");
-		Console.WriteLine($"SlowAvg: {asset.SlowAvg}");
-		Console.WriteLine($"FastAvg: {asset.FastAvg}");
-		Console.WriteLine($"DYAvgRecent: {asset.DYAvgRecent}");
-		Console.WriteLine($"DYAvgConsolidated: {asset.DYAvgConsolidated}");
-		Console.WriteLine($"BazinCeilingPriceAboveCurrent: {asset.BazinCeilingPriceAboveCurrent}");
-		Console.WriteLine($"CurrentPriceBelowPortfolioAverage: {asset.CurrentPriceBelowPortfolioAverage}");
-		Console.WriteLine($"HasEnoughYearsOfIPO: {asset.HasEnoughYearsOfIPO}");
-		Console.WriteLine($"DownTrend: {asset.DownTrend}");
-		Console.WriteLine($"PVPBellowThreshold: {asset.PVPBellowThreshold}");
-		Console.WriteLine($"ManagementFeeBellowThreshold: {asset.ManagementFeeBellowThreshold}");
-		Console.WriteLine($"VacancyBellowThreshold: {asset.VacancyBellowThreshold}");
-		Console.WriteLine($"AssetValueAboveThreshold: {asset.AssetValueAboveThreshold}");
-		Console.WriteLine($"RegionsAboveThreshold: {asset.RegionsAboveThreshold}");
-		Console.WriteLine($"PropertyAmountAboveThreshold: {asset.PropertyAmountAboveThreshold}");
-		Console.WriteLine($"DailyLiquidityThreshold: {asset.DailyLiquidityAboveThreshold}");
-		Console.WriteLine($"DYAboveThresholdRecent: {asset.DYAboveThresholdRecent}");
-		Console.WriteLine($"DYAboveThresholdConsolidated: {asset.DYAboveThresholdConsolidated}");
-		Console.WriteLine($"RealROIAboveThresholdRecent: {asset.RealROIAboveThresholdNear}");
-		Console.WriteLine($"RealROIAboveThresholdConsolidated: {asset.RealROIAboveThresholdLong}");
-		Console.WriteLine($"NominalROIAboveThresholdRecent: {asset.NominalROIAboveThresholdNear}");
-		Console.WriteLine($"NominalROIAboveThresholdConsolidated: {asset.NominalROIAboveThresholdLong}");
-		Console.WriteLine($"DividendAVG: {asset.DividendAVG}");
-	}
-	static string PrintOptions()
-	{
-		Console.Clear();
-		Console.WriteLine($"Portifólio {PortifolioID}");
-		Console.WriteLine("Seleciona uma opção");
-		Console.WriteLine("1 - Listar ativos");
-		Console.WriteLine("2 - Atualizar todos os preços");
-		Console.WriteLine("3 - Listar preços vazios");
-		Console.WriteLine("4 - Atualizar preços vazios");
-		Console.WriteLine("5 - Listar Renda Fixa");
-		Console.WriteLine("6 - Listar Assets do portifólio");
-		Console.WriteLine("7 - Change Portifólio");
-		Console.WriteLine("E - Sair");
-		return Console.ReadLine();
-	}
-	static void ChangePortifolio()
-	{
-		Console.WriteLine("Insira o ID do Portifólio:");
-		PortifolioID = long.Parse(Console.ReadLine());
-	}
-	static void ListAssets()
-	{
-		foreach (var asset in GetService<IAssets>().All())
-			PrintAsset(asset);
-	}
-	static void ListBonds()
-	{
-		var bounds = GetService<IBonds>().ByPortifolio(PortifolioID);
-		foreach (var bond in bounds)
-			PrintBond(bond);
-
-
-		Console.WriteLine($"Total: {bounds.Where(b => !b.Expired && !b.Redeemed).Sum(b => b.Value)}");
-	}
-	static void ListPortifolioAssets()
-	{
-		var assets = GetService<IPortfolioAssets>().ByPortifolio(PortifolioID);
-		foreach (var asset in assets)
-			PrintPortfolioAsset(asset);
-		var delta = new DeltaValue(assets.Sum(b => b.InvestedValue), assets.Sum(a => a.CurrentValue));
-		Console.WriteLine($"Investment: {delta.Initial.ToPrecision()} Current: {delta.Final.ToPrecision()} Difference: {delta.Difference.ToPrecision()} ({(delta.Percentage * 100).ToPrecision()}%)");
-	}
-	static void UpdateAllPrices()
-	{
-		Task.WaitAll(GetService<IPriceUpdater>().Update());
-		ListNullPriceTickers();
-		Console.WriteLine("Atualizado");
-	}
-	static void UpdateMissingPrices()
-	{
-		Task.WaitAll(GetService<IPriceUpdater>().Update());
-		ListNullPriceTickers();
-		Console.WriteLine("Atualizado");
-	}
-	static void ListNullPriceTickers()
-	{
-		foreach (var asset in GetService<IAssets>().All().Where(a => !a.MarketPrice.HasValue))
-			Console.WriteLine($"{asset.Ticker} Not Found");
-	}
 	private static void BuildServices()
 	{
 		ServiceProvider = new ServiceCollection()
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
-			.AddScoped(sp => new Context { Account = new Account { GUID = Guid.NewGuid().ToString(), ID = 1, Name = "Glauber" } })
-			//.AddScoped(sp => new DataJSONFilesConfig { BasePath = "C:\\Dev\\StockBrain\\PROD" })
+			.AddScoped(sp => new Context { Account = new Account { GUID = "35557e43-e295-4321-bc63-652b1c7870bc",  Name = "Glauber", MainPortfolio = "123e4567-e89b-12d3-a456-426614174000" } })
 			.AddSingleton(sp => new DataBaseConfig("https://stock-brain-qa-default-rtdb.firebaseio.com", "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p"))
-			.AddScoped<DataBaseClient>()
+			.AddScoped<DBClient>()
 					.AddScoped(sp => new StockEvaluationConfig
 					{
 						BazinExpectedReturn = 0.06,
@@ -423,9 +323,6 @@ internal class Program
 					.AddScoped<ISegments, Segments>()
 					.AddScoped<IBrokers, Brokers>()
 					.AddScoped<IBondIssuers, BondIssuers>()
-					.AddScoped<IBonds, Bonds>()
-					.AddScoped<IPortfolioAssets, PortfolioAssets>()
-					.AddScoped<IPortfolioAssetMovements, PortfolioAssetMovements>()
 					.AddScoped<IInvestmentRecommender, InvestmentRecommender>()
 					.AddScoped<IPortifolioCalculator, PortifolioCalculator>()
 					.AddScoped<IPortfolios, Portfolios>()
@@ -433,7 +330,6 @@ internal class Program
 					.AddScoped<IPriceUpdater, PriceUpdater>()
 					.AddScoped<IAssetMovements, AssetMovements>()
 					.AddScoped<IBondMovements, BondMovements>()
-					.AddScoped<IPortfolioAssetBrokers, PortfolioAssetBrokers>()
 					.AddScoped<IPortfolioAssetManager, PortfolioAssetManager>()
 					.AddScoped<IInvestmentRecommenderConfigCalculator, InvestmentRecommenderConfigCalculator>()
 					.AddScoped<IStockInfos, StockInfos>()
@@ -444,68 +340,6 @@ internal class Program
 					.AddScoped<IAssetInfos, AssetInfos>()
 					.AddScoped<IDecisionFactorAnswerSetter, DecisionFactorAnswerSetter>()
 			.BuildServiceProvider();
-	}
-	private static string WriteYearAndMonths(TimeSpan span)
-	{
-		var years = span.Years();
-		var months = span.Months();
-		var yearText = years > 0 ? (years > 1 ? $"{years} anos" : $"{years} ano") : string.Empty;
-		var monthText = months > 0 ? (months > 1 ? $"{months} meses" : $"{months} mês") : string.Empty;
-
-		return yearText + (string.IsNullOrEmpty(yearText) || string.IsNullOrEmpty(monthText) ? monthText : $" e {monthText}");
-	}
-	private static void PrintPortfolioAsset(PortfolioAsset asset)
-	{
-		PrintAsset(asset.Asset);
-		Console.WriteLine($"Quantity: {asset.Quantity}");
-		Console.WriteLine($"Avg Price: {asset.AveragePrice}");
-		Console.WriteLine($"Value: {asset.InvestedValue}");
-		Console.WriteLine($"Current Value: {asset.CurrentValue}");
-		Console.WriteLine($"Risk: {(asset.Risk ? "Yes" : "NO")}");
-		Console.WriteLine($"Start: {asset.FirstAquisition}");
-		Console.WriteLine($"Last: {asset.LastAquisition}");
-		Console.WriteLine($"Price: {asset.DeltaPrice.Difference.ToPrecision()}");
-		Console.WriteLine($"Total: {asset.DeltaTotal.Difference.ToPrecision()}");
-		Console.WriteLine($"Evolution: {(asset.DeltaTotal.Percentage * 100).ToPrecision()}%");
-		Console.WriteLine("============================================");
-		Console.WriteLine();
-	}
-	private static void PrintBond(Bond bond)
-	{
-		Console.WriteLine($"[{bond.ID}][{bond.Type.ToString()}] {bond.Issuer.Name} {bond.Index.ToString()} {bond.Tax}%");
-		Console.WriteLine("============================================");
-		Console.WriteLine($"Valor: {bond.Value}");
-		Console.WriteLine($"Tipo: {bond.Type}");
-		Console.WriteLine($"Index: {bond.Index}");
-		Console.WriteLine($"Taxa: {bond.Tax}");
-		Console.WriteLine($"Emissor: {bond.Issuer.Name}");
-		Console.WriteLine($"Corretora: {bond.Broker.Name}");
-		Console.WriteLine($"Data: {bond.Date}");
-		Console.WriteLine($"Expiracao: {bond.Expiration}");
-		Console.WriteLine($"Age: {WriteYearAndMonths(bond.Age)}");
-		Console.WriteLine($"Time to expire: {(bond.Expired ? "Expired" : WriteYearAndMonths(bond.TimeToExpire))}");
-		Console.WriteLine("============================================");
-		Console.WriteLine();
-	}
-	private static void PrintAsset(Asset asset)
-	{
-		Console.WriteLine($"Ticker: {asset.Ticker}");
-		Console.WriteLine("============================================");
-		Console.WriteLine($"Name: {asset.Name}");
-		Console.WriteLine($"Description: {asset.Description}");
-		Console.WriteLine($"Sector: {asset.Sector.Name}");
-		Console.WriteLine($"Segment: {asset.Segment.Name}");
-		Console.WriteLine($"IPO: {asset.IPO}");
-		Console.WriteLine($"Foundation: {asset.Foundation}");
-		Console.WriteLine($"Positive: {asset.PositiveNotes}");
-		Console.WriteLine($"Negative: {asset.NegativeNotes}");
-		Console.WriteLine($"Age: {WriteYearAndMonths(asset.Foundation.Span)}");
-		Console.WriteLine($"IPO Time: {WriteYearAndMonths(asset.IPO.Span)}");
-		Console.ForegroundColor = ConsoleColor.Green;
-		Console.WriteLine($"Price: {asset.MarketPrice}");
-		Console.ForegroundColor = ConsoleColor.Gray;
-		Console.WriteLine("============================================");
-		Console.WriteLine();
 	}
 }
 

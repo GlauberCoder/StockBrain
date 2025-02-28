@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockBrain.Infra.Abstration
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockBrain.Utils", "StockBrain.Utils\StockBrain.Utils.csproj", "{4D0BAEAC-8E4E-4322-8B9C-AC09669B5072}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockBrain.Infra.Repositories.JSONFiles", "StockBrain.Infra.Repositories.JSONFiles\StockBrain.Infra.Repositories.JSONFiles.csproj", "{A42809AD-D98D-4F2E-A51B-F3A457C72F6C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockBrain.Infra.PriceGetters", "StockBrain.Infra.PriceGetters\StockBrain.Infra.PriceGetters.csproj", "{7AB140F2-A833-4960-A7C9-2CB5DF61FC0E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockBrain.Infra.PriceGetters.Abstractions", "StockBrain.Infra.PriceGetters.Abstractions\StockBrain.Infra.PriceGetters.Abstractions.csproj", "{FB28DC4A-48A5-453C-B0CA-0ABC8E2D3B45}"
@@ -67,10 +65,6 @@ Global
 		{4D0BAEAC-8E4E-4322-8B9C-AC09669B5072}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D0BAEAC-8E4E-4322-8B9C-AC09669B5072}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D0BAEAC-8E4E-4322-8B9C-AC09669B5072}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A42809AD-D98D-4F2E-A51B-F3A457C72F6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A42809AD-D98D-4F2E-A51B-F3A457C72F6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A42809AD-D98D-4F2E-A51B-F3A457C72F6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A42809AD-D98D-4F2E-A51B-F3A457C72F6C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7AB140F2-A833-4960-A7C9-2CB5DF61FC0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7AB140F2-A833-4960-A7C9-2CB5DF61FC0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AB140F2-A833-4960-A7C9-2CB5DF61FC0E}.Release|Any CPU.ActiveCfg = Release|Any CPU

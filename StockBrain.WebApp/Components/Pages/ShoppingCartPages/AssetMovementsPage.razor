@@ -182,8 +182,8 @@
 		IsLoading = true;
 		InvokeAsync(StateHasChanged).ContinueWith(r =>
 		{
-			AssetMovements = ReloadData(firstLoad, Assets.ByAccount(Context.Account.ID), SelectedAssets());
-			BondMovements = ReloadData(firstLoad, Bonds.ByAccount(Context.Account.ID), SelectedBonds());
+			AssetMovements = ReloadData(firstLoad, Assets.All(), SelectedAssets());
+			BondMovements = ReloadData(firstLoad, Bonds.All(), SelectedBonds());
 			IsLoading = false;
 			InvokeAsync(StateHasChanged);
 		});

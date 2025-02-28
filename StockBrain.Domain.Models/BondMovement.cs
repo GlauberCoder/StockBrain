@@ -4,7 +4,6 @@ namespace StockBrain.Domain.Models;
 
 public class BondMovement : BaseEntity
 {
-	public long AccountID { get; set; }
 	public DateOnly Date { get; set; }
 	public Broker Broker { get; set; }
 	public BondIssuer Issuer { get; set; }
@@ -14,11 +13,10 @@ public class BondMovement : BaseEntity
 	public double Value { get; set; }
 	public DateOnly Expiration { get; set; }
 
-	public Bond ToBond(long portfolioID)
+	public Bond ToBond()
 	{
 		return new Bond
 		{
-			PortfolioID = portfolioID,
 			Broker = Broker,
 			Issuer = Issuer,
 			Type = Type,

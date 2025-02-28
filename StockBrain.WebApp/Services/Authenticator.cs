@@ -20,7 +20,7 @@ public class Authenticator
 
 	public async Task<Account> Authenticate(string accountUUID) 
 	{
-		var account = Accounts.Get(accountUUID);
+		var account = Accounts.ByID(accountUUID);
 		if (account != null)
 		{
 			var httpContext = HttpContextAccessor.HttpContext;
@@ -40,5 +40,5 @@ public class Authenticator
 	public bool IsAuthenticated() => HttpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated??false;
 	public string GetName() => HttpContextAccessor.HttpContext.User.Identity.Name;
 	public string GetUUID() => HttpContextAccessor.HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-	public Account GetAccount() => IsAuthenticated() ? Accounts.Get(GetUUID()) : null;
+	public Account GetAccount() => IsAuthenticated() ? Accounts.ByID(GetUUID()) : null;
 }

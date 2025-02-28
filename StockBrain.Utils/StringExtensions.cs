@@ -8,4 +8,6 @@ public static class StringExtensions
 	public static string Remove(this string text, string value) => text.Replace(value, string.Empty);
 	public static string ToPointDecimalSeparator(this string text) => text.Replace(".", string.Empty).Replace(",", ".");
 	public static double ToDouble(this string text) => double.Parse(text.ToPointDecimalSeparator().Trim());
+	public static bool IsEmpty(this string text) => string.IsNullOrWhiteSpace(text);
+	public static bool HasValue(this string text) => !text.IsEmpty();
 }

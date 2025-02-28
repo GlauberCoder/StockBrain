@@ -5,5 +5,5 @@ namespace StockBrain.Domain.Abstractions;
 
 public interface IPortifolioCalculator
 {
-	Portfolio Calc(BaseEntity portifolio, long accountID, Dictionary<AssetType, double> Targets, string name, bool main, IEnumerable<PortfolioAsset> assets, IEnumerable<Bond> bonds);
+	Portfolio Calc(BaseEntity portifolio, Dictionary<AssetType, double> Targets, string name, IEnumerable<PortfolioAsset> assets, IEnumerable<Bond> bonds);
 }

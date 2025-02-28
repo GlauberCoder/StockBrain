@@ -7,12 +7,12 @@ namespace StockBrain.Infra.Repositories.Firebase;
 
 public class DecisionFactors : IDecisionFactors
 {
-	public DecisionFactors(Context context, DataBaseClient client)
+	public DecisionFactors(Context context, DBClient client)
 	{
 		Client = client;
 	}
 
-	DataBaseClient Client { get; }
+	DBClient Client { get; }
 
-	public IDictionary<AssetType, IEnumerable<string>> All() => Client.GetValue<IDictionary<AssetType, IEnumerable<string>>>("decisionFactors");
+	public IDictionary<AssetType, IEnumerable<string>> All() => Client.Single<IDictionary<AssetType, IEnumerable<string>>>("decisionFactors");
 }

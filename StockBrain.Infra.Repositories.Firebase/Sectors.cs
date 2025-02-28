@@ -6,7 +6,7 @@ namespace StockBrain.Infra.Repositories.Firebase;
 
 public class Sectors : BaseFirebaseRepository<Sector, Sector>, ISectors
 {
-	public Sectors(Context context, DataBaseClient client)
+	public Sectors(Context context, DBClient client)
 		: base(context, client, "sectors")
 	{
 	}

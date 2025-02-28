@@ -12,7 +12,6 @@ public class AssetDTO : BaseEntity
 	}
 	public AssetDTO(Asset asset)
 	{
-		ID = asset.ID;
 		GUID = asset.GUID;
 		Ticker = asset.Ticker;
 		Type = asset.Type;
@@ -24,8 +23,8 @@ public class AssetDTO : BaseEntity
 		LastReview = asset.LastReview.Date;
 		IPO = asset.IPO.Date;
 		Foundation = asset.Foundation.Date;
-		SectorID = asset.Sector.ID;
-		SegmentID = asset.Segment.ID;
+		SectorGUID = asset.Sector.GUID;
+		SegmentGUID = asset.Segment.GUID;
 		MarketPrice = asset.MarketPrice;
 		LastPriceUpdate = asset.LastPriceUpdate;
 	}
@@ -41,8 +40,8 @@ public class AssetDTO : BaseEntity
 	public DateOnly Foundation { get; set; }
 	public AssetType Type { get; set; }
 	public string Name { get; set; }
-	public long SectorID { get; set; }
-	public long SegmentID { get; set; }
+	public string SectorGUID { get; set; }
+	public string SegmentGUID { get; set; }
 	public double? MarketPrice { get; set; }
 
 	public Asset ToAsset(Sector sector, Segment segment, Context context) 
@@ -50,7 +49,6 @@ public class AssetDTO : BaseEntity
 		var maxMonthsToExpire = 3;
 		return new Asset
 		{
-			ID = ID,
 			GUID = GUID,
 			Ticker = Ticker,
 			Type = Type,

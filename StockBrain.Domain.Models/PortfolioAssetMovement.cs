@@ -8,7 +8,6 @@ public class PortfolioAssetMovement : BaseEntity
 	}
 	public PortfolioAssetMovement(AssetMovement movement, PortfolioAsset asset, Context context)
 	{
-		PortfolioID = asset.PortfolioID;
 		Ticker = movement.Asset.Ticker;
 		StartQuantity = asset.Quantity;
 		StartInvestment = asset.InvestedValue;
@@ -18,7 +17,6 @@ public class PortfolioAssetMovement : BaseEntity
 		Broker = movement.Broker;
 
 	}
-	public long PortfolioID { get; init; }
 	public Broker Broker { get; init; }
 	public string Ticker { get; init; }
 	public int StartQuantity { get; init; }
