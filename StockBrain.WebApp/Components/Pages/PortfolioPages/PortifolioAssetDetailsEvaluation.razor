@@ -4,32 +4,59 @@
 
 
 <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Gap="1rem">
-	<RadzenStack Gap="0">
-		<RadzenStack JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
-			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" JustifyContent="JustifyContent.SpaceBetween">
-				<RadzenText TextStyle="TextStyle.H6">@Asset.Asset.Score.Value / @Asset.Asset.Score.Total Points</RadzenText>
-				<RadzenText TextStyle="TextStyle.H6" class="rz-m-0">@PointPercentage.PercentageFormat()</RadzenText>
-			</RadzenStack>
+	<RadzenRow>
+		<RadzenColumn Size="2">
+			<RadzenText TextStyle="TextStyle.H6">Score</RadzenText>
+		</RadzenColumn>
+		<RadzenColumn Size="1">
+			<RadzenText TextStyle="TextStyle.H6" class="float-end">@Asset.Asset.Score.Value / @Asset.Asset.Score.Total</RadzenText>
+		</RadzenColumn>
+		<RadzenColumn Size="8">
 			<RadzenProgressBar Value=@PointPercentage.ToPercentage() ShowValue="false" Style="--rz-progressbar-height: 1rem;" />
-		</RadzenStack>
-	</RadzenStack>
-	@foreach (var answer in Asset.Asset.Answers)
+		</RadzenColumn>
+		<RadzenColumn Size="1">
+			<RadzenText TextStyle="TextStyle.H6" class="float-end">@PointPercentage.PercentageFormat()</RadzenText>
+		</RadzenColumn>
+	</RadzenRow>
+	@foreach (var group in Asset.Asset.Answers.OrderBy(a => a.Factor.Group).GroupBy(a => a.Factor.Group))
 	{
-		<RadzenStack Gap="0">
-			<RadzenRow RowGap="0">
-				<RadzenColumn SizeSM="8">
-					<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name</RadzenText>
-					<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="GetBadgeStyle(answer.Answer)" Text="@GetBadgeLabel(answer.Answer)" class="rz-ml-5" Style="width:30px" />
-				</RadzenColumn>
-			</RadzenRow>
-		</RadzenStack>
+		<hr />
+		var total = group.Count();
+		var grade = Math.Max(group.Sum(g => g.Answer ? 1 : -1),0);
+		var percentage = (double)grade / (double)total;
+		<RadzenRow>
+			<RadzenColumn Size="2">
+				<RadzenText TextStyle="TextStyle.H6">@group.Key</RadzenText>
+			</RadzenColumn>
+			<RadzenColumn Size="1">
+				<RadzenText TextStyle="TextStyle.H6" class="float-end">@grade / @total</RadzenText>
+			</RadzenColumn>
+			<RadzenColumn Size="8">
+				<RadzenProgressBar Value=@percentage.ToPercentage() ShowValue="false" Style="--rz-progressbar-height: 1rem;" />
+			</RadzenColumn>
+			<RadzenColumn Size="1">
+				<RadzenText TextStyle="TextStyle.H6" class="float-end">@percentage.PercentageFormat()</RadzenText>
+			</RadzenColumn>
+		</RadzenRow>
+
+		@foreach (var answer in group.OrderBy(a => a.Factor.Name))
+		{
+			<RadzenStack Gap="0">
+				<RadzenRow RowGap="0">
+					<RadzenColumn SizeSM="8">
+						<RadzenText TextStyle="TextStyle.Overline" title="@answer.Factor.Description">@answer.Factor.Name</RadzenText>
+						<RadzenBadge IsPill="true" Variant="Variant.Outlined" BadgeStyle="GetBadgeStyle(answer.Answer)" Text="@GetBadgeLabel(answer.Answer)" class="rz-ml-5" Style="width:30px" />
+					</RadzenColumn>
+				</RadzenRow>
+			</RadzenStack>
+		}
 	}
 </RadzenStack>
 
 @code {
 	[Parameter]
 	public PortfolioAssetDetail Asset { get; set; }
-	public double PointPercentage => Asset.Asset.Score.Proportion; 
+	public double PointPercentage => Asset.Asset.Score.Proportion;
 	BadgeStyle GetBadgeStyle(bool answer)
 	{
 		return answer ? BadgeStyle.Primary : BadgeStyle.Danger;

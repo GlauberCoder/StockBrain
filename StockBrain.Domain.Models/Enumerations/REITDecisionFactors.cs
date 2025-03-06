@@ -9,6 +9,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Retorno",
 			Key = "DYAboveThresholdRecent",
 			Name = "Distribuição de Dividendos (DY) médio superior á {0} últimos {1} meses?",
 			Description = "Favorece FIIs que distribuíram consistentemente dividendos acima de {0} nos últimos {1} meses."
@@ -22,6 +23,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Retorno",
 			Key = "DYAboveThresholdConsolidated",
 			Name = "Distribuição de Dividendos (DY) médio superior á {0} últimos {1} meses?",
 			Description = "Favorece FIIs que distribuíram consistentemente dividendos acima de {0} nos últimos {1} meses."
@@ -35,6 +37,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Momento",
 			Key = "PVPBellowThreshold",
 			Name = "Preço/Valor Patrimonial (P/VP) menor que {0} ?",
 			Description = "Favorece FIIs cujo preço de mercado está abaixo de {0} do seu valor patrimonial."
@@ -48,6 +51,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "DailyLiquidityAboveThreshold",
 			Name = "Empresa possui liquidez diária acima de {0} ?",
 			Description = "Verifica se o FIIs tem liquidez suficiente para grandes operações no mercado."
@@ -61,6 +65,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "RealROIAboveThresholdNear",
 			Name = "Rentabilidade real maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs com rentabilidade acima da inflação nos considerando os últimos {0} anos."
@@ -73,6 +78,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "RealROIAboveThresholdMiddle",
 			Name = "Rentabilidade real maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs com rentabilidade acima da inflação nos considerando os últimos {0} anos."
@@ -86,6 +92,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "RealROIAboveThresholdLong",
 			Name = "Rentabilidade Real maior que {0} nos últimos {1} anos?",
 			Description = "Favorece REITs com rentabilidade real acima do benchmark nos últimos {0} anos."
@@ -99,6 +106,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "NominalROIAboveThresholdNear",
 			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
@@ -112,6 +120,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "NominalROIAboveThresholdMiddle",
 			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
@@ -125,6 +134,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "NominalROIAboveThresholdLong",
 			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
@@ -138,6 +148,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Retorno",
 			Key = "ManagementFeeBellowThreshold",
 			Name = "Taxa de Administração menor que {0}?",
 			Description = "Verifica se a taxa de administração do FII é competitiva."
@@ -151,6 +162,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "VacancyBellowThreshold",
 			Name = "Vacância menor que {0} ?",
 			Description = "Favorece FIIs com baixos índices de vacância, garantindo ocupação estável."
@@ -164,6 +176,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "AssetValueAboveThreshold",
 			Name = "Patrimônio do Fundo superior a {0} ?",
 			Description = "Favorece fundos com patrimônio superior ao benchmark, indicando maior robustez."
@@ -177,6 +190,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Momento",
 			Key = "DownTrend",
 			Name = "Tendência de baixa?",
 			Description = "Verifica se o FII está atualmente em uma tendência de baixa no mercado."
@@ -190,6 +204,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Retorno",
 			Key = "BazinCeilingPriceAboveCurrent",
 			Name = "Preço teto Bazin é superior ao preço atual?",
 			Description = "Verifica se o preço atual está abaixo do preço teto segundo Bazin. Para a formula deve-se considerar o retorno esperado de {0} e a média de dividendos dos últimos {1} anos"
@@ -203,6 +218,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Momento",
 			Key = "CurrentPriceBelowPortfolioAverage",
 			Name = "Preço atual é menor que o preço médio?",
 			Description = "Favorece empresas cujo preço atual está abaixo da média, possivelmente indicando uma oportunidade de compra."
@@ -216,6 +232,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "WellRated",
 			Name = "Empresa é bem avaliada pelos usuários do Investidor10?",
 			Description = "Considera a opinião dos investidores como um fator adicional na decisão."
@@ -229,6 +246,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "RegionsAboveThreshold",
 			Name = "Presente em mais que {0} regiões?",
 			Description = "Favorece REITs com alta diversificação regional, indicando menor risco."
@@ -242,6 +260,7 @@ public class REITDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "PropertyAmountAboveThreshold",
 			Name = "Possuí mais que {0} imóveis ?",
 			Description = "Favorece REITs com uma quantidade imóveis acima do benchmark, garantindo diversificação interna."

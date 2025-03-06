@@ -2,6 +2,7 @@
 
 public class DecisionFactor : BaseEntity
 {
+	public required string Group { get; init; }
 	public required string Key { get; init; }
 	public required string Name { get; init; }
 	public required string Description { get; init; }
@@ -15,6 +16,7 @@ public class DecisionFactor : BaseEntity
 		return new DecisionFactor
 		{
 			Key = Key,
+			Group = Group,
 			Name = nameParts.Any() ? string.Format(Name, nameParts.ToArray()) : Name,
 			Description = descriptionParts.Any() ? string.Format(Description, descriptionParts.ToArray()) : Description,
 		};

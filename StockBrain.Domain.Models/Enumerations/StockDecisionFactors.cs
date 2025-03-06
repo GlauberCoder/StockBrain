@@ -9,6 +9,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "HasEnoughYearsInMarket",
 			Name = "Empresa com mais de {0} anos de fundação?",
 			Description = "Favorece empresas que estão há mais de {0} anos no mercado, indicando estabilidade e histórico sólido."
@@ -22,6 +23,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "HasNeverPostedLosses",
 			Name = "Empresa nunca deu prejuízo (ano fiscal)?",
 			Description = "Favorece empresas que consistentemente geram lucros e não registraram prejuízos."
@@ -35,6 +37,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Momento",
 			Key = "PLIsNotTooHigh",
 			Name = "P/L (preço sobre lucro) não é maior que {0}?",
 			Description = "Favorece empresas cujo preço não está exagerado quando comparado ao lucro."
@@ -47,6 +50,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Momento",
 			Key = "PVPIsNotTooHigh",
 			Name = "P/VP (preço sobre valor patrimônial) não é maior que {0}?",
 			Description = "Favorece empresas cujo preço não está exagerado quando comparado ao patrimônio."
@@ -59,6 +63,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "ProfitableLastQuarters",
 			Name = "Empresa com lucro nos últimos {0} trimestres?",
 			Description = "Indica empresas que mantêm um histórico consistente de lucro trimestral."
@@ -72,6 +77,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Retorno",
 			Key = "PaidAcceptableDividends",
 			Name = "Empresa pagou dividendos acima de {0} nos últimos {1} anos?",
 			Description = "Distribuir dividendos é um indicativo de lucro real, favorece empresas que mantêm uma política de dividendos atrativa ao longo dos últimos anos."
@@ -85,6 +91,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "HasAcceptableROE",
 			Name = "Empresa possui ROE acima de {0} ?",
 			Description = "Favorece empresas com bom retorno sobre o patrimônio, mostrando eficiência em gerar lucros."
@@ -98,6 +105,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "LowDebtToEquity",
 			Name = "Empresa possui dívida menor que o patrimônio?",
 			Description = "Indica empresas com menor risco financeiro devido a um endividamento controlado."
@@ -111,6 +119,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "PositiveRevenueCAGR",
 			Name = "Empresa apresentou crescimento de receita nos últimos {0} anos?",
 			Description = "Verifica empresas com um crescimento sustentável e consistente da receita."
@@ -124,6 +133,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "ProfitGrowth",
 			Name = "Empresa apresentou crescimento de lucros nos últimos {0} anos?",
 			Description = "Favorece empresas que demonstraram aumento consistente nos lucros ao longo do tempo."
@@ -137,6 +147,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "HasLiquidity",
 			Name = "Empresa possui liquidez diária acima de {0} ?",
 			Description = "Verifica se a empresa possui volume de negociação adequado para investidores institucionais."
@@ -150,6 +161,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "WellRated",
 			Name = "Empresa é bem avaliada?",
 			Description = "Considera a opinião dos investidores como um fator adicional na decisão."
@@ -163,6 +175,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Momento",
 			Key = "CurrentPriceBelowPortfolioAverage",
 			Name = "Preço atual é menor que o preço médio?",
 			Description = "Favorece empresas cujo preço atual está abaixo da média, possivelmente indicando uma oportunidade de compra."
@@ -176,6 +189,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Resiliência",
 			Key = "HasEnoughYearsOfIPO",
 			Name = "Empresa com IPO há mais de {0} anos?",
 			Description = "Considera empresas que estão no mercado público há mais tempo, indicando maturidade."
@@ -189,6 +203,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Retorno",
 			Key = "BazinCeilingPriceBelowCurrent",
 			Name = "Preço teto (Bazin) é maior que o preço atual?",
 			Description = "Avalia se o preço atual está abaixo do teto recomendado pelo método Bazin. Para formula é usado um retorno esperado de {0} e a média dos dividendos é calculada nos últimos {1} anos"
@@ -202,6 +217,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "GrahamFairPriceBelowCurrent",
 			Name = "Preço justo (Benjamin Graham) é maior que o preço atual?",
 			Description = "Identifica empresas cujos preços estão abaixo do valor justo estimado pela fórmula de Graham."
@@ -215,6 +231,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Momento",
 			Key = "DownTrend",
 			Name = "Empresa está em tendência de baixa?",
 			Description = "Verifica se a empresa está apresentando uma tendência de queda no mercado."
@@ -228,6 +245,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "RealROIAboveThresholdNear",
 			Name = "Rentabilidade real maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs com rentabilidade acima da inflação nos considerando os últimos {0} anos."
@@ -240,6 +258,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "RealROIAboveThresholdMiddle",
 			Name = "Rentabilidade real maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs com rentabilidade acima da inflação nos considerando os últimos {0} anos."
@@ -253,6 +272,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "RealROIAboveThresholdLong",
 			Name = "Rentabilidade Real maior que {0} nos últimos {1} anos?",
 			Description = "Favorece REITs com rentabilidade real acima do benchmark nos últimos {0} anos."
@@ -266,6 +286,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "NominalROIAboveThresholdNear",
 			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
@@ -279,6 +300,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "NominalROIAboveThresholdMiddle",
 			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
@@ -292,6 +314,7 @@ public class StockDecisionFactors
 	{
 		Factor = new DecisionFactor
 		{
+			Group = "Crescimento",
 			Key = "NominalROIAboveThresholdLong",
 			Name = "Rentabilidade maior que {0} nos últimos {1} anos?",
 			Description = "Favorece FIIs que tiveram retorno médio superior ao benchmark nos últimos {0} anos."
