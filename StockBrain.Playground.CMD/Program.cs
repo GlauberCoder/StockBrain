@@ -30,41 +30,9 @@ internal class Program
 		//CreateAccount("Higor", "Fisher");
 		//NewFormatETL();
 
-		AddAsset("WEGE3");
-
 		Console.ReadKey();
 	}
-	static void AddAsset(string ticker) 
-	{ 
-		var context = GetService<Context>();
-		var asset = GetService<IAssets>().ByID(ticker);
-		var portfoliosRepository = GetService<IPortfolios>();
-		var portfolios = portfoliosRepository.All();
-		foreach (var portfolio in portfolios)
-		{
-			var portfolioAsset = new PortfolioAssetDetail
-			{
-				Asset = new PortfolioAsset
-				{
-					GUID = asset.Ticker,
-					FirstAquisition = context.Today,
-					LastAquisition = context.Today,
-					Quantity = 0,
-					InvestedValue = 0,
-					Risk = false,
-					Asset = asset
-				},
-				DeltaTarget = null,
-				InvestedOnTotal = null,
-				InvestedType = null,
-				Target = null
-			};
-			var portfolioAssets = portfolio.Assets.ToList();
-			portfolioAssets.Add(portfolioAsset);
-			portfolio.Assets = portfolioAssets;
-		}
-		portfoliosRepository.Save(portfolios);
-	}
+	
 	static void NewFormatETL()
 	{
 		var source = new FirebaseClient("https://stock-brain-bd238-default-rtdb.firebaseio.com", new FirebaseOptions
