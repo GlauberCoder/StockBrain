@@ -59,5 +59,5 @@ public class DBContext<TEntity>
 		foreach (var guid in guids)
 			Delete(guid);	
 	}
-	public void Delete(string guid) => Node.Child(guid).DeleteAsync();
+	public void Delete(string guid) => Node.Child(guid).DeleteAsync().Wait();
 }
