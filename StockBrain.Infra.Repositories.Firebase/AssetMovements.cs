@@ -40,9 +40,10 @@ public class AssetMovements : AccountFirebaseRepository<AssetMovement, AssetMove
 
 	protected override IEnumerable<AssetMovementDTO> FromEntity(IEnumerable<AssetMovement> entities) => entities.Select(FromEntity);
 
-	protected override AssetMovement BeforeCreate(AssetMovement entity)
+	protected override AssetMovementDTO BeforeCreateDTO(AssetMovementDTO entity)
 	{
 		entity.Date = Context.Today;
-		return base.BeforeCreate(entity);
+		entity.BrokerGUID = Context.Account.MainVarBroker;
+		return base.BeforeCreateDTO(entity);
 	}
 }

@@ -4,5 +4,6 @@
 	{
 		public required string Name { get; init; }
 		public required string MainPortfolio { get; init; }
+		public required string MainVarBroker { get; init; }
 	}
 }

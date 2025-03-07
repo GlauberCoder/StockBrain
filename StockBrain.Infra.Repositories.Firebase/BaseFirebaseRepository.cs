@@ -44,12 +44,18 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO> :  IBaseRepository<T
 	public TEntity Save(TEntity entity)
 	{
 		BeforeSave(entity);
+		TDTO dto = null;
 		if (entity.IsNew())
+		{
 			BeforeCreate(entity);
-		Client.Save(FromEntity(entity));
+			dto = FromEntity(entity);
+			BeforeCreateDTO(dto);
+		}
+		Client.Save(dto);
 		return entity;
 	}
 	protected virtual TEntity BeforeCreate(TEntity entity) => entity;
+	protected virtual TDTO BeforeCreateDTO(TDTO dto) => dto;
 	protected virtual TEntity BeforeSave(TEntity entity) => entity;
 	protected virtual string GenerateGUID(TEntity entity) => Guid.NewGuid().ToString();
 
