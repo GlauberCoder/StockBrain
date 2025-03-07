@@ -13,6 +13,7 @@ public class PortfolioDTO : BaseEntity
 	{
 		Targets = portifolio.Types.ToDictionary(p => p.Key, p => p.Value.Target.Proportion);
 		Name = portifolio.Name;
+		GUID = portifolio.GUID;
 		Assets = portifolio.Assets.ToDictionary(a => a.Asset.Asset.Ticker, a => new PortfolioAssetDTO(a.Asset));
 		Bonds = portifolio.Bonds.ToDictionary(a => a.GUID, a => new BondDTO(a));
 
