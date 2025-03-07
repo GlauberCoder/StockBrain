@@ -44,6 +44,7 @@ public class AssetMovements : AccountFirebaseRepository<AssetMovement, AssetMove
 	{
 		entity.Date = Context.Today;
 		entity.BrokerGUID = Context.Account.MainVarBroker;
+		entity.GUID = entity.AssetGUID;
 		return base.BeforeCreateDTO(entity);
 	}
 }
