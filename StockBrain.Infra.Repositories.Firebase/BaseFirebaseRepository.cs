@@ -44,11 +44,10 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO> :  IBaseRepository<T
 	public TEntity Save(TEntity entity)
 	{
 		BeforeSave(entity);
-		TDTO dto = null;
+		TDTO dto = FromEntity(entity);
 		if (entity.IsNew())
 		{
 			BeforeCreate(entity);
-			dto = FromEntity(entity);
 			BeforeCreateDTO(dto);
 		}
 		Client.Save(dto);
