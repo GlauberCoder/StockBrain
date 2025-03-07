@@ -30,17 +30,41 @@ internal class Program
 		//CreateAccount("Higor", "Fisher");
 		//NewFormatETL();
 
-		var destiny = new FirebaseClient("https://stock-brain-qa-default-rtdb.firebaseio.com", new FirebaseOptions
-		{
-			AuthTokenAsyncFactory = () => Task.FromResult("gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p")
-		});
-		var result = destiny.Child("users/35557e43-e295-4321-bc63-652b1c7870bc/portfolios/123e4567-e89b-12d3-a456-426614174000").Shallow().OnceAsJsonAsync().Result;
-
-		Console.WriteLine(result);
+		AddAsset("WEGE3");
 
 		Console.ReadKey();
 	}
-
+	static void AddAsset(string ticker) 
+	{ 
+		var context = GetService<Context>();
+		var asset = GetService<IAssets>().ByID(ticker);
+		var portfoliosRepository = GetService<IPortfolios>();
+		var portfolios = portfoliosRepository.All();
+		foreach (var portfolio in portfolios)
+		{
+			var portfolioAsset = new PortfolioAssetDetail
+			{
+				Asset = new PortfolioAsset
+				{
+					GUID = asset.Ticker,
+					FirstAquisition = context.Today,
+					LastAquisition = context.Today,
+					Quantity = 0,
+					InvestedValue = 0,
+					Risk = false,
+					Asset = asset
+				},
+				DeltaTarget = null,
+				InvestedOnTotal = null,
+				InvestedType = null,
+				Target = null
+			};
+			var portfolioAssets = portfolio.Assets.ToList();
+			portfolioAssets.Add(portfolioAsset);
+			portfolio.Assets = portfolioAssets;
+		}
+		portfoliosRepository.Save(portfolios);
+	}
 	static void NewFormatETL()
 	{
 		var source = new FirebaseClient("https://stock-brain-bd238-default-rtdb.firebaseio.com", new FirebaseOptions
@@ -184,7 +208,7 @@ internal class Program
 		return new Segment { GUID = value.GUID, Name = value.Name };
 	}
 	static Account ToAccount(dynamic value, Dictionary<string, Dictionary<long, string>> translations) {
-		return new Account { GUID = value.GUID, Name = value.Name, MainPortfolio = value.MainPortfolio };
+		return new Account { GUID = value.GUID, MainVarBroker = "524d107a-a4c1-4afc-a610-a6c837baaf1f", Name = value.Name, MainPortfolio = value.MainPortfolio };
 	}
 	static DBClient GetFirebaseClient() => GetService<DBClient>();
 
@@ -193,7 +217,7 @@ internal class Program
 		var client = GetFirebaseClient();
 		var context = GetService<Context>();
 		var portfolioGUID = Guid.NewGuid().ToString();
-		var account = new Account { Name = accountName, GUID = Guid.NewGuid().ToString(), MainPortfolio = portfolioGUID };
+		var account = new Account { Name = accountName, MainVarBroker = "524d107a-a4c1-4afc-a610-a6c837baaf1f", GUID = Guid.NewGuid().ToString(), MainPortfolio = portfolioGUID };
 
 
 		var assets = GetService<IAssets>().All().Where(a => !a.Risk).Select(a => new PortfolioAssetDTO
@@ -238,7 +262,7 @@ internal class Program
 	{
 		ServiceProvider = new ServiceCollection()
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
-			.AddScoped(sp => new Context { Account = new Account { GUID = "35557e43-e295-4321-bc63-652b1c7870bc",  Name = "Glauber", MainPortfolio = "123e4567-e89b-12d3-a456-426614174000" } })
+			.AddScoped(sp => new Context { Account = new Account { GUID = "35557e43-e295-4321-bc63-652b1c7870bc", MainVarBroker = "524d107a-a4c1-4afc-a610-a6c837baaf1f", Name = "Glauber", MainPortfolio = "123e4567-e89b-12d3-a456-426614174000" } })
 			.AddSingleton(sp => new DataBaseConfig("https://stock-brain-qa-default-rtdb.firebaseio.com", "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p"))
 			.AddScoped<DBClient>()
 					.AddScoped(sp => new StockEvaluationConfig

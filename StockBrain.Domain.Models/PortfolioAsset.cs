@@ -5,7 +5,6 @@ namespace StockBrain.Domain.Models;
 
 public class PortfolioAsset : BaseEntity
 {
-	public long PortfolioID { get; set; }
 	public Asset Asset { get; set; }
 	public int Quantity { get; set; }
 	public double InvestedValue { get; set; }
