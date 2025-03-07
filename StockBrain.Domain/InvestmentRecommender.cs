@@ -72,7 +72,7 @@ public class InvestmentRecommender : IInvestmentRecommender
 		foreach (var item in itens)
 			item.SetInvestment(Math.Max(item.DeltaTarget.Difference, 0) / totalDeltaTarget, investment, newTotal);
 
-		return itens;
+		return itens.Where(i => !i.Quantity.HasValue || i.Quantity > 0);
 
 	}
 }
