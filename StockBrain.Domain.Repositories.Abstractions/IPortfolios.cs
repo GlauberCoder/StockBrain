@@ -2,7 +2,7 @@
 
 namespace StockBrain.Infra.Repositories.Abstractions;
 
-public interface IPortfolios : IBaseRepository<Portfolio>
+public interface IPortfolios : IBaseAccountRepository<Portfolio>
 {
 	Portfolio Main();
 	IEnumerable<EntityReference> References();

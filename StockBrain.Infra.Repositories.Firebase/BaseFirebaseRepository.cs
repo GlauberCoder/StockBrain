@@ -9,7 +9,7 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO> :  IBaseRepository<T
 	where TDTO : BaseEntity
 {
 	protected Context Context { get; }
-	string Name { get; }
+	protected string Name { get; }
 	bool UseCache { get; }
 	protected DBContext<TDTO> Client { get; set; }
 
@@ -43,16 +43,24 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO> :  IBaseRepository<T
 
 	public TEntity Save(TEntity entity)
 	{
+		var isNew = entity.IsNew();
+		if (isNew)
+		{
+			entity.GUID = Guid.NewGuid().ToString();
+			BeforeCreate(entity);
+		}
 		var dto = FromEntity(entity);
 		BeforeSave(entity);
-		BeforeSaveDTO(dto);
-		if (entity.IsNew())
-		{
-			BeforeCreate(entity);
-			BeforeCreateDTO(dto);
-		}
-		Client.Save(dto);
+		Save(dto, isNew);
 		return entity;
+	}
+	public TDTO Save(TDTO dto, bool isNew)
+	{
+		BeforeSaveDTO(dto);
+		if (isNew)
+			BeforeCreateDTO(dto);
+		Client.Save(dto);
+		return dto;
 	}
 	protected virtual TEntity BeforeCreate(TEntity entity) => entity;
 	protected virtual TDTO BeforeCreateDTO(TDTO dto) => dto;

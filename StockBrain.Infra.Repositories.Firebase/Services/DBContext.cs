@@ -33,7 +33,7 @@ public class DBContext<TEntity>
 		if (entity.IsNew())
 			entity.GUID = Guid.NewGuid().ToString();
 
-		Node.Child(entity.GUID).PutAsync(entity);
+		Node.Child(entity.GUID).PutAsync(entity).Wait();
 		return entity;
 	}
 	public IEnumerable<TEntity> Save(IEnumerable<TEntity> entities) 

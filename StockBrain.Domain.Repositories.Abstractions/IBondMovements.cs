@@ -2,6 +2,6 @@
 
 namespace StockBrain.Infra.Repositories.Abstractions;
 
-public interface IBondMovements :  IBaseRepository<BondMovement>
+public interface IBondMovements : IBaseAccountRepository<BondMovement>
 {
 }
