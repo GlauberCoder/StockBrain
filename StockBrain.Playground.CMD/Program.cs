@@ -25,19 +25,19 @@ internal class Program
 	static async Task Main(string[] args)
 	{
 		BuildServices();
-		//CreateAccount("Higor", "Fisher");
+		CreateAccount("Pedro", "PC");
 		//NewFormatETL();
-		CreateAsset("WEGE3",
-			"WEG S.A.",
-			"Empresa multinacional brasileira que atua na fabricação e comercialização de equipamentos eletroeletrônicos, com foco em motores, automação e geração de energia.",
-			new DateOnly(1961, 9, 16),
-			new DateOnly(1971, 6, 12),
-			"Exposição a ciclos econômicos globais e variações cambiais. Pressões competitivas no setor industrial e riscos regulatórios em mercados externos.",
-			"Liderança global em motores elétricos e automação. Forte presença internacional, inovação contínua e crescimento sustentável.",
-			"Bens Industriais",
-			"Motores, Compressores e Outros",
-			AssetType.Acoes
-		);
+		//CreateAsset("WEGE3",
+		//	"WEG S.A.",
+		//	"Empresa multinacional brasileira que atua na fabricação e comercialização de equipamentos eletroeletrônicos, com foco em motores, automação e geração de energia.",
+		//	new DateOnly(1961, 9, 16),
+		//	new DateOnly(1971, 6, 12),
+		//	"Exposição a ciclos econômicos globais e variações cambiais. Pressões competitivas no setor industrial e riscos regulatórios em mercados externos.",
+		//	"Liderança global em motores elétricos e automação. Forte presença internacional, inovação contínua e crescimento sustentável.",
+		//	"Bens Industriais",
+		//	"Motores, Compressores e Outros",
+		//	AssetType.Acoes
+		//);
 		Console.ReadKey();
 	}
 	static void CreateAsset(
@@ -90,7 +90,7 @@ internal class Program
 
 		Save(client, "accounts", account);
 		Save(client, $"users/{account.GUID}/portfolios", portfolio);
-
+		Console.WriteLine($"{accountName} criado {account.GUID}");
 	}
 	static void Save<TEntity>(DBClient client, string path, TEntity entity) where TEntity : BaseEntity => client.GetContext<TEntity>(path).Save(entity);
 	static async Task CreateInfos(params string[] tickers) => await GetService<IAssetInfoUpdater>().UpdateAll(null, tickers);
@@ -100,7 +100,7 @@ internal class Program
 		ServiceProvider = new ServiceCollection()
 			.AddScoped(sp => new BrAPIConfig { ApiKey = "2MVc6qfPniXFuAaDyMnFDf" })
 			.AddScoped(sp => new Context { Account = new Account { GUID = "35557e43-e295-4321-bc63-652b1c7870bc", MainVarBroker = "524d107a-a4c1-4afc-a610-a6c837baaf1f", Name = "Glauber", MainPortfolio = "123e4567-e89b-12d3-a456-426614174000" } })
-			.AddSingleton(sp => new DataBaseConfig("https://stock-brain-qa-default-rtdb.firebaseio.com", "gO5jwO3ysMdTSkzUQmnPWiCnpkIAHBv4F8KYb48p"))
+			.AddSingleton(sp => new DataBaseConfig("https://stock-brain-bd238-default-rtdb.firebaseio.com/", "ku6qpXHMJ4KfpOecG8ZiBtO8xeuW73owmQMdDhwv"))
 			.AddScoped<DBClient>()
 					.AddScoped(sp => new StockEvaluationConfig
 					{

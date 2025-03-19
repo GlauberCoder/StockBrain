@@ -88,7 +88,7 @@ public class PortfolioAssetManager : IPortfolioAssetManager
 		var broker = brokers.FirstOrDefault(a => a.Broker.GUID == movement.Broker.GUID);
 		if (broker == null)
 		{
-			broker = new PortfolioAssetBroker { Broker = movement.Broker, Quantity = 0, Ticker = asset.Asset.Asset.Ticker };
+			broker = new PortfolioAssetBroker { GUID = movement.Broker.GUID, Broker = movement.Broker, Quantity = 0, Ticker = asset.Asset.Asset.Ticker };
 			brokers.Add(broker);
 		}
 

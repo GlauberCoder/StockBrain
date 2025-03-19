@@ -201,6 +201,7 @@ namespace StockBrain.WebApp
 					.AddScoped<IAssetInfoUpdater, InvestidorDezAssetInfoUpdater>()
 					.AddScoped<IAssetInfos, AssetInfos>()
 					.AddScoped<IDecisionFactorAnswerSetter, DecisionFactorAnswerSetter>()
+					.AddScoped<IAssetMovementFromCSVUpdater, AssetMovementFromCSVUpdater>()
 					.AddScoped<Dialogs>()
 					.BuildServiceProvider();
 		}

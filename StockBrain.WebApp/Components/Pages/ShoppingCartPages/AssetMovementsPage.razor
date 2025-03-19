@@ -2,6 +2,7 @@
 @using Radzen.Blazor
 @using StockBrain.Domain.Models
 @using StockBrain.Infra.Repositories.Abstractions
+@using StockBrain.Services.Abstrations
 @using StockBrain.WebApp.Components.Pages.AssetPages
 @using StockBrain.WebApp.Models
 @rendermode InteractiveServer
@@ -46,9 +47,18 @@
 				<RadzenRow>
 					<RadzenColumn Size="12">
 						<RadzenButton Click=@AddVarItem Icon="add" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10 float-end" />
-
+						<RadzenButton Click=@ChangeShowCsv Icon="csv" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10 float-end rz-mr-2" />
 					</RadzenColumn>
 				</RadzenRow>
+				@if (ShowCsv)
+				{
+					<RadzenRow>
+						<RadzenColumn Size="12">
+							<RadzenTextArea @bind-Value=@Csv Style="width:100%;" class="rz-mt-2" Placeholder="TIKER;QTD;VALOR UNITARIO;VALOR TOTAL"></RadzenTextArea>
+							<RadzenButton Variant="Variant.Outlined" Click=@UpdateFromCsv Text="Update" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" Disabled="@ConfirmDisabled" class="float-end rz-mr-2 rz-mt-2" />
+						</RadzenColumn>
+					</RadzenRow>
+				}
 				<RadzenRow AlignItems="AlignItems.Center">
 					<RadzenColumn Size="1"></RadzenColumn>
 					<RadzenColumn Size="2">Ticker</RadzenColumn>
@@ -123,15 +133,25 @@
 	[Inject]
 	IBondMovements Bonds { get; set; }
 
+	[Inject]
+	IAssetMovementFromCSVUpdater MovementFromCSVUpdater { get; set; }
+
 	IEnumerable<SelectableItem<AssetMovement>> AssetMovements { get; set; } = new List<SelectableItem<AssetMovement>>();
 	IEnumerable<SelectableItem<BondMovement>> BondMovements { get; set; } = new List<SelectableItem<BondMovement>>();
 	Broker Broker { get; set; }
-
+	string Csv { get; set; }
+	bool ShowCsv { get; set; } = false;
 	bool ConfirmDisabled => CancelDisabled || AssetMovements.Any(m => m.Selected && m.Model.Broker == null);
 	bool CancelDisabled => (!SelectedAssets().Any() && !SelectedBonds().Any());
 	private bool IsLoading { get; set; }
 	string GetRicoURL(Asset asset)
 		=> $"https://arealogada.rico.com.vc/renda-variavel/ordens/{asset.Ticker}/comprar";
+
+	void ChangeShowCsv()
+	{
+		ShowCsv = !ShowCsv;
+		StateHasChanged();
+	}
 	void ConfirmSelected()
 	{
 		Dialogs.MovementConfirmation(SelectedAssets(), SelectedBonds());
@@ -201,5 +221,12 @@
 		ReloadData(false);
 		StateHasChanged();
 
+	}
+	void UpdateFromCsv()
+	{
+		MovementFromCSVUpdater.Update(Csv, AssetMovements.Select(m => m.Model));
+		Csv = string.Empty;
+		ShowCsv = false;
+		StateHasChanged();
 	}
 }
