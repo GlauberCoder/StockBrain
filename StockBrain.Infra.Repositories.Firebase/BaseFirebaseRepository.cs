@@ -49,8 +49,8 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO> :  IBaseRepository<T
 			entity.GUID = Guid.NewGuid().ToString();
 			BeforeCreate(entity);
 		}
-		var dto = FromEntity(entity);
 		BeforeSave(entity);
+		var dto = FromEntity(entity);
 		Save(dto, isNew);
 		return entity;
 	}
