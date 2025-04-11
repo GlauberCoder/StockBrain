@@ -38,7 +38,7 @@
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Investimento" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">
 			<Template Context="movement">
-				@movement.Investment
+				@movement.Investment.MonetaryFormat()
 			</Template>
 		</RadzenDataGridColumn>
 		<RadzenDataGridColumn Title="Corretora" Frozen="true" Sortable="true" Filterable="true" Width="80px" TextAlign="TextAlign.Left">

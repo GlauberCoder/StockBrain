@@ -1,6 +1,4 @@
-﻿using Firebase.Database;
-using Firebase.Database.Query;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using StockBrain.Domain;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
