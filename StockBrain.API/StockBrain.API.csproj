@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StockBrain.Domain\StockBrain.Domain.csproj" />
+    <ProjectReference Include="..\StockBrain.Infra.PriceGetters\StockBrain.Infra.PriceGetters.csproj" />
+    <ProjectReference Include="..\StockBrain.Infra.Repositories.Firebase\StockBrain.Infra.Repositories.Firebase.csproj" />
+    <ProjectReference Include="..\StockBrain.InvestidorDez\StockBrain.InvestidorDez.csproj" />
+    <ProjectReference Include="..\StockBrain.Services\StockBrain.Services.csproj" />
+  </ItemGroup>
+
+</Project>
