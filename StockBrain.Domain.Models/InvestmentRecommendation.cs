@@ -50,6 +50,10 @@ public class InvestmentRecommendation
 	public double NewTotal { get; }
 	public DateOnly Date { get; }
 
+	public InvestmentRecommendation()
+	{
+			
+	}
 	public InvestmentRecommendation(IEnumerable<InvestmentGroupType> types, double investment, double newTotal, DateOnly date)
 	{
 		Investment = investment;

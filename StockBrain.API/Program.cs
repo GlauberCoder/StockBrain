@@ -21,6 +21,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCors(options =>
+{
+	options.AddDefaultPolicy(policy =>
+	{
+		policy.WithOrigins("http://localhost:5173") // Endereço do seu frontend
+			  .AllowAnyHeader()
+			  .AllowAnyMethod();
+	});
+});
 builder.Services.AddSwaggerGen(options =>
 {
 	options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -205,6 +214,8 @@ builder
 
 
 var app = builder.Build();
+
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

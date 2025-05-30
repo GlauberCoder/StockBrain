@@ -1,5 +1,4 @@
-﻿using StockBrain.Domain.Models.Enums;
-using StockBrain.Utils;
+﻿using StockBrain.Utils;
 
 namespace StockBrain.Domain.Models;
 
@@ -17,12 +16,10 @@ public class PortfolioAsset : BaseEntity
 	public double CurrentValue => ((Asset.MarketPrice ?? 0) * Quantity).ToPrecision(2);
 	public DeltaValue DeltaPrice => new DeltaValue(AveragePrice, Asset.MarketPrice ?? 0);
 	public DeltaValue DeltaTotal => new DeltaValue(InvestedValue, CurrentValue);
-	public IEnumerable<DecisionFactorAnswer> Answers { get; private set; }
 	public PercentageValue Score { get; private set; }
 	public void SetScore(IEnumerable<DecisionFactorAnswer> answers) 
 	{
 		var max = answers.Count();
-		Answers = answers;
 		var points = Math.Max(answers.Sum(a => a.Answer ? 1 : -1), 0);
 		Score = new PercentageValue(points, max);
 	}

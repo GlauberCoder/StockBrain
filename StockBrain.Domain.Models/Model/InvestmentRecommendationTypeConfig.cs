@@ -8,6 +8,10 @@ public class InvestmentRecommendationTypeConfig
 	public bool Invest { get; set; }
 	public int Amount { get; set; }
 	public double Target { get; set; }
+	public InvestmentRecommendationTypeConfig()
+	{
+			
+	}
 	public InvestmentRecommendationTypeConfig(AssetType type, double target) : this(type, target, true, 3)
 	{
 	}

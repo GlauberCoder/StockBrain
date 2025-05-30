@@ -1,4 +1,6 @@
-﻿@using StockBrain.Domain.Models
+﻿@using StockBrain.Domain.Abstractions
+@using StockBrain.Domain.Models
+@using StockBrain.Infra.Repositories.Abstractions
 @using StockBrain.WebApp.Components.Pages.AssetPages
 
 
@@ -18,7 +20,7 @@
 			<RadzenText TextStyle="TextStyle.H6" class="float-end">@PointPercentage.PercentageFormat()</RadzenText>
 		</RadzenColumn>
 	</RadzenRow>
-	@foreach (var group in Asset.Asset.Answers.OrderBy(a => a.Factor.Group).GroupBy(a => a.Factor.Group))
+	@foreach (var group in Answers.GroupBy(a => a.Factor.Group))
 	{
 		<hr />
 		var total = group.Count();
@@ -54,8 +56,15 @@
 </RadzenStack>
 
 @code {
+	[Inject]
+	IDecisionFactorAnswerSetter Factors { get; set; }
+	[Inject]
+	IAssetInfos AssetInfos { get; set; }
+	[Inject]
+	IDecisionFactors DecisionFactors { get; set; }
 	[Parameter]
 	public PortfolioAssetDetail Asset { get; set; }
+	public IEnumerable<DecisionFactorAnswer> Answers { get; set; } = Enumerable.Empty<DecisionFactorAnswer>();
 	public double PointPercentage => Asset.Asset.Score.Proportion;
 	BadgeStyle GetBadgeStyle(bool answer)
 	{
@@ -64,5 +73,10 @@
 	string GetBadgeLabel(bool answer)
 	{
 		return answer ? "+1" : "-1";
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		var asset = Asset.Asset.Asset;
+		Answers = Factors.Get(Asset.Asset, AssetInfos.By(asset.Type, asset.Ticker), DecisionFactors.All());
 	}
 }

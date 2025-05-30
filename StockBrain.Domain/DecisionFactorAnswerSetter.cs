@@ -60,109 +60,30 @@ public class DecisionFactorAnswerSetter : IDecisionFactorAnswerSetter
 	/// <returns>The collection of portfolio assets with updated decision factor answers.</returns>
 	public IEnumerable<PortfolioAsset> Set(IEnumerable<PortfolioAsset> assets, IDictionary<string, AssetInfo> infos, IDictionary<AssetType, IEnumerable<string>> factors)
 	{
-		foreach (var typeGroup in assets.GroupBy(a => a.Asset.Type))
+		foreach (var asset in assets)
 		{
-			switch (typeGroup.Key)
-			{
-				case AssetType.Acoes:
-					SetStocks(typeGroup, infos, factors[typeGroup.Key]);
-					break;
-				case AssetType.FII:
-					SetREITs(typeGroup, infos, factors[typeGroup.Key]);
-					break;
-				case AssetType.BDR:
-					SetBDRs(typeGroup, infos, factors[typeGroup.Key]);
-					break;
-				default:
-					break;
-			}
+			var answers = Enumerable.Empty<DecisionFactorAnswer>();
+			if (infos.TryGetValue(asset.Asset.Ticker, out var info))
+				answers = Get(asset, info, factors);
+
+			asset.SetScore(answers);
 		}
 		return assets;
 	}
-
-	/// <summary>
-	/// Assigns decision factor answers to stock assets in the portfolio.
-	/// </summary>
-	/// <param name="assets">The collection of stock portfolio assets.</param>
-	/// <param name="infos">A dictionary mapping asset tickers to their information.</param>
-	/// <param name="factors">The relevant decision factors for stocks.</param>
-	void SetStocks(IEnumerable<PortfolioAsset> assets, IDictionary<string, AssetInfo> infos, IEnumerable<string> factors)
+	public IEnumerable<DecisionFactorAnswer> Get(PortfolioAsset asset, AssetInfo info, IDictionary<AssetType, IEnumerable<string>> factors)
 	{
-		foreach (var asset in assets)
+		switch (asset.Asset.Type)
 		{
-			var answers = Enumerable.Empty<DecisionFactorAnswer>();
-			if (infos.TryGetValue(asset.Asset.Ticker, out var info))
-			{
-				var stats = new StockStats(asset, (StockInfo)info, StockConfig);
-				answers = GetAnswers(stats, factors);
-			}
-			asset.SetScore(answers);
+			case AssetType.Acoes:
+				return GetAnswers(new StockStats(asset, (StockInfo)info, StockConfig), AssetType.Acoes, factors[AssetType.Acoes], StockDecisionFactors.DecisionFactors);
+			case AssetType.FII:
+				return GetAnswers(new REITStats(asset, (REITInfo)info, REITConfig), AssetType.FII, factors[AssetType.FII], REITDecisionFactors.DecisionFactors);
+			case AssetType.BDR:
+				return GetAnswers(new BDRStats(asset, (BDRInfo)info, BDRConfig), AssetType.BDR, factors[AssetType.BDR], BDRDecisionFactors.DecisionFactors);
+			default:
+				return Enumerable.Empty<DecisionFactorAnswer>();
 		}
 	}
-
-	/// <summary>
-	/// Assigns decision factor answers to REIT assets in the portfolio.
-	/// </summary>
-	/// <param name="assets">The collection of REIT portfolio assets.</param>
-	/// <param name="infos">A dictionary mapping asset tickers to their information.</param>
-	/// <param name="factors">The relevant decision factors for REITs.</param>
-	void SetREITs(IEnumerable<PortfolioAsset> assets, IDictionary<string, AssetInfo> infos, IEnumerable<string> factors)
-	{
-		foreach (var asset in assets)
-		{
-			var answers = Enumerable.Empty<DecisionFactorAnswer>();
-			if (infos.TryGetValue(asset.Asset.Ticker, out var info))
-			{
-				var stats = new REITStats(asset, (REITInfo)info, REITConfig);
-				answers = GetAnswers(stats, factors);
-			}
-			asset.SetScore(answers);
-		}
-	}
-
-	/// <summary>
-	/// Assigns decision factor answers to BDR assets in the portfolio.
-	/// </summary>
-	/// <param name="assets">The collection of BDR portfolio assets.</param>
-	/// <param name="infos">A dictionary mapping asset tickers to their information.</param>
-	/// <param name="factors">The relevant decision factors for BDRs.</param>
-	void SetBDRs(IEnumerable<PortfolioAsset> assets, IDictionary<string, AssetInfo> infos, IEnumerable<string> factors)
-	{
-		foreach (var asset in assets)
-		{
-			var answers = Enumerable.Empty<DecisionFactorAnswer>();
-			if (infos.TryGetValue(asset.Asset.Ticker, out var info))
-			{
-				var stats = new BDRStats(asset, (BDRInfo)info, BDRConfig);
-				answers = GetAnswers(stats, factors);
-			}
-			asset.SetScore(answers);
-		}
-	}
-
-	/// <summary>
-	/// Gets the decision factor answers for a REIT asset using the provided statistics and factors.
-	/// </summary>
-	/// <param name="stats">The REIT statistics object.</param>
-	/// <param name="factors">The relevant decision factors for REITs.</param>
-	/// <returns>A collection of decision factor answers for the REIT asset.</returns>
-	public IEnumerable<DecisionFactorAnswer> GetAnswers(REITStats stats, IEnumerable<string> factors) => GetAnswers(stats, AssetType.FII, factors, REITDecisionFactors.DecisionFactors);
-
-	/// <summary>
-	/// Gets the decision factor answers for a stock asset using the provided statistics and factors.
-	/// </summary>
-	/// <param name="stats">The stock statistics object.</param>
-	/// <param name="factors">The relevant decision factors for stocks.</param>
-	/// <returns>A collection of decision factor answers for the stock asset.</returns>
-	public IEnumerable<DecisionFactorAnswer> GetAnswers(StockStats stats, IEnumerable<string> factors) => GetAnswers(stats, AssetType.Acoes, factors, StockDecisionFactors.DecisionFactors);
-
-	/// <summary>
-	/// Gets the decision factor answers for a BDR asset using the provided statistics and factors.
-	/// </summary>
-	/// <param name="stats">The BDR statistics object.</param>
-	/// <param name="factors">The relevant decision factors for BDRs.</param>
-	/// <returns>A collection of decision factor answers for the BDR asset.</returns>
-	public IEnumerable<DecisionFactorAnswer> GetAnswers(BDRStats stats, IEnumerable<string> factors) => GetAnswers(stats, AssetType.BDR, factors, BDRDecisionFactors.DecisionFactors);
 
 	/// <summary>
 	/// Gets the decision factor answers for a given asset statistics object, asset type, factors, and evaluators.
@@ -177,4 +98,5 @@ public class DecisionFactorAnswerSetter : IDecisionFactorAnswerSetter
 	{
 		return factors.Select(f => evaluators[f].Answer(stats));
 	}
+
 }

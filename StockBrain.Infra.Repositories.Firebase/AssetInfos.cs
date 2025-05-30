@@ -1,4 +1,7 @@
-﻿using StockBrain.Domain.Models.AssetInfos;
+﻿using StockBrain.Domain.Models;
+using StockBrain.Domain.Models.AssetInfos;
+using StockBrain.Domain.Models.Enumerations;
+using StockBrain.Domain.Models.Enums;
 using StockBrain.Infra.Repositories.Abstractions;
 
 namespace StockBrain.Infra.Repositories.Firebase;
@@ -32,5 +35,20 @@ public class AssetInfos : IAssetInfos
 			result.Add(info.Ticker, info);
 
 		return result;
+	}
+
+	public AssetInfo By(AssetType type, string ticker)
+	{
+		switch (type)
+		{
+			case AssetType.Acoes:
+				return StockInfos.ByTicker(ticker);
+			case AssetType.FII:
+				return REITInfos.ByTicker(ticker);
+			case AssetType.BDR:
+				return BDRInfos.ByTicker(ticker);
+			default:
+				return null;
+		}
 	}
 }
