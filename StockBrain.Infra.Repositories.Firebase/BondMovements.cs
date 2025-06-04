@@ -52,4 +52,24 @@ public class BondMovements : AccountFirebaseRepository<BondMovement, BondMovemen
 
 		return base.BeforeSave(entity);
 	}
+
+	public void Add(BondMovementDTO bondMovement)
+	{
+		Save(FromDTO(bondMovement));
+	}
+	public void Clear()
+	{
+		Delete(All());
+	}
+
+	public void DefineBroker(string brokerUUID, IEnumerable<string> uuids)
+	{
+		var broker = Brokers.ByID(brokerUUID);
+		foreach (var uuid in uuids)
+		{
+			var movement = ByID(uuid);
+			movement.Broker = broker;
+			Save(movement);
+		}
+	}
 }

@@ -45,13 +45,13 @@ public class InvestidorDezAssetInfoUpdater : IAssetInfoUpdater
 			switch (typeGroup.Key)
 			{
 				case AssetType.Acoes:
-					await UpdateStocks(typeGroup, client, onUpdate, statuses);
+					await UpdateInfos(assets, client, onUpdate, Stocks, new InvestidorDezStockInfoGetter(Context, client), statuses);
 					break;
 				case AssetType.FII:
-					await UpdateREITs(typeGroup, client, onUpdate, statuses);
+					await UpdateInfos(assets, client, onUpdate, REITs, new InvestidorDezREITInfoGetter(Context, client), statuses);
 					break;
 				case AssetType.BDR:
-					await UpdateBDRs(typeGroup, client, onUpdate, statuses);
+					await UpdateInfos(assets, client, onUpdate, BDRs, new InvestidorDezBDRInfoGetter(Context, client), statuses);
 					break;
 				default:
 					break;
@@ -60,41 +60,54 @@ public class InvestidorDezAssetInfoUpdater : IAssetInfoUpdater
 		Assets.Save(assets);
 		onUpdate?.Invoke(statuses, true);
 	}
+	public async Task<IAssetInfoUpdateStatus> Update(Asset asset)
+	{
+		var client = GetClient();
+		var status = new AssetInfoUpdateStatus(asset.Ticker);
+		switch (asset.Type)
+		{
+			case AssetType.Acoes:
+				await UpdateInfo(asset, client, Stocks, new InvestidorDezStockInfoGetter(Context, client), status);
+				break;
+			case AssetType.FII:
+				await UpdateInfo(asset, client, REITs, new InvestidorDezREITInfoGetter(Context, client), status);
+				break;
+			case AssetType.BDR:
+				await UpdateInfo(asset, client, BDRs, new InvestidorDezBDRInfoGetter(Context, client), status);
+				break;
+			default:
+				break;
+		}
+		Assets.Save(asset);
+		return status;
+	}
+	public async Task<IAssetInfoUpdateStatus> Update(string ticker) => await Update(Assets.ByTicker(ticker));
 	async Task UpdateInfos<TInfo>(IEnumerable<Asset> assets, InvestidorDezClient client, Action<IDictionary<string, IAssetInfoUpdateStatus>, bool> onUpdate, IBaseRepository<TInfo> repository, InvestidorDezAssetInfoGetter<TInfo> getter, IDictionary<string, IAssetInfoUpdateStatus> statuses)
 		where TInfo : AssetInfo, new()
 	{
-		var infos = new List<TInfo>();
 		foreach (var asset in assets)
 		{
-			var status = statuses[asset.Ticker];
-			try
-			{
-				var result = await getter.Get(asset);
-				infos.Add(result);
-			}
-			catch (Exception ex)
-			{
-				status.HasError = true;
-				status.ErrorMessage = ex.Message;
-				throw;
-			}
-			status.Done = true;
-			asset.LastReview = new DateOnlySpan(Context.Today, Context.Today);
+			UpdateInfo(asset, client, repository, getter, statuses[asset.Ticker]);
 			onUpdate?.Invoke(statuses, false);
 		}
-		repository.Save(infos);
 	}
-	async Task UpdateStocks(IEnumerable<Asset> assets, InvestidorDezClient client, Action<IDictionary<string, IAssetInfoUpdateStatus>, bool> onUpdate, IDictionary<string, IAssetInfoUpdateStatus> statuses)
+	async Task UpdateInfo<TInfo>(Asset asset, InvestidorDezClient client, IBaseRepository<TInfo> repository, InvestidorDezAssetInfoGetter<TInfo> getter, IAssetInfoUpdateStatus status)
+		where TInfo : AssetInfo, new()
 	{
-		await UpdateInfos(assets, client, onUpdate, Stocks, new InvestidorDezStockInfoGetter(Context,client), statuses);
-	}
-	async Task UpdateREITs(IEnumerable<Asset> assets, InvestidorDezClient client, Action<IDictionary<string, IAssetInfoUpdateStatus>, bool> onUpdate, IDictionary<string, IAssetInfoUpdateStatus> statuses)
-	{
-		await UpdateInfos(assets, client, onUpdate, REITs, new InvestidorDezREITInfoGetter(Context, client), statuses);
-	}
-	async Task UpdateBDRs(IEnumerable<Asset> assets, InvestidorDezClient client, Action<IDictionary<string, IAssetInfoUpdateStatus>, bool> onUpdate, IDictionary<string, IAssetInfoUpdateStatus> statuses)
-	{
-		await UpdateInfos(assets, client, onUpdate, BDRs, new InvestidorDezBDRInfoGetter(Context, client), statuses);
+		try
+		{
+			var result = await getter.Get(asset);
+			repository.Save(result);
+		}
+		catch (Exception ex)
+		{
+			status.HasError = true;
+			status.ErrorMessage = ex.Message;
+			throw;
+		}
+		status.Done = true;
+		asset.LastReview = new DateOnlySpan(Context.Today, Context.Today);
+				
 	}
 	InvestidorDezClient GetClient() => new InvestidorDezClient(Context);
 }

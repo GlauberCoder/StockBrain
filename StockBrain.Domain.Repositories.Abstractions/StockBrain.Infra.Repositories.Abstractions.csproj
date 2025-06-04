@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StockBrain.Domain.Models\StockBrain.Domain.Models.csproj" />
+    <ProjectReference Include="..\StockBrain.DTOs\StockBrain.DTOs.csproj" />
   </ItemGroup>
 
 </Project>

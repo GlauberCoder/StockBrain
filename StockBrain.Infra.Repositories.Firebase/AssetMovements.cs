@@ -47,4 +47,25 @@ public class AssetMovements : AccountFirebaseRepository<AssetMovement, AssetMove
 		entity.GUID = entity.AssetGUID;
 		return base.BeforeCreateDTO(entity);
 	}
+
+	public void Add(AssetMovementDTO assetMovement)
+	{
+		Save(FromDTO(assetMovement));
+	}
+
+	public void Clear()
+	{
+		Delete(All());
+	}
+
+	public void DefineBroker(string brokerUUID, IEnumerable<string> uuids)
+	{
+		var broker = Brokers.ByID(brokerUUID);
+		foreach (var uuid in uuids)
+		{
+			var movement = ByID(uuid);
+			movement.Broker = broker;
+			Save(movement);
+		}
+	}
 }

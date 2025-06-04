@@ -30,24 +30,39 @@ public class PriceUpdater : IPriceUpdater
 		foreach (var asset in assets)
 		{
 			var status = statuses[asset.Ticker];
-			try
-			{
-				var price = PriceGetter.Get(asset.Ticker).Result;
-				asset.MarketPrice = price;
-				asset.LastPriceUpdate = Context.Today;
-				updatedAssets.Add(asset);
-			}
-			catch (Exception ex)
-			{
-				status.HasError = true;
-				status.ErrorMessage = ex.Message;
-			}
-			status.Done = true;
+			Update(asset, status);
 			onUpdate?.Invoke(statuses, false);
 		}
 		onUpdate?.Invoke(statuses, true);
-		Assets.Save(updatedAssets);
+	}
+	IAssetInfoUpdateStatus Update(Asset asset, IAssetInfoUpdateStatus status)
+	{
+		try
+		{
+			var price = PriceGetter.Get(asset.Ticker).Result;
+			asset.MarketPrice = price;
+			asset.LastPriceUpdate = Context.Today;
+			Assets.Save(asset);
+		}
+		catch (Exception ex)
+		{
+			status.HasError = true;
+			status.ErrorMessage = ex.Message;
+		}
+		status.Done = true;
+		return status;
 	}
 
+	public IAssetInfoUpdateStatus Update(Asset asset)
+	{
+		var status = new AssetInfoUpdateStatus(asset.Ticker);
+		Update(asset, status);
+		return status;
+	}
 
+	public IAssetInfoUpdateStatus Update(string ticker)
+	{
+		var asset = Assets.ByTicker(ticker);
+		return Update(asset);
+	}
 }

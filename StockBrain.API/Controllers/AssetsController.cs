@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using StockBrain.API.Services;
+﻿using Microsoft.AspNetCore.Mvc;
 using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
+using StockBrain.Services;
+using StockBrain.Services.Abstrations;
 
 namespace StockBrain.API.Controllers;
 
@@ -13,13 +13,21 @@ public class AssetsController : Controller
 	/// <summary>
 	/// Gets or sets the portfolios repository.
 	/// </summary>
-	IPortfolios Portfolios { get; set; }
-
+	IPortfolios Portfolios { get; }
+	IAssets Assets { get; }
+	IAssetInfoUpdater InfoUpdater { get; }
+	IPriceUpdater PriceUpdater { get; }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="PortfolioSummariesController"/> class.
 	/// </summary>
 	/// <param name="portfolios">The portfolios repository instance.</param>
-	public AssetsController(IPortfolios portfolios) => Portfolios = portfolios;
+	public AssetsController(IPortfolios portfolios, IAssets assets, IAssetInfoUpdater infoUpdater, IPriceUpdater priceUpdater)
+	{
+		Portfolios = portfolios;
+		Assets = assets;
+		InfoUpdater = infoUpdater;
+		PriceUpdater = priceUpdater;
+	}
 
 	/// <summary>
 	/// Retrieves the details of a specific asset in the portfolio by its ticker symbol.
@@ -30,5 +38,18 @@ public class AssetsController : Controller
 	[HttpGet("Ticker/{ticker}/Portfolio/{portfolioUUID}")]
 	public PortfolioAssetDetail AssetByTicker(string portfolioUUID, string ticker) =>
 		Portfolios.ByID(portfolioUUID).Assets.FirstOrDefault(a => a.Asset.Asset.Ticker == ticker);
+
+	[HttpGet("All/Portfolio/{portfolioUUID}")]
+	public IEnumerable<PortfolioAssetDetail> AllAssets(string portfolioUUID) =>
+		Portfolios.ByID(portfolioUUID).Assets;
+
+	[HttpPost("Ticker/{ticker}/Update/Info")]
+	public async Task<IAssetInfoUpdateStatus> UpdateInfo(string ticker) =>
+		await InfoUpdater.Update(ticker);
+	[HttpPost("Ticker/{ticker}/Update/Price")]
+	public IAssetInfoUpdateStatus UpdatePrice(string ticker) =>
+		PriceUpdater.Update(ticker);
+	[HttpGet("Get/Tickers")]
+	public IEnumerable<string> GetTickers() => Assets.All().Select(a => a.GUID);
 
 }
