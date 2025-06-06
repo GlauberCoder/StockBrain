@@ -12,6 +12,6 @@ public class DeltaValue
 		Initial = initial;
 		Final = final;
 		Difference = final - initial;
-		Percentage = Difference / initial;
+		Percentage = initial == 0 ? 0 : Difference / initial;
 	}
 }

@@ -14,12 +14,16 @@ using StockBrain.Infra.Repositories.Firebase.Services;
 using StockBrain.InvestidorDez;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opt =>
+{
+	opt.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
+}); ;
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors(options =>
 {

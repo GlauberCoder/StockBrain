@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
+using StockBrain.Domain.Models.AssetInfos;
 using StockBrain.Infra.Repositories.Abstractions;
 using StockBrain.Services;
 using StockBrain.Services.Abstrations;
@@ -17,16 +19,23 @@ public class AssetsController : Controller
 	IAssets Assets { get; }
 	IAssetInfoUpdater InfoUpdater { get; }
 	IPriceUpdater PriceUpdater { get; }
+	IAssetInfos AssetInfos { get; }
+	IDecisionFactors DecisionFactors { get; }
+	IDecisionFactorAnswerSetter DecisionFactorsSetter { get; }
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="PortfolioSummariesController"/> class.
 	/// </summary>
 	/// <param name="portfolios">The portfolios repository instance.</param>
-	public AssetsController(IPortfolios portfolios, IAssets assets, IAssetInfoUpdater infoUpdater, IPriceUpdater priceUpdater)
+	public AssetsController(IPortfolios portfolios, IAssets assets, IAssetInfoUpdater infoUpdater, IPriceUpdater priceUpdater, IAssetInfos assetInfos, IDecisionFactors decisionFactors, IDecisionFactorAnswerSetter decisionFactorsSetter)
 	{
 		Portfolios = portfolios;
 		Assets = assets;
 		InfoUpdater = infoUpdater;
 		PriceUpdater = priceUpdater;
+		AssetInfos = assetInfos;
+		DecisionFactors = decisionFactors;
+		DecisionFactorsSetter = decisionFactorsSetter;
 	}
 
 	/// <summary>
@@ -39,6 +48,21 @@ public class AssetsController : Controller
 	public PortfolioAssetDetail AssetByTicker(string portfolioUUID, string ticker) =>
 		Portfolios.ByID(portfolioUUID).Assets.FirstOrDefault(a => a.Asset.Asset.Ticker == ticker);
 
+
+
+	[HttpGet("Ticker/{ticker}/Portfolio/{portfolioUUID}/Factors")]
+	public IEnumerable<DecisionFactorAnswer> AssetByTickerFactors(string portfolioUUID, string ticker) {
+		var asset = Portfolios.ByID(portfolioUUID).Assets.FirstOrDefault(a => a.Asset.Asset.Ticker == ticker)?.Asset;
+		var info = AssetInfos.By(asset.Asset.Type, asset.Asset.Ticker);
+		var factors = DecisionFactors.All();
+		return DecisionFactorsSetter.Get(asset, info, factors);
+	}
+	[HttpGet("Ticker/{ticker}/Info")]
+	public AssetInfo AssetInfoBy(string ticker)
+	{
+		var asset = Assets.ByID(ticker);
+		return AssetInfos.By(asset.Type, asset.Ticker);
+	}
 	[HttpGet("All/Portfolio/{portfolioUUID}")]
 	public IEnumerable<PortfolioAssetDetail> AllAssets(string portfolioUUID) =>
 		Portfolios.ByID(portfolioUUID).Assets;
