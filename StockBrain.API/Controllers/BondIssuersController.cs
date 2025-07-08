@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StockBrain.Domain.Models;
 using StockBrain.Infra.Repositories.Abstractions;
 
@@ -6,6 +7,7 @@ namespace StockBrain.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class BondIssuersController : Controller
 {
 

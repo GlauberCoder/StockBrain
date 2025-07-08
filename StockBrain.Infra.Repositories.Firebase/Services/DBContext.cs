@@ -27,7 +27,8 @@ public class DBContext<TEntity>
 					.Result?
 					.Select(e => e.Object) ?? Enumerable.Empty<TEntity>();
 	}
-	public TEntity Get(string guid) => Node.Child(guid).OnceSingleAsync<TEntity>().Result;
+	public TEntity Get(string guid) => GetAsync(guid).Result;
+	public Task<TEntity> GetAsync(string guid) => Node.Child(guid).OnceSingleAsync<TEntity>();
 	public TEntity Save(TEntity entity) 
 	{
 		if (entity.IsNew())

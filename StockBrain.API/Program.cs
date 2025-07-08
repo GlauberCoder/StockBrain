@@ -213,6 +213,7 @@ builder
 			.AddScoped<IDecisionFactors, DecisionFactors>()
 			.AddScoped<IAssetInfoUpdater, InvestidorDezAssetInfoUpdater>()
 			.AddScoped<IAssetInfos, AssetInfos>()
+			.AddScoped<IPortfolioAssetUpdater, PortfolioAssetUpdater>()
 			.AddScoped<IDecisionFactorAnswerSetter, DecisionFactorAnswerSetter>()
 			.AddScoped<IAssetMovementFromCSVUpdater, AssetMovementFromCSVUpdater>();
 

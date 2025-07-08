@@ -10,7 +10,7 @@ public class BondMovements : AccountFirebaseRepository<BondMovement, BondMovemen
 {
 	IBondIssuers Issuers { get; }
 	IBrokers Brokers { get; }
-	const string GovUUID = "GOV";
+	const string GovUUID = "c0f293b9-10c3-485f-99b3-16b85ca6f780";
 
 	public BondMovements(Context context, DBClient client,IBondIssuers issuers, IBrokers brokers)
 		: base(context, client, "bondMovements", false)

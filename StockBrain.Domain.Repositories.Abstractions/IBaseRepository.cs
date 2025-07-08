@@ -11,4 +11,5 @@ public interface IBaseRepository<T>
 	IEnumerable<T> Delete(IEnumerable<T> entities);
 	void Delete(IEnumerable<string> guids);
 	T ByID(string guid);
+	Task<T> ByIDAsync(string guid);
 }

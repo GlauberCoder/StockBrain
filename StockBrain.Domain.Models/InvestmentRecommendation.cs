@@ -48,15 +48,17 @@ public class InvestmentRecommendation
 
 	public double Investment { get; }
 	public double NewTotal { get; }
+	public double StartValue { get; }
 	public DateOnly Date { get; }
 
 	public InvestmentRecommendation()
 	{
 			
 	}
-	public InvestmentRecommendation(IEnumerable<InvestmentGroupType> types, double investment, double newTotal, DateOnly date)
+	public InvestmentRecommendation(IEnumerable<InvestmentGroupType> types, double investment, double startValue, double newTotal, DateOnly date)
 	{
 		Investment = investment;
+		StartValue = startValue;
 		NewTotal = newTotal;
 		Date = date;
 		Categories = types.Where(t => t.Investment.Value > 0).GroupBy(t => t.Type.Category()).Select(g => new InvestmentGroupCategory(g.Key, g, investment, newTotal));

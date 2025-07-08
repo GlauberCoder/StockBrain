@@ -14,7 +14,7 @@ public class PortfolioAssetManager : IPortfolioAssetManager
 	public PortfolioAssetManager(
 		Context context,
 		IPortfolios portfolios,
-		IAssetMovements movements, 
+		IAssetMovements movements,
 		IBondMovements bondMovements
 		)
 	{
@@ -22,6 +22,27 @@ public class PortfolioAssetManager : IPortfolioAssetManager
 		Portfolios = portfolios;
 		Movements = movements;
 		BondMovements = bondMovements;
+	}
+	public async Task ConfirmMovements(IEnumerable<string> portfolioReferences, IEnumerable<string> assets, IEnumerable<string> bonds)
+	{
+		var portifolios = portfolioReferences.Select(v => new EntityReference(v, v));
+		var assetMovements = new List<AssetMovement>();
+		foreach (var asset in assets)
+		{
+			var assetMovement = await Movements.ByIDAsync(asset);
+			if (assetMovement != null)
+				assetMovements.Add(assetMovement);
+		}
+		var bondMovements = new List<BondMovement>();
+
+		foreach (var bond in bonds)
+		{
+			var bondMovement = await BondMovements.ByIDAsync(bond);
+			if (bondMovement != null)
+				bondMovements.Add(bondMovement);
+		}
+		ConfirmMovements(portifolios, assetMovements, bondMovements);
+
 	}
 	public void ConfirmMovements(IEnumerable<EntityReference> portfolioReferences, IEnumerable<AssetMovement> assets, IEnumerable<BondMovement> bonds)
 	{
@@ -60,14 +81,14 @@ public class PortfolioAssetManager : IPortfolioAssetManager
 
 		portfolio.Assets = portfolioAssets;
 	}
-	void ApplyMovement(PortfolioAssetDetail asset, AssetMovement movement) 
+	void ApplyMovement(PortfolioAssetDetail asset, AssetMovement movement)
 	{
 		var assetMovement = ApplyAssetMovement(asset, movement);
 		ApplyMovementOnAsset(asset, assetMovement);
 		ApplyBrokerMovement(asset, movement);
 
 	}
-	PortfolioAssetMovement ApplyAssetMovement(PortfolioAssetDetail asset, AssetMovement movement) 
+	PortfolioAssetMovement ApplyAssetMovement(PortfolioAssetDetail asset, AssetMovement movement)
 	{
 		var assetMovement = new PortfolioAssetMovement(movement, asset.Asset, Context);
 		var movements = asset.Asset.Movements.ToList();
@@ -95,7 +116,7 @@ public class PortfolioAssetManager : IPortfolioAssetManager
 		broker.Quantity += movement.Quantity;
 		asset.Asset.Brokers = brokers;
 	}
-	PortfolioAssetDetail BuildNewAsset(Asset asset) 
+	PortfolioAssetDetail BuildNewAsset(Asset asset)
 	{
 		var portfolioAsset = new PortfolioAsset
 		{

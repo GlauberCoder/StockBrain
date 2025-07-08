@@ -23,4 +23,5 @@ public class AuthController : Controller
 			return Unauthorized();
 		return Ok(result);
 	}
+
 }

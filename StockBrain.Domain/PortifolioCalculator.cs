@@ -11,7 +11,7 @@ public class PortifolioCalculator : IPortifolioCalculator
 	public Portfolio Calc(BaseEntity portifolio, Dictionary<AssetType, double> targets, string name, IEnumerable<PortfolioAsset> assets, IEnumerable<Bond> bonds)
 	{
 		var variableTotal = assets.Sum(a => a.CurrentValue).ToPrecision(2);
-		var fixedTotal = bonds.Sum(a => a.Value).ToPrecision(2);
+		var fixedTotal = bonds.Where(b => !b.Expired).Sum(a => a.Value).ToPrecision(2);
 		var total = (variableTotal + fixedTotal).ToPrecision(2);
 		var types = GetTypeDetails(total, targets, assets, bonds);
 		var categories = GetCategoryDetails(total, types);

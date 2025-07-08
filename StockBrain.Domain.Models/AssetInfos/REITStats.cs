@@ -1,6 +1,5 @@
 ﻿using StockBrain.Domain.Models.EvaluationConfigs;
 using StockBrain.Utils;
-using System.Reflection.Metadata;
 
 namespace StockBrain.Domain.Models.AssetInfos;
 
@@ -8,7 +7,6 @@ public class REITStats
 {
 	public REITStats(PortfolioAsset asset, REITInfo info, REITEvaluationConfig config)
 	{
-		Asset = asset;
 		Info = info;
 		Config = config;
 		DividendAVG = info.Dividends.Any() ? info.Dividends.Take(config.BazinYearAmount).Average(d => d.Value).ToPrecision(2) : 0;
@@ -40,7 +38,6 @@ public class REITStats
 		NominalROIAboveThresholdLong = info.NominalROILong >= config.NominalROIThresholdLong;
 
 	}
-	public PortfolioAsset Asset { get; }
 	public REITInfo Info { get; }
 	public REITEvaluationConfig Config { get; }
 	public double BazinPrice { get; }

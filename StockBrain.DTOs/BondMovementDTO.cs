@@ -13,6 +13,7 @@ public class BondMovementDTO : BaseEntity
 		GUID = movement.GUID;
 		BrokerGUID = movement.Broker.GUID;
 		IssuerGUID = movement.Issuer.GUID;
+		Type = movement.Type;
 		Index = movement.Index;
 		Tax = movement.Tax;
 		Value = movement.Value;

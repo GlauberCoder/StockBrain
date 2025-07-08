@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StockBrain.API.Services;
 using StockBrain.Domain.Models;
-using StockBrain.Domain.Models.Enums;
 using StockBrain.Infra.Repositories.Abstractions;
 
 namespace StockBrain.API.Controllers;
@@ -9,15 +9,17 @@ namespace StockBrain.API.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize]
-public class BrokersController : Controller
+public class AccountsController : Controller
 {
-	IBrokers Brokers { get; }
 
-	public BrokersController(IBrokers brokers)
+	public AccountsController(Context context)
 	{
-		Brokers = brokers;
+		Context = context;
 	}
 
+	Context Context { get; }
+
 	[HttpGet]
-	public IEnumerable<Broker> Get() => Brokers.All();
+	public Account Get() => Context.Account;
 }
+

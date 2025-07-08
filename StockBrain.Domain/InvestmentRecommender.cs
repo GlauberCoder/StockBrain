@@ -19,7 +19,7 @@ public class InvestmentRecommender : IInvestmentRecommender
 	{
 		var newTotal = (portfolio.Total + investment).ToPrecision(2);
 		var types = GetTypes(portfolio, investment, newTotal, config);
-		return new InvestmentRecommendation(types, investment, newTotal, Context.Today);
+		return new InvestmentRecommendation(types, investment, portfolio.Total, newTotal, Context.Today);
 	}
 
 	IEnumerable<InvestmentGroupAsset> GetAssets(AssetType type, Portfolio portfolio, double newTotal)

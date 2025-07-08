@@ -29,6 +29,7 @@ public abstract class BaseFirebaseRepository<TEntity, TDTO> :  IBaseRepository<T
 	IEnumerable<TDTO> GetDTOs() => Client.Get();
 	public IEnumerable<TEntity> All() => FromDTO(AllDTO().ToList());
 	public TEntity ByID(string guid) => FromDTO(Client.Get(guid));
+	public async Task<TEntity> ByIDAsync(string guid) => FromDTO(await Client.GetAsync(guid));
 	public virtual IEnumerable<TEntity> Save(IEnumerable<TEntity> entities) {
 		foreach(var entity in entities)
 			Save(entity);

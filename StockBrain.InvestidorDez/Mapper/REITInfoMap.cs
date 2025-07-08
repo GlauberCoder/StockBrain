@@ -37,14 +37,16 @@ public class REITInfoMap : AssetInfoMap<REITInfo>
 	}
 	object GetRegionCount(HtmlNode node)
 	{
-		return node.SelectNodes(".//tr").Count;
+		return node?.SelectNodes(".//tr").Count ?? 0;
 	}
 	object GetPropertyCount(HtmlNode node)
 	{
 		var count = 0;
-		foreach (var childNode in node.SelectNodes(".//tr/td[2]/span"))
-			count += int.Parse(childNode.InnerHtml);
-		
+		if (node != null)
+		{
+			foreach (var childNode in node.SelectNodes(".//tr/td[2]/span"))
+				count += int.Parse(childNode.InnerHtml);
+		}
 		return count;
 	}
 }

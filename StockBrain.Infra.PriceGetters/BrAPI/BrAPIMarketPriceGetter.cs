@@ -22,7 +22,7 @@ public class BrAPIMarketPriceGetter : IPriceGetter
 		var uri = GetURI(ticker);
 		var json = await client.GetStringAsync(uri);
 		var result = json.Deserialize<BrAPIMarketData>();
-		double? price = result.Results.FirstOrDefault()?.RegularMarketPrice;
+		double? price = result.Results.FirstOrDefault()?.RegularMarketPreviousClose;
 
 		return price;
 

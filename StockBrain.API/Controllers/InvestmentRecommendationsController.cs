@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using StockBrain.Domain.Abstractions;
 using StockBrain.Domain.Models;
@@ -10,6 +11,7 @@ namespace StockBrain.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class InvestmentRecommendationsController : Controller
 {
 	IPortfolios Portfolios { get; set; }

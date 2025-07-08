@@ -11,10 +11,10 @@ public abstract class AccountFirebaseRepository<TEntity, TDTO> : BaseFirebaseRep
 	public string BaseName { get; private set; }
 	public string AccountUUID { get; private set; }
 	public AccountFirebaseRepository(Context context, DBClient client, string name, bool useCache = true)
-		: base(context, client, $"users/{context.Account.GUID}/{name}", useCache)
+		: base(context, client, $"users/{context?.Account?.GUID}/{name}", useCache)
 	{
 		DBClient = client;
-		AccountUUID = Context.Account.GUID;
+		AccountUUID = Context?.Account?.GUID ?? string.Empty;
 		BaseName = name;
 	}
 

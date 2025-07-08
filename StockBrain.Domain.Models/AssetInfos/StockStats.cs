@@ -7,10 +7,9 @@ public class StockStats
 {
 	public StockStats(PortfolioAsset asset, StockInfo info, StockEvaluationConfig config)
 	{
-		Asset = asset;
 		Info = info;
 		Config = config;
-		DividendAVG = info.Dividends.Take(config.BazinYearAmount).Average(d => d.Value).ToPrecision(4);
+		DividendAVG = info.Dividends?.Take(config.BazinYearAmount).Average(d => d.Value).ToPrecision(4) ?? 0;
 		BazinPrice = (DividendAVG / config.BazinExpectedReturn).ToPrecision(2);
 		GrahamPrice = Math.Sqrt(config.GrahamConstant * info.LPA * info.VPA).ToPrecision(2);
 		SlowAvg = info.Prices.Take(config.SlowAvgSize).Average(p => p.Value).ToPrecision(2);
@@ -36,7 +35,6 @@ public class StockStats
 		PVPIsNotTooHigh = info.PVP <= config.PVPThreshold;
 
 	}
-	public PortfolioAsset Asset { get; }
 	public StockInfo Info { get; }
 	public StockEvaluationConfig Config { get; }
 	public double BazinPrice { get; }

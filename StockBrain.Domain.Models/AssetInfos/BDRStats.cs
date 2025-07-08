@@ -7,7 +7,6 @@ public class BDRStats
 {
 	public BDRStats(PortfolioAsset asset, BDRInfo info, BDREvaluationConfig config)
 	{
-		Asset = asset;
 		Info = info;
 		Config = config;
 		DividendAVG = info.Dividends != null && info.Dividends.Any() ? info.Dividends.Take(config.BazinYearAmount).Average(d => d.Value).ToPrecision(2) : 0;
@@ -32,7 +31,6 @@ public class BDRStats
 		PVPIsNotTooHigh = info.PVP <= config.PVPThreshold;
 
 	}
-	public PortfolioAsset Asset { get; }
 	public BDRInfo Info { get; }
 	public BDREvaluationConfig Config { get; }
 	public double BazinPrice { get; }
